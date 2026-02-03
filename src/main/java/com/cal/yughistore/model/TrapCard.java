@@ -4,8 +4,10 @@ import com.cal.yughistore.model.abstractClasses.YughioCard;
 import com.cal.yughistore.model.enums.EnumCardType;
 import com.cal.yughistore.model.enums.EnumFrameType;
 import com.cal.yughistore.model.enums.EnumSpellTrapCardRace;
+import jakarta.persistence.Entity;
 import lombok.*;
 
+@Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

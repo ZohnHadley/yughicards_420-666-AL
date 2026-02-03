@@ -7,12 +7,11 @@ import lombok.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-//@Table(name = "yughiocards")
+//@Table(name = "yughio_cards")
 public abstract class YughioCard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
