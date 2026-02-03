@@ -3,4 +3,15 @@ services:
     image: ollama/ollama:latest
     ports:
       - "11434:11434"
-
+  postgres:
+    container_name: postgres
+    image: postgres:17
+    restart: always
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=yugy
+      - POSTGRES_PASSWORD=muto
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432"
