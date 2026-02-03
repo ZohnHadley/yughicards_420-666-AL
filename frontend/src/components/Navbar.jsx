@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { translations, languages } from "../locales/index.js";
+import { FaShoppingCart, FaUser } from "react-icons/fa"; // icônes panier et utilisateur
 
 export default function Navbar({ language, setLanguage }) {
     const t = translations[language]?.navbar || {
@@ -11,8 +12,12 @@ export default function Navbar({ language, setLanguage }) {
     };
 
     return (
-        <nav className="bg-red-600 shadow-md p-4 flex items-center justify-between fixed top-0 left-0 w-full z-50">
-            <div className="text-2xl font-bold text-white">Yughi-Cards</div>
+        <nav className="bg-red-600 shadow-md py-6 px-6 flex items-center justify-between fixed top-0 left-0 w-full z-50">
+
+            {/* Nom du site cliquable */}
+            <Link to="/" className="text-3xl font-bold text-white hover:text-red-300">
+                Yughi-Cards
+            </Link>
 
             <ul className="flex space-x-6 items-center">
                 <li>
@@ -27,18 +32,32 @@ export default function Navbar({ language, setLanguage }) {
                 <li>
                     <Link to="/contact" className="hover:text-red-300 text-white">{t.contact}</Link>
                 </li>
+
+                {/* Sélecteur de langue */}
+                <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    className="bg-gray-200 text-black font-semibold border border-gray-400 rounded px-3 py-1
+             hover:bg-gray-300 hover:text-black transition"
+                >
+                    {languages.map(lang => (
+                        <option key={lang.code} value={lang.code}>
+                            {lang.shortCode}
+                        </option>
+                    ))}
+                </select>
+
+
+                {/* Icônes */}
                 <li>
-                    <select
-                        value={language}
-                        onChange={(e) => setLanguage(e.target.value)}
-                        className="border border-gray-300 rounded px-2 py-1"
-                    >
-                        {languages.map(lang => (
-                            <option key={lang.code} value={lang.code}>
-                                {lang.shortCode}
-                            </option>
-                        ))}
-                    </select>
+                    <Link to="/cart" className="text-white hover:text-red-300 text-xl">
+                        <FaShoppingCart/>
+                    </Link>
+                </li>
+                <li>
+                    <Link to="/login" className="text-white hover:text-red-300 text-xl">
+                        <FaUser/>
+                    </Link>
                 </li>
             </ul>
         </nav>
