@@ -1,6 +1,6 @@
 package com.cal.yughistore.controllers;
 
-import com.cal.yughistore.services.OllamaModelService;
+import com.cal.yughistore.services.ai.OllamaModelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

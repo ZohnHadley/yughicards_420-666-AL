@@ -1,26 +1,21 @@
-package com.cal.yughistore.model.abstractClasses;
+package com.cal.yughistore.services.DTOs;
 
+import com.cal.yughistore.model.YughioCard;
 import com.cal.yughistore.model.enums.EnumCardType;
 import com.cal.yughistore.model.enums.EnumFrameType;
-import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
-//@Table(name = "yughio_cards")
-public abstract class YughioCard {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Data
+public class DTOYughioCard {
     private Long id;
-
-    private Long api_id;
+    private Long apiID;
     private String name;
     private EnumCardType type;
     private EnumFrameType frameType;
     private String description;
     private String ygoprodeck_url;
+
 }

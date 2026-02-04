@@ -1,8 +1,29 @@
 package com.cal.yughistore.model.enums;
 
 public enum EnumMonsterCardRace {
+    AQUA,
+    BEAST,
+    BEAST_WARRIOR,
+    CREATOR_GOD,
+    CYBERSE,
+    DINOSAUR,
+    DIVINE_BEAST,
+    DRAGON,
+    FAIRY,
+    FIEND,
+    FISH,
+    INSECT,
+    MACHINE,
+    PLANT,
+    PSYCHIC,
+    PYRO,
+    REPTILE,
+    ROCK,
+    SEA_SERPENT,
     SPELLCASTER,
+    THUNDER,
     WARRIOR,
-    INSECT
-    //TODO ADD IF NEEDED ETC ...
+    WINGED_BEAST,
+    WYRM,
+    ZOMBIE
 }
