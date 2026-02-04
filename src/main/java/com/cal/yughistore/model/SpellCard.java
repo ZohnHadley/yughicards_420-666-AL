@@ -7,11 +7,11 @@ import jakarta.persistence.Entity;
 import lombok.*;
 
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
 public class SpellCard  extends YughioCard {
 
     private EnumSpellCardRace race;
