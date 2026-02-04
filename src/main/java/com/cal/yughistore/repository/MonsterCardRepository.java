@@ -11,4 +11,7 @@ import java.util.List;
 @Repository
 public interface MonsterCardRepository extends JpaRepository<MonsterCard, Long> {
 
+    MonsterCard getTrapCardsById(Long id);
+
+    MonsterCard getTrapCardsByName(String name);
 }

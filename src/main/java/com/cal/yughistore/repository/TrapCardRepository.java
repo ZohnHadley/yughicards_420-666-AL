@@ -9,4 +9,8 @@ import java.util.List;
 
 @Repository
 public interface TrapCardRepository extends JpaRepository<TrapCard, Long> {
+
+    TrapCard getTrapCardsByName(String name);
+
+    TrapCard getTrapCardsById(Long id);
 }

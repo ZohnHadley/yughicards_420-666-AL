@@ -10,12 +10,7 @@ import java.util.List;
 @Repository
 public interface SpellCardRepository extends JpaRepository<SpellCard, Long> {
 
-    @Override
-    <S extends SpellCard> S save(S entity);
+    SpellCard getTrapCardsById(Long id);
 
-    @Override
-    SpellCard getReferenceById(Long api_id);
-
-    List<SpellCard> getAll();
-    List<SpellCard> getAllByType(EnumCardType type);
+    SpellCard getTrapCardsByName(String name);
 }

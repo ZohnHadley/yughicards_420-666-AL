@@ -1,4 +1,6 @@
 package com.cal.yughistore.services.cardServices;
+import com.cal.yughistore.model.SpellCard;
+import com.cal.yughistore.model.TrapCard;
 import com.cal.yughistore.repository.SpellCardRepository;
 import com.cal.yughistore.services.DTOs.DTOSpellCard;
 import org.slf4j.Logger;
@@ -17,5 +19,19 @@ public class SpellCardService {
         }
         repository.save(card.toEntity());
         logger.info("MonsterCardService : saved spell card {}", card.getName());
+    }
+
+    public SpellCard getById(Long id){
+        if(id == null || id == -1){
+            throw new RuntimeException("card id cannot be blank");
+        }
+        return repository.getTrapCardsById(id);
+    }
+
+    public SpellCard getByName(String name){
+        if(name.isBlank()){
+            throw new RuntimeException("card name cannot be blank");
+        }
+        return repository.getTrapCardsByName(name);
     }
 }
