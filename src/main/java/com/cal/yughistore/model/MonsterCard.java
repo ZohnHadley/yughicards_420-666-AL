@@ -1,6 +1,6 @@
 package com.cal.yughistore.model;
 
-import com.cal.yughistore.model.abstractClasses.YughioCard;
+import com.cal.yughistore.model.YughioCard;
 import com.cal.yughistore.model.enums.EnumCardAttribute;
 import com.cal.yughistore.model.enums.EnumCardType;
 import com.cal.yughistore.model.enums.EnumFrameType;
