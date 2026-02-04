@@ -1,4 +1,4 @@
-package com.cal.yughistore.model.abstractClasses;
+package com.cal.yughistore.model;
 
 import com.cal.yughistore.model.enums.EnumCardType;
 import com.cal.yughistore.model.enums.EnumFrameType;
@@ -7,11 +7,11 @@ import lombok.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-//@Table(name = "yughio_cards")
+@ToString
 public abstract class YughioCard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

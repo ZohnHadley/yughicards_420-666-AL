@@ -1,4 +1,4 @@
-package com.cal.yughistore.services;
+package com.cal.yughistore.services.ai;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ public class OllamaModelService {
         try {
             String ollama_response = chatClient
                     .prompt(prompt).advisors(advisorSpec -> {
-
+                    //advisor goes here
                     })
                     .call()
                     .content();
