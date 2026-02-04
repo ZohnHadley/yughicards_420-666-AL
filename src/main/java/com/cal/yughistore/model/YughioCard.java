@@ -7,11 +7,10 @@ import lombok.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@ToString
 public abstract class YughioCard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,4 +22,17 @@ public abstract class YughioCard {
     private EnumFrameType frameType;
     private String description;
     private String ygoprodeck_url;
+
+    @ManyToOne
+    private ShoppingCart shoppingCart = new ShoppingCart();
+
+    public  YughioCard(Long id, Long apiID, String name, EnumCardType type, EnumFrameType frameType, String description, String ygoprodeck_url){
+        this.id = id;
+        this.apiID = apiID;
+        this.name = name;
+        this.type = type;
+        this.frameType = frameType;
+        this.description = description;
+        this.ygoprodeck_url = ygoprodeck_url;
+    }
 }
