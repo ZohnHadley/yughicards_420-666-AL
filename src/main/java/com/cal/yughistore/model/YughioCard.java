@@ -7,28 +7,25 @@ import lombok.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@Table
 public abstract class YughioCard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long apiID;
-    private String name;
-    private EnumCardType type;
-    private EnumFrameType frameType;
-    private String description;
-    private String ygoprodeck_url;
+    private Long api_id;
+    private String name = "no_name";
+    private EnumCardType type = EnumCardType.NULL;
+    private EnumFrameType frameType = EnumFrameType.NULL;
+    private String description = "...";
+    private String ygoprodeck_url = "";
 
-    @ManyToOne
-    private ShoppingCart shoppingCart = new ShoppingCart();
-
-    public  YughioCard(Long id, Long apiID, String name, EnumCardType type, EnumFrameType frameType, String description, String ygoprodeck_url){
+    public  YughioCard(Long id, Long api_id, String name, EnumCardType type, EnumFrameType frameType, String description, String ygoprodeck_url){
         this.id = id;
-        this.apiID = apiID;
+        this.api_id = api_id;
         this.name = name;
         this.type = type;
         this.frameType = frameType;

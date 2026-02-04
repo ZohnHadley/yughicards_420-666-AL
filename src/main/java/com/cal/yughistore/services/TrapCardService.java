@@ -1,4 +1,4 @@
-package com.cal.yughistore.services.cardServices;
+package com.cal.yughistore.services;
 import com.cal.yughistore.model.TrapCard;
 import com.cal.yughistore.repository.TrapCardRepository;
 import com.cal.yughistore.services.DTOs.DTOTrapCard;

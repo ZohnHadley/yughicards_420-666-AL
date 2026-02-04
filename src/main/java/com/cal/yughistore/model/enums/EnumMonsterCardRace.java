@@ -1,6 +1,8 @@
 package com.cal.yughistore.model.enums;
 
 public enum EnumMonsterCardRace {
+    NULL,
+
     AQUA,
     BEAST,
     BEAST_WARRIOR,

@@ -1,6 +1,5 @@
 package com.cal.yughistore.services.DTOs;
 
-import com.cal.yughistore.model.YughioCard;
 import com.cal.yughistore.model.enums.EnumCardType;
 import com.cal.yughistore.model.enums.EnumFrameType;
 import lombok.*;
@@ -9,9 +8,9 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Data
-public class DTOYughioCard {
+public abstract class DTOYughioCard {
     private Long id;
-    private Long apiID;
+    private Long api_id;
     private String name;
     private EnumCardType type;
     private EnumFrameType frameType;

@@ -2,6 +2,7 @@ package com.cal.yughistore.model.enums;
 
 
 public enum EnumCardType {
+    NULL,
 //    Main Deck Types
     EFFECT_MONSTER,
     FLIP_EFFECT_MONSTER,

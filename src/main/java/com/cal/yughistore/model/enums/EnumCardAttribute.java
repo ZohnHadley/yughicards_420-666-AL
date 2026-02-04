@@ -1,6 +1,7 @@
 package com.cal.yughistore.model.enums;
 
 public enum EnumCardAttribute {
+    NULL,
     DARK,
     DIVINE,
     EARTH,
