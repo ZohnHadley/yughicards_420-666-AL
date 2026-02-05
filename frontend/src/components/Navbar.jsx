@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { translations, languages } from "../locales/index.js";
-import { FaShoppingCart, FaUser } from "react-icons/fa"; // icônes panier et utilisateur
+import { FaShoppingCart, FaUser } from "react-icons/fa";
 
 export default function Navbar({ language, setLanguage }) {
     const t = translations[language]?.navbar || {
