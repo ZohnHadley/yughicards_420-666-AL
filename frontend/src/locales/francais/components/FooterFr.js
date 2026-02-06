@@ -1,4 +1,5 @@
 export const FooterFr = {
+    yugioh: "Yu-Gi-Oh!",
     about: "À propos",
     contact: "Contact",
     sell: "Vendez-nous",
