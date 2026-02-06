@@ -2,15 +2,19 @@ import {NavbarFr} from "./francais/components/NavbarFr.js";
 import {NavbarEn} from "./english/components/NavbarEn.js";
 import {FooterFr} from "./francais/components/FooterFr.js";
 import {FooterEn} from "./english/components/FooterEn.js";
+import {AboutFr} from "./francais/AboutFr.js";
+import {AboutEn} from "./english/AboutEn.js";
 
 export const translations = {
     fr: {
         navbar: NavbarFr,
-        footer: FooterFr
+        footer: FooterFr,
+        about: AboutFr
     },
     en: {
         navbar: NavbarEn,
-        footer: FooterEn
+        footer: FooterEn,
+        about: AboutEn
     }
 }
 export const languages = [
