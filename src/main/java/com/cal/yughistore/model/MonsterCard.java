@@ -22,7 +22,17 @@ public class MonsterCard extends YughioCard {
     private EnumMonsterCardRace race;
     private EnumCardAttribute cardAttribute;
 
-    public MonsterCard(Long id, Long api_id, String name, EnumFrameType frameType, String description, String ygoprodeck_url, int atk, int def, int level, EnumMonsterCardRace race, EnumCardAttribute cardAttribute) {
+    public MonsterCard(Long id,
+                       int api_id,
+                       String name,
+                       EnumFrameType frameType,
+                       String description,
+                       String ygoprodeck_url,
+                       int atk,
+                       int def,
+                       int level,
+                       EnumMonsterCardRace
+                               race, EnumCardAttribute cardAttribute) {
         super(id, api_id, name, EnumCardType.NORMAL_MONSTER, frameType, description, ygoprodeck_url);
         this.atk = atk;
         this.def = def;
