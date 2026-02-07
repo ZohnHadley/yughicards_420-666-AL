@@ -21,7 +21,9 @@ public abstract class YughioCard {
     private String name = "no_name";
     private EnumCardType type = EnumCardType.NULL;
     private EnumFrameType frameType = EnumFrameType.NULL;
-    private String description = "...";
-    private String ygoprodeck_url = "";
-
+    private String description = "null";
+    private String ygoprodeck_url = "null";
+    //add card set
+    //add card prices
+    //add card images
 }
