@@ -25,7 +25,7 @@ public class YughistoreApplication {
 	CommandLineRunner commandLineRunner(ApplicationContext context) {
 		return args -> {
 			DTOYughioCard dto = DTOYughioCard.toDTO(new DTOYughioCard());
-			monsterCardService.save(dto);
+			yughioCardService.save(dto);
 		};
 	}
 }

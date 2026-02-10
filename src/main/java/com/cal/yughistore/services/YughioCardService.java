@@ -1,7 +1,7 @@
 package com.cal.yughistore.services;
 import com.cal.yughistore.model.YughioCard;
 import com.cal.yughistore.repository.YughioCardRepository;
-import com.cal.yughistore.services.DTOs.DTOMonsterCard;
+import com.cal.yughistore.services.DTOs.DTOYughioCard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ public class YughioCardService {
         this.repository = repository;
     }
 
-    public void save(DTOMonsterCard card){
+    public void save(DTOYughioCard card){
         if (card == null){
             throw new RuntimeException("card can't be null");
         }
