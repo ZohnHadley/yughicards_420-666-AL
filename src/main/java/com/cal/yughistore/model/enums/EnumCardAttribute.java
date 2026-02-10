@@ -9,7 +9,7 @@ public enum EnumCardAttribute {
     LIGHT,
     WATER,
     WIND,
-    LAUGH
-    //TODO ADD IF NEEDED ETC ...
+    LAUGH;
 
+    //TODO ADD IF NEEDED ETC ...
 }

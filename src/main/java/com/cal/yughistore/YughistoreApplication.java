@@ -1,9 +1,9 @@
 package com.cal.yughistore;
 
-import com.cal.yughistore.model.MonsterCard;
-import com.cal.yughistore.services.DTOs.DTOMonsterCard;
-import com.cal.yughistore.services.MonsterCardService;
-import com.cal.yughistore.services.SpellCardService;
+import com.cal.yughistore.model.YughioCard;
+import com.cal.yughistore.model.enums.EnumConfigType;
+import com.cal.yughistore.services.DTOs.DTOYughioCard;
+import com.cal.yughistore.services.YughioCardService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,12 +13,10 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class YughistoreApplication {
 
-	private final  MonsterCardService monsterCardService;
-	private  final SpellCardService spellCardService;
+	private  final YughioCardService yughioCardService;
 
-    public YughistoreApplication(MonsterCardService monsterCardService, SpellCardService spellCardService) {
-        this.monsterCardService = monsterCardService;
-        this.spellCardService = spellCardService;
+    public YughistoreApplication(YughioCardService yughioCardService) {
+        this.yughioCardService = yughioCardService;
     }
 
     public static void main(String[] args) {
@@ -28,8 +26,14 @@ public class YughistoreApplication {
 	@Bean
 	CommandLineRunner commandLineRunner(ApplicationContext context) {
 		return args -> {
-			DTOMonsterCard dto = DTOMonsterCard.toDTO(new MonsterCard());
-			monsterCardService.save(dto);
+			DTOYughioCard dto = DTOYughioCard.toDTO(
+                    YughioCard
+                    .builder()
+							.type(EnumConfigType.TYPE_MONSTER)
+                            .name("Test Card")
+                            .build()
+            );
+			yughioCardService.save(dto);
 		};
 	}
 }
