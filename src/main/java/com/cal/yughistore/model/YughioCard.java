@@ -1,6 +1,7 @@
 package com.cal.yughistore.model;
 
 
+import com.cal.yughistore.model.enums.EnumConfigType;
 import com.cal.yughistore.model.enums.EnumCardType;
 import com.cal.yughistore.model.enums.EnumFrameType;
 import com.cal.yughistore.model.properties.PropertiesMonsterCard;
@@ -13,15 +14,15 @@ import lombok.*;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @AllArgsConstructor
-
+@NoArgsConstructor
 @Getter
 @Setter
 @Table
 @ToString
 public class YughioCard {
-    public enum ConfigType { TYPE_MONSTER, TYPE_SPELL, TYPE_TRAP }
     @Enumerated(EnumType.STRING)
-    private ConfigType configType;
+    private EnumConfigType enumConfigType;
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "properties_id")
     private SpecificProperties properties;
@@ -38,16 +39,21 @@ public class YughioCard {
     private String ygoprodeck_url = "null";
 
     @Builder
-    public YughioCard(){}
+    public YughioCard(Long id, int api_id, String name, EnumConfigType type, EnumFrameType frameType, String description, String ygoprodeck_url){
+        this.id = id;
+        this.api_id = api_id;
+        this.name = name;
+        this.frameType = frameType;
+        this.description = description;
+        this.ygoprodeck_url = ygoprodeck_url;
 
-    @Builder
-    public YughioCard(ConfigType type){
-        this.configType = type;
-        if (type == ConfigType.TYPE_MONSTER) {
+
+        this.enumConfigType = type;
+        if (type == EnumConfigType.TYPE_MONSTER) {
             this.properties = new PropertiesMonsterCard();
-        } else if (type == ConfigType.TYPE_SPELL) {
+        } else if (type == EnumConfigType.TYPE_SPELL) {
             this.properties = new PropertiesSpellCard();
-        } else if(type == ConfigType.TYPE_TRAP){
+        } else if(type == EnumConfigType.TYPE_TRAP){
             this.properties = new PropertiesTrapCard();
         }
     }
