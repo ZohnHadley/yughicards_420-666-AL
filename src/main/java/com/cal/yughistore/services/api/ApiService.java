@@ -39,7 +39,6 @@ public class ApiService {
 
     public JsonNode getInformationForAllCards() {
         try {
-            // Use the get() method for an HTTP GET request
             JsonNode result = apiGet("/cardinfo.php");
 
             if (result != null) {
