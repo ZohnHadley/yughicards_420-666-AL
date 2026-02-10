@@ -23,7 +23,7 @@ public class ApiController {
     //TODO [] : going to change so it returns a DTO instead of String (but for now it returns String)
     @GetMapping("/get-all-cards")
     public ResponseEntity<String> getAllCardsInformation(){
-        return ResponseEntity.ok(apiService.getInformationForAllCards().asText());
+        return ResponseEntity.ok(apiService.getInformationForAllCards().toPrettyString());
     }
 
 }
