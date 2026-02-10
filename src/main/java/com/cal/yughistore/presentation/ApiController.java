@@ -5,10 +5,7 @@ import com.cal.yughistore.services.api.ApiService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,7 +20,18 @@ public class ApiController {
     //TODO [] : going to change so it returns a DTO instead of String (but for now it returns String)
     @GetMapping("/get-all-cards")
     public ResponseEntity<String> getAllCardsInformation(){
-        return ResponseEntity.ok(apiService.getInformationForAllCards().asText());
+        return ResponseEntity.ok(apiService.getInformationForAllCards().toPrettyString());
+    }
+
+
+    @GetMapping("/get-all-cards?num={numberOfCards}")
+    public ResponseEntity<String> getAllCardsInformation(@PathVariable int numberOfCards){
+        return ResponseEntity.ok(apiService.getInformationForAllCards(numberOfCards).asText());
+    }
+
+    @GetMapping("/get-card?name={cardName}")
+    public ResponseEntity<String> getAllCardsInformation(@PathVariable String cardName){
+        return ResponseEntity.ok(apiService.getInformationForNamedCard(cardName).asText());
     }
 
 }
