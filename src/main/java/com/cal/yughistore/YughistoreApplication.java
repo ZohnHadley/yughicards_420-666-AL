@@ -1,5 +1,7 @@
 package com.cal.yughistore;
 
+import com.cal.yughistore.model.YughioCard;
+import com.cal.yughistore.model.enums.EnumConfigType;
 import com.cal.yughistore.services.DTOs.DTOYughioCard;
 import com.cal.yughistore.services.YughioCardService;
 import org.springframework.boot.CommandLineRunner;
@@ -24,7 +26,12 @@ public class YughistoreApplication {
 	@Bean
 	CommandLineRunner commandLineRunner(ApplicationContext context) {
 		return args -> {
-			DTOYughioCard dto = DTOYughioCard.toDTO(new DTOYughioCard());
+			DTOYughioCard dto = DTOYughioCard.toDTO(
+                    YughioCard
+                    .builder()
+                            .name("Test Card")
+                            .build()
+            );
 			yughioCardService.save(dto);
 		};
 	}

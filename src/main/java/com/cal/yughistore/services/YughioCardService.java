@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class YughioCardService {
     private static final Logger logger = LoggerFactory.getLogger(YughioCardService.class);
-
     private final YughioCardRepository repository;
 
     public YughioCardService(YughioCardRepository repository) {
@@ -20,6 +19,7 @@ public class YughioCardService {
         if (card == null){
             throw new RuntimeException("card can't be null");
         }
+
         repository.save(card.toEntity());
         logger.info("YughioCardRepository : saved monster card {}", card.getName());
     }
