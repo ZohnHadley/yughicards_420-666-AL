@@ -29,6 +29,7 @@ public class YughistoreApplication {
 			DTOYughioCard dto = DTOYughioCard.toDTO(
                     YughioCard
                     .builder()
+							.type(EnumConfigType.TYPE_MONSTER)
                             .name("Test Card")
                             .build()
             );
