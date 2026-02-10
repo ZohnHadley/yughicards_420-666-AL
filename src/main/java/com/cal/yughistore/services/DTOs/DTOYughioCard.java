@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Data
-public abstract class DTOYughioCard {
+public class DTOYughioCard {
     private Long id;
     private Long api_id;
     private String name;
