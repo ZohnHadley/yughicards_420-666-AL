@@ -169,13 +169,59 @@
 
                 - Section « Notre histoire » décrivant l’origine et la mission du magasin. 
 
-                - Section « Ce qui nous rend uniques » mettant en valeur l’authenticité des cartes, les prix, la qualité du service et la diversité de l’inventaire à l’aide d’icônes et d’une disposition en grille. 
+                - Section « Ce qui nous rend uniques » mettant en valeur l’authenticité des cartes, les prix, la qualité du service et la diversité de l’inventaire à l’aide d’icônes et d’une disposition en grille    
 
                 - Section « Notre engagement » présentant les valeurs et l’engagement envers les clients. 
 
                 - Design : mise en page moderne avec des cartes (cards), des ombres, une hiérarchie claire des titres et une palette de couleurs cohérente avec l’identité visuelle du site. 
 
 --- 
+
+### 11 févrié: (4pm - 6pm) FE - Implémentation de la page contactUs
+   - **Recherche** : Inspiration tirée des pages contactUs des magasins de cartes consultés le 3 février.
+     
+   - **En-tête** : Mise en place du titre principal, d’un séparateur visuel et d’un sous-titre pour introduire la section contact.
+     
+   - **Introduction** : Ajout d’une section expliquant comment prendre contact avec le magasin, avec une mise en page claire et lisible.
+
+   - **Informations de contact** :
+        - Numéro de téléphone : Afficher le numéro de téléphone.
+    
+        - Email : Cliquable, ouvre Gmail dans un nouvel onglet.
+    
+        - Adresse : Cliquable et ouvre Google Maps dans un nouvel onglet avec l'adresse.
+    
+        - Design : Chaque information est dans une card avec une icône colorée.
+    
+        - Heures d’ouverture : Affichage des horaires de semaine et du weekend.
+    
+        - Réseaux sociaux : Ajout des icônes Facebook, Instagram et X (Twitter) avec animations au survol (changement de couleur).
+    
+        - Carte Google Maps : Intégration d’un iframe avec l’adresse du magasin(cegep andré-laurendeau).
+    
+        - Message d’encouragement : Section finale colorée (rouge) avec texte invitant les visiteurs à venir et indiquant la disponibilité de l’équipe pour répondre aux questions.
+    
+        - Internationalisation (i18n) : Toutes les sections utilisent les traductions pour adapter le contenu automatiquement selon la langue sélectionnée (français / anglais).
+ 
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
  
 
  
