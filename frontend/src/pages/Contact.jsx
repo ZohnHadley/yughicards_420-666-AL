@@ -69,13 +69,7 @@ function Contact({ language }) {
                                 return (
                                     <div
                                         key={index}
-                                        onClick={() => {
-                                            if (detail.isEmail || detail.icon === MapPin) {
-                                                window.open(detail.link, "_blank", "noopener,noreferrer");
-                                            } else {
-                                                window.location.href = detail.link;
-                                            }
-                                        }}
+                                        onClick={() => {}}
                                         className="flex items-start space-x-4 group hover:bg-gray-50 p-3 rounded-lg transition-colors cursor-pointer"
                                     >
                                         <div className={`${detail.color} text-white rounded-full p-3 flex-shrink-0 group-hover:scale-110 transition-transform`}>
@@ -88,12 +82,13 @@ function Contact({ language }) {
                                     </div>
                                 );
                             })}
+
                         </div>
 
                         {/* Heures d'ouverture */}
                         <div className="mt-8 pt-6 border-t border-gray-200">
-                            <div className="flex items-center space-x-3 mb-4">
-                                <div className="bg-purple-600 text-white rounded-full p-3">
+                            <div className="flex items-center space-x-3 mb-4 group">
+                                <div className="bg-purple-600 text-white rounded-full p-3 flex-shrink-0 transition-transform group-hover:scale-110">
                                     <Clock className="w-6 h-6" />
                                 </div>
                                 <h3 className="text-xl font-semibold text-gray-800">{t.hours.title}</h3>
@@ -109,6 +104,7 @@ function Contact({ language }) {
                                 </div>
                             </div>
                         </div>
+
 
                         {/* Réseaux sociaux */}
                         <div className="mt-8 pt-6 border-t border-gray-200">
