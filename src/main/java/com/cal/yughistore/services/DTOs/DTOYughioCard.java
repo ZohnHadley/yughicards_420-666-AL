@@ -1,5 +1,7 @@
 package com.cal.yughistore.services.DTOs;
 
+import com.cal.yughistore.CardImages;
+import com.cal.yughistore.model.CardPrices;
 import com.cal.yughistore.model.YughioCard;
 import com.cal.yughistore.model.enums.*;
 import com.cal.yughistore.model.properties.PropertiesMonsterCard;
@@ -11,6 +13,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.*;
 import org.jspecify.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -31,6 +36,9 @@ public class DTOYughioCard {
     private String description = "";
     private String ygoprodeck_url = "";
 
+    private List<CardImages> card_images = new ArrayList<>();
+    private List<CardPrices> card_prices = new ArrayList<>();
+
     /// Properties (depends on card type (trap, spell, monster, etc) ) ///
     private CardProperties cardProperties;
 
@@ -45,6 +53,35 @@ public class DTOYughioCard {
             return new PropertiesTrapCard();
         }
         return null;
+    }
+
+    private static @Nullable List<CardImages> cardImagesFromNode(JsonNode node){
+        List<CardImages> cardImages = new ArrayList<>();
+        JsonNode imageCollectionList =  node.get("card_images");
+        for(JsonNode imageCollection : imageCollectionList){
+            cardImages.add(new CardImages(
+                    imageCollection.get("id").asInt(),
+                    imageCollection.get("image_url").asText(""),
+                    imageCollection.get("image_url_small").asText(""),
+                    imageCollection.get("image_url_cropped").asText("")
+            ));
+        }
+        return cardImages;
+    }
+
+    private static @Nullable List<CardPrices> cardPricesFromNode(JsonNode node){
+        List<CardPrices> cardImages = new ArrayList<>();
+        JsonNode imageCollectionList =  node.get("card_prices");
+        for(JsonNode imageCollection : imageCollectionList){
+            cardImages.add(new CardPrices(
+                    imageCollection.get("cardmarket_price").asText(""),
+                    imageCollection.get("tcgplayer_price").asText(""),
+                    imageCollection.get("ebay_price").asText(""),
+                    imageCollection.get("amazon_price").asText(""),
+                    imageCollection.get("coolstuffinc_price").asText("")
+            ));
+        }
+        return cardImages;
     }
 
     public static DTOYughioCard toDTO(JsonNode node) {
@@ -89,6 +126,8 @@ public class DTOYughioCard {
                 .ygoprodeck_url(node.get("ygoprodeck_url").asText())
                 .frameType(frameType)
                 .cardProperties(cardProperties)
+                .card_images(cardImagesFromNode(node))
+                .card_prices(cardPricesFromNode(node))
                 .build();
 
         return card;

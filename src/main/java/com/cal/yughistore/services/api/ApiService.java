@@ -51,7 +51,7 @@ public class ApiService {
                 for (JsonNode node : result.get("data")) {
                     dtoList.add(DTOYughioCard.toDTO(node));
                 }
-                logger.info("ApiService getAll results : {}", result.get("data"));
+                logger.info("ApiService getAll responded? : {}", (!result.isEmpty()));
                 return dtoList;
             }
         } catch (Exception exception) {
@@ -113,7 +113,7 @@ public class ApiService {
     }
 
     //Get all Level 4/RANK 4 Water cards and order by atk
-//    public JsonNode getInformationForAllWithLevelAttribOrderedByProperty(int level, EnumCardAttribute attribute, String property) {
+//    public List<DTOYughioCard> getInformationForAllWithLevelAttribOrderedByProperty(int level, EnumCardAttribute attribute, String property) {
 //        try {
 //            //TODO check to see attribut keeps underscore from enum name
 //            JsonNode result = apiGet("/cardinfo.php?level=" + level + "&attribute=" + attribute.name() + "&sort=" + property);
@@ -128,4 +128,17 @@ public class ApiService {
 //        }
 //        return null;
 //    }
+
+    //TODO
+    //    Get all cards belonging to "Blue-Eyes" archetype
+    //    https://db.ygoprodeck.com/api/v7/cardinfo.php?archetype=Blue-Eyes
+    //    Get all Level 4/RANK 4 Water cards and order by atk
+    //    https://db.ygoprodeck.com/api/v7/cardinfo.php?level=4&attribute=water&sort=atk
+    //    Get all cards on the TCG Banlist who are level 4 and order them by name (A-Z)
+    //    https://db.ygoprodeck.com/api/v7/cardinfo.php?banlist=tcg&level=4&sort=name
+    //    Get all Dark attribute monsters from the Metal Raiders set
+    //    https://db.ygoprodeck.com/api/v7/cardinfo.php?cardset=metal%20raiders&attribute=dark
+    //    Get all cards with "Wizard" in their name who are LIGHT attribute monsters with a race of Spellcaster
+    //    https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=Wizard&attribute=light&race=spellcaster
+    //    Get all Spell Cards that are Equip Spell Cards
 }

@@ -1,6 +1,7 @@
 package com.cal.yughistore.model;
 
 
+import com.cal.yughistore.CardImages;
 import com.cal.yughistore.model.enums.EnumPropertiesConfigType;
 import com.cal.yughistore.model.enums.EnumCardType;
 import com.cal.yughistore.model.enums.EnumFrameType;
@@ -10,6 +11,9 @@ import com.cal.yughistore.model.properties.PropertiesTrapCard;
 import com.cal.yughistore.model.properties.CardProperties;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -35,6 +39,17 @@ public class YughioCard {
     @Column(length = 500)
     private String ygoprodeck_url;
 
+    @OneToMany(
+            mappedBy = "yughioCard",
+            cascade = jakarta.persistence.CascadeType.ALL
+    )
+    private List<CardImages> card_images = new ArrayList<>();
+    @OneToMany(
+            mappedBy = "yughioCard",
+            cascade = jakarta.persistence.CascadeType.ALL
+    )
+    private List<CardPrices> card_prices = new ArrayList<>();
+
     /// Properties (depends on card type (trap, spell, monster, etc) ) ///
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "cardProperties_id")
@@ -50,7 +65,8 @@ public class YughioCard {
             EnumFrameType frameType,
             String description,
             String ygoprodeck_url,
-            EnumPropertiesConfigType propertiesConfigType
+            List<CardImages> card_images,
+            List<CardPrices> card_prices
     ) {
 
         this.id = id;
@@ -60,19 +76,14 @@ public class YughioCard {
         this.frameType = frameType;
         this.description = description;
         this.ygoprodeck_url = ygoprodeck_url;
-
+        this.card_images = card_images;
+        this.card_prices = card_prices;
         if (this.type.name().toUpperCase().contains(EnumPropertiesConfigType.TYPE_MONSTER.getName())) {
             this.cardProperties = new PropertiesMonsterCard();
-        }
-        else if (this.type.name().toUpperCase().contains(EnumPropertiesConfigType.TYPE_SPELL.getName())) {
+        } else if (this.type.name().toUpperCase().contains(EnumPropertiesConfigType.TYPE_SPELL.getName())) {
             this.cardProperties = new PropertiesSpellCard();
-        }
-        else if (this.type.name().toUpperCase().contains(EnumPropertiesConfigType.TYPE_TRAP.getName())) {
+        } else if (this.type.name().toUpperCase().contains(EnumPropertiesConfigType.TYPE_TRAP.getName())) {
             this.cardProperties = new PropertiesTrapCard();
         }
-    }
-
-    private void typaSet() {
-
     }
 }

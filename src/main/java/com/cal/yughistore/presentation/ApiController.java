@@ -23,7 +23,7 @@ public class ApiController {
     }
 
     //TODO [] : going to change so it returns a DTO instead of String (but for now it returns String)
-    @GetMapping("/get-all-cards")
+    @GetMapping("/get-cards-all")
     public ResponseEntity<List<DTOYughioCard>> index(){
         return ResponseEntity.ok(apiService.getInformationForAllCards());
     }
@@ -33,9 +33,9 @@ public class ApiController {
         return ResponseEntity.ok(apiService.getInformationForAllCards(numberOfCards));
     }
 
-    @GetMapping("/get-cards/num={numberOfCards}&offset={offset}")
-    public ResponseEntity<List<DTOYughioCard>> getAllCardsInformation(@PathVariable int numberOfCards, @PathVariable int offset){
-        return ResponseEntity.ok(apiService.getInformationForAllCards(numberOfCards, offset));
+    @GetMapping("/get-cards/num={numberOfCards}/offset={listOffset}")
+    public ResponseEntity<List<DTOYughioCard>> getAllCardsInformation(@PathVariable int numberOfCards, @PathVariable int listOffset){
+        return ResponseEntity.ok(apiService.getInformationForAllCards(numberOfCards, listOffset));
     }
 
     @GetMapping("/get-card/name={cardName}")
