@@ -10,8 +10,8 @@ public enum EnumNonMonsterCardRace {
     //
 
     //spell card
-    FIELD_SPELL,
-    EQUIP_SPELL,
-    QUICK_PLAY_SPELL,
-    RITUAL_SPELL
+    FIELD,
+    EQUIP,
+    QUICK_PLAY,
+    RITUAL
 }

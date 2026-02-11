@@ -10,12 +10,12 @@ import lombok.ToString;
 @ToString
 @Getter
 @Setter
-public class PropertiesMonsterCard extends SpecificProperties {
+public class PropertiesMonsterCard extends CardProperties {
 
     private int atk;
     private int def;
     private int level;
     private EnumMonsterCardRace race;
-    private EnumCardAttribute cardAttribute;
+    private EnumCardAttribute attribute;
 
 }

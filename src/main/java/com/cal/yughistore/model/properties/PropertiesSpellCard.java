@@ -7,7 +7,7 @@ import lombok.ToString;
 @ToString
 @Getter
 @Setter
-public class PropertiesSpellCard extends SpecificProperties {
+public class PropertiesSpellCard extends CardProperties {
 
     private EnumNonMonsterCardRace race;
 

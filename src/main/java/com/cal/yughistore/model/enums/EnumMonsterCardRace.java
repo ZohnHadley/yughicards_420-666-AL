@@ -15,6 +15,7 @@ public enum EnumMonsterCardRace {
     FIEND,
     FISH,
     INSECT,
+    ILLUSION,
     MACHINE,
     PLANT,
     PSYCHIC,

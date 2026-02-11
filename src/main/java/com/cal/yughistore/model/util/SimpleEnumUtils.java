@@ -34,9 +34,10 @@ public class SimpleEnumUtils {
      */
     public static <E extends Enum<E>> E findEnumValue(Class<E> enumType, String valueName) {
         if (!isValuePresentInEnum(enumType, valueName)) {
-            throw new NullPointerException(
-                    "The value " + valueName + " is not present in the enum " + enumType.getName()
-            );
+//            throw new NullPointerException(
+//                    "The value " + valueName + " is not present in the enum " + enumType.getName()
+//            );
+            return Enum.valueOf(enumType, "NULL");
         }
         // If the value is present, we can safely perform a case-sensitive lookup
         // after converting the input to uppercase, as enum names are conventionally uppercase.

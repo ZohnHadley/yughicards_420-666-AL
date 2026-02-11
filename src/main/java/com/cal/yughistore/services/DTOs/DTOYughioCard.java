@@ -5,10 +5,12 @@ import com.cal.yughistore.model.enums.*;
 import com.cal.yughistore.model.properties.PropertiesMonsterCard;
 import com.cal.yughistore.model.properties.PropertiesSpellCard;
 import com.cal.yughistore.model.properties.PropertiesTrapCard;
-import com.cal.yughistore.model.properties.SpecificProperties;
+import com.cal.yughistore.model.properties.CardProperties;
 import com.cal.yughistore.model.util.SimpleEnumUtils;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.*;
+import org.jspecify.annotations.Nullable;
 
 @Data
 @Builder
@@ -19,97 +21,107 @@ import lombok.*;
 @Table
 @ToString
 public class DTOYughioCard {
-    private EnumConfigType enumConfigType = EnumConfigType.TYPE_MONSTER;
-    private SpecificProperties properties;
 
+    /// base card properties (all cards have these) ///
     private Long id;
     private int api_id;
     private String name = "no_name";
     private EnumCardType type = EnumCardType.NULL;
     private EnumFrameType frameType = EnumFrameType.NULL;
-    private String description = "null";
-    private String ygoprodeck_url = "null";
+    private String description = "";
+    private String ygoprodeck_url = "";
+
+    /// Properties (depends on card type (trap, spell, monster, etc) ) ///
+    private CardProperties cardProperties;
 
 
-//    public static DTOYughioCard fromJsonNode(JsonNode node) {
-//        EnumCardType cardType = SimpleEnumUtils.findEnumValue(EnumCardType.class, node.get("type").toString().replaceAll("\\s", "_").replaceAll("\"", ""));
-//
-//        switch (cardType) {
-//            case NORMAL_MONSTER:
-//                return toMonsterDTO(node);
-//            case SPELL_CARD:
-//            case TRAP_CARD:
-//                return toSpellDTO(node);
-//            default:
-//                throw new IllegalArgumentException("Unsupported card type: " + node.get("type").toString());
-//        }
-//    }
+    /// static methode ///
+    private static @Nullable CardProperties getCardProperties(EnumCardType cardType) {
+        if (cardType.name().toUpperCase().contains(EnumPropertiesConfigType.TYPE_MONSTER.getName())) {
+            return new PropertiesMonsterCard();
+        } else if (cardType.name().toUpperCase().contains(EnumPropertiesConfigType.TYPE_SPELL.getName())) {
+            return new PropertiesSpellCard();
+        } else if (cardType.name().toUpperCase().contains(EnumPropertiesConfigType.TYPE_TRAP.getName())) {
+            return new PropertiesTrapCard();
+        }
+        return null;
+    }
 
-//   private static DTOYughioCard toMonsterDTO(JsonNode node) {
-//        return DTOYughioCard.builder()
-//                        .api_id(node.get("id").asInt())
-//                        .name(node.get("name").asText())
-//                        .type(node.get("type").asText())
-//                        .description(node.get("desc").asText(""))
-//                        .ygoprodeck_url(node.get("ygoprodeck_url").asText(""))
-//                        .frameType(node.get("frameType").asText(""))
-//                        .race(node.get("race").asText())
-//                        .atk(node.get("atk").asInt())
-//                        .def(node.get("def").asInt())
-//                        .level(node.get("level").asInt())
-//                        .cardAttribute(node.get("cardAttribute").asText())
-//                        .build();
-//    }
-//
-//    private static DTOYughioCard toSpellDTO(JsonNode node) {
-//        return DTOYughioCard.builder()
-//                .api_id(node.get("id").asInt())
-//                .name(node.get("name").asText())
-//                .type(node.get("type").asText())
-//                .description(node.get("desc").asText(""))
-//                .ygoprodeck_url(node.get("ygoprodeck_url").asText(""))
-//                .frameType(node.get("frameType").asText(""))
-//                .race(node.get("race").asText())
-//                .build();
-//
-//    }
+    public static DTOYughioCard toDTO(JsonNode node) {
+        EnumCardType cardType = SimpleEnumUtils.findEnumValue(EnumCardType.class, node.get("type").asText().replaceAll("\\s", "_").replaceAll("-","_"));
+        EnumFrameType frameType = SimpleEnumUtils.findEnumValue(EnumFrameType.class, node.get("frameType").asText().replaceAll("\\s", "_").replaceAll("-","_"));
 
-    public static DTOYughioCard toDTO(YughioCard card){
+        CardProperties cardProperties = getCardProperties(cardType);
+        if (cardProperties != null) {
+            if (cardProperties.getClass().equals(PropertiesMonsterCard.class)) {
+                PropertiesMonsterCard monster = ((PropertiesMonsterCard) cardProperties);
+
+                monster.setAtk(node.get("atk").asInt());
+                monster.setDef(node.get("def").asInt());
+                monster.setLevel(node.get("level").asInt());
+
+                EnumMonsterCardRace race = SimpleEnumUtils.findEnumValue(EnumMonsterCardRace.class, node.get("race").asText().replaceAll("\\s", "_").replaceAll("-","_"));
+                EnumCardAttribute attribute = SimpleEnumUtils.findEnumValue(EnumCardAttribute.class, node.get("attribute").asText().replaceAll("\\s", "_").replaceAll("-","_"));
+
+                monster.setRace(race);
+                monster.setAttribute(attribute);
+            } else if (cardProperties.getClass().equals(PropertiesSpellCard.class)) {
+                PropertiesSpellCard spell = ((PropertiesSpellCard) cardProperties);
+
+                EnumNonMonsterCardRace race = SimpleEnumUtils.findEnumValue(EnumNonMonsterCardRace.class, node.get("race").asText().replaceAll("\\s", "_").replaceAll("-","_"));
+
+                spell.setRace(race);
+            } else if (cardProperties.getClass().equals(PropertiesTrapCard.class)) {
+                PropertiesTrapCard trap = ((PropertiesTrapCard) cardProperties);
+
+                EnumNonMonsterCardRace race = SimpleEnumUtils.findEnumValue(EnumNonMonsterCardRace.class, node.get("race").asText().replaceAll("\\s", "_").replaceAll("-","_"));
+
+                trap.setRace(race);
+            }
+
+        }
+
+        DTOYughioCard card = DTOYughioCard.builder()
+                .api_id(node.get("id").asInt())
+                .name(node.get("name").asText())
+                .type(cardType)
+                .description(node.get("desc").asText())
+                .ygoprodeck_url(node.get("ygoprodeck_url").asText())
+                .frameType(frameType)
+                .cardProperties(cardProperties)
+                .build();
+
+        return card;
+    }
+
+
+    public static DTOYughioCard toDTO(YughioCard card) {
         return DTOYughioCard.builder()
                 .id(card.getId())
                 .api_id(card.getApi_id())
                 .name(card.getName())
+                .type(card.getType())
                 .description(card.getDescription())
                 .ygoprodeck_url(card.getYgoprodeck_url())
                 .frameType(card.getFrameType())
-                .enumConfigType(card.getEnumConfigType())
-                .properties(card.getProperties())
+                .cardProperties(card.getCardProperties())
                 .build();
     }
 
+    /// ///
+
     public YughioCard toEntity() {
-        EnumConfigType cardConfig = SimpleEnumUtils.findEnumValue(EnumConfigType.class, this.enumConfigType.name());
         YughioCard card = YughioCard.builder()
                 .api_id(this.api_id)
                 .name(this.name)
+                .type(this.type)
                 .frameType(this.frameType)
                 .description(this.description)
                 .ygoprodeck_url(this.ygoprodeck_url)
                 .build();
 
-        switch (cardConfig) {
-            case EnumConfigType.TYPE_MONSTER:
-                card.setProperties(new PropertiesMonsterCard());
-                break;
-            case EnumConfigType.TYPE_SPELL:
-                card.setProperties(new PropertiesSpellCard());
-                break;
-            case EnumConfigType.TYPE_TRAP:
-                card.setProperties(new PropertiesTrapCard());
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported card type: " + this.type);
-        }
+        CardProperties cardProperties = getCardProperties(card.getType());
+        card.setCardProperties(cardProperties);
 
         return card;
     }

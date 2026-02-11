@@ -1,5 +1,6 @@
 package com.cal.yughistore.presentation;
 
+import com.cal.yughistore.services.DTOs.DTOYughioCard;
 import com.cal.yughistore.services.YughioCardService;
 import com.cal.yughistore.services.api.ApiService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,22 +17,25 @@ import java.util.List;
 public class ApiController {
 
     private final ApiService apiService;
+    @GetMapping("/")
+    public ResponseEntity<String> getAllCardsInformation(){
+        return ResponseEntity.ok("Connected");
+    }
 
     //TODO [] : going to change so it returns a DTO instead of String (but for now it returns String)
     @GetMapping("/get-all-cards")
-    public ResponseEntity<String> getAllCardsInformation(){
-        return ResponseEntity.ok(apiService.getInformationForAllCards().toPrettyString());
+    public ResponseEntity<List<DTOYughioCard>> index(){
+        return ResponseEntity.ok(apiService.getInformationForAllCards());
     }
 
-
-    @GetMapping("/get-all-cards?num={numberOfCards}")
-    public ResponseEntity<String> getAllCardsInformation(@PathVariable int numberOfCards){
-        return ResponseEntity.ok(apiService.getInformationForAllCards(numberOfCards).asText());
+    @GetMapping("/get-all-cards/num={numberOfCards}")
+    public ResponseEntity<List<DTOYughioCard>> getAllCardsInformation(@PathVariable int numberOfCards){
+        return ResponseEntity.ok(apiService.getInformationForAllCards(numberOfCards));
     }
 
-    @GetMapping("/get-card?name={cardName}")
-    public ResponseEntity<String> getAllCardsInformation(@PathVariable String cardName){
-        return ResponseEntity.ok(apiService.getInformationForNamedCard(cardName).asText());
+    @GetMapping("/get-card/name={cardName}")
+    public ResponseEntity<DTOYughioCard> getAllCardsInformation(@PathVariable String cardName){
+        return ResponseEntity.ok(apiService.getInformationForNamedCard(cardName));
     }
 
 }

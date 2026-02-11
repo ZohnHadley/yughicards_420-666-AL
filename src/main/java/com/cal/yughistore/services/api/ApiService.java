@@ -1,6 +1,8 @@
 package com.cal.yughistore.services.api;
 
 import com.cal.yughistore.model.enums.EnumCardAttribute;
+import com.cal.yughistore.repository.YughioCardRepository;
+import com.cal.yughistore.services.DTOs.DTOYughioCard;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -8,15 +10,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class ApiService {
     private static final Logger logger = LoggerFactory.getLogger(ApiService.class);
+    private final YughioCardRepository repository;
 
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
     private final String url = "https://db.ygoprodeck.com/api/v7";
 
-    public ApiService(RestClient.Builder builder) {
+    public ApiService(YughioCardRepository repository, RestClient.Builder builder) {
+        this.repository = repository;
         this.restClient = builder.baseUrl(url).build();
         this.objectMapper = new ObjectMapper();
     }
@@ -29,7 +36,6 @@ public class ApiService {
                     .body(String.class);
 
             JsonNode root = objectMapper.readTree(json);
-            System.out.println(root);
             return root;
         } catch (Exception e) {
             e.printStackTrace();
@@ -37,13 +43,16 @@ public class ApiService {
         return null;
     }
 
-    public JsonNode getInformationForAllCards() {
+    public List<DTOYughioCard> getInformationForAllCards() {
         try {
             JsonNode result = apiGet("/cardinfo.php");
-
             if (result != null) {
-                logger.info("ApiService getAll results : {}", result);
-                return result.get("data");
+                List<DTOYughioCard> dtoList = new ArrayList<>();
+                for (JsonNode node : result.get("data")) {
+                    dtoList.add(DTOYughioCard.toDTO(node));
+                }
+                logger.info("ApiService getAll results : {}", result.get("data"));
+                return dtoList;
             }
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -51,15 +60,18 @@ public class ApiService {
         return null;
     }
 
-    public JsonNode getInformationForAllCards(int numberOfCards) {
+    public List<DTOYughioCard> getInformationForAllCards(int numberOfCards) {
         try {
             // Use the get() method for an HTTP GET request
             JsonNode result = apiGet("/cardinfo.php?num=" + numberOfCards + "/offset=0");
 
             if (result != null) {
-                logger.info("ApiService getAll results : {}", result);
-                return result.get("data");
-
+                List<DTOYughioCard> dtoList = new ArrayList<>();
+                for (JsonNode node : result.get("data")) {
+                    dtoList.add(DTOYughioCard.toDTO(node));
+                }
+                logger.info("ApiService getAll results : {}", result.get("data"));
+                return dtoList;
             }
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -73,7 +85,7 @@ public class ApiService {
             JsonNode result = apiGet("/cardinfo.php?num=" + numberOfCards + "/offset=" + offset);
 
             if (result != null) {
-                logger.info("ApiService getAll results : {}", result);
+                logger.info("ApiService getAll results : {}", result.get("data"));
                 return result.get("data");
 
             }
@@ -83,15 +95,13 @@ public class ApiService {
         return null;
     }
 
-    public JsonNode getInformationForNamedCard(String cardName) {
+    public DTOYughioCard getInformationForNamedCard(String cardName) {
         try {
-            // Use the get() method for an HTTP GET request
-            JsonNode result = apiGet("/cardinfo.php?name=" + cardName);
-
+            JsonNode result = apiGet("/cardinfo.php?name="+cardName);
             if (result != null) {
-                logger.info("ApiService getAll results : {}", result);
-                return result.get("data");
-
+                DTOYughioCard cardDto = DTOYughioCard.toDTO(result.get("data").get(0));
+                logger.info("ApiService getAll results : {}", cardDto);
+                return cardDto;
             }
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -106,7 +116,7 @@ public class ApiService {
             JsonNode result = apiGet("/cardinfo.php?level=" + level + "&attribute=" + attribute.name() + "&sort=" + property);
 
             if (result != null) {
-                logger.info("ApiService getAll results : {}", result);
+                logger.info("ApiService getAll results : {}", result.get("data"));
                 return result.get("data");
 
             }

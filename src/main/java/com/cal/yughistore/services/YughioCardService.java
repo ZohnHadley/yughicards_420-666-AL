@@ -29,8 +29,10 @@ public class YughioCardService {
 
             // Read the entire file content into a string
             String content = Files.readString(filePath);
-            JsonNode dataList = (JsonUtil.getInstance().fromJson(content)).get("data");
-
+//            JsonNode dataList = (JsonUtil.getInstance().fromJson(content)).get("data");
+//            for(JsonNode node : dataList){
+//                repository.save(DTOYughioCard.toDTO(node).toEntity());
+//            }
 
         } catch (IOException e) {
             // Handle potential I/O errors (e.g., file not found, permission issues)
@@ -38,26 +40,33 @@ public class YughioCardService {
         }
     }
 
-    public void save(DTOYughioCard card){
+    public DTOYughioCard save(DTOYughioCard card){
         if (card == null){
             throw new RuntimeException("card can't be null");
         }
 
-        repository.save(card.toEntity());
-        logger.info("YughioCardRepository : saved monster card {}", card.getName());
+        DTOYughioCard cardDto = DTOYughioCard.toDTO(repository.save(card.toEntity()));
+        logger.info("YughioCardRepository : saved monster card {}", cardDto.toString());
+        return cardDto;
     }
 
-    public YughioCard getById(Long id){
+    public DTOYughioCard getById(Long id){
         if(id == null || id == -1){
             throw new RuntimeException("card id cannot be blank");
         }
-        return repository.getTrapCardsById(id);
+
+        DTOYughioCard cardDto = DTOYughioCard.toDTO(repository.getTrapCardsById(id));
+        logger.info("YughioCardRepository : getById {}", cardDto.toString());
+        return cardDto;
     }
 
-    public YughioCard getByName(String name){
+    public DTOYughioCard getByName(String name){
         if(name.isBlank()){
             throw new RuntimeException("card name cannot be blank");
         }
-        return repository.getTrapCardsByName(name);
+
+        DTOYughioCard cardDto = DTOYughioCard.toDTO(repository.getTrapCardsByName(name));
+        logger.info("YughioCardRepository : getByName {}", cardDto.toString());
+        return cardDto;
     }
 }

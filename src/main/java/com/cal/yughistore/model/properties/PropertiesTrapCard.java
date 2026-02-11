@@ -8,6 +8,6 @@ import lombok.ToString;
 @ToString
 @Getter
 @Setter
-public class PropertiesTrapCard extends SpecificProperties{
+public class PropertiesTrapCard extends CardProperties {
     private EnumNonMonsterCardRace race;
 }
