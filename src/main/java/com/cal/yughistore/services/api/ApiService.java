@@ -63,7 +63,7 @@ public class ApiService {
     public List<DTOYughioCard> getInformationForAllCards(int numberOfCards) {
         try {
             // Use the get() method for an HTTP GET request
-            JsonNode result = apiGet("/cardinfo.php?num=" + numberOfCards + "/offset=0");
+            JsonNode result = apiGet("/cardinfo.php?num=" + numberOfCards + "&offset=0");
 
             if (result != null) {
                 List<DTOYughioCard> dtoList = new ArrayList<>();
@@ -79,15 +79,18 @@ public class ApiService {
         return null;
     }
 
-    public JsonNode getInformationForAllCards(int numberOfCards, int offset) {
+    public List<DTOYughioCard> getInformationForAllCards(int numberOfCards, int offset) {
         try {
             // Use the get() method for an HTTP GET request
-            JsonNode result = apiGet("/cardinfo.php?num=" + numberOfCards + "/offset=" + offset);
+            JsonNode result = apiGet("/cardinfo.php?num=" + numberOfCards + "&offset=" + offset);
 
             if (result != null) {
+                List<DTOYughioCard> dtoList = new ArrayList<>();
+                for (JsonNode node : result.get("data")) {
+                    dtoList.add(DTOYughioCard.toDTO(node));
+                }
                 logger.info("ApiService getAll results : {}", result.get("data"));
-                return result.get("data");
-
+                return dtoList;
             }
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -110,19 +113,19 @@ public class ApiService {
     }
 
     //Get all Level 4/RANK 4 Water cards and order by atk
-    public JsonNode getInformationForAllWithLevelAttribOrderedByProperty(int level, EnumCardAttribute attribute, String property) {
-        try {
-            //TODO check to see attribut keeps underscore from enum name
-            JsonNode result = apiGet("/cardinfo.php?level=" + level + "&attribute=" + attribute.name() + "&sort=" + property);
-
-            if (result != null) {
-                logger.info("ApiService getAll results : {}", result.get("data"));
-                return result.get("data");
-
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-        return null;
-    }
+//    public JsonNode getInformationForAllWithLevelAttribOrderedByProperty(int level, EnumCardAttribute attribute, String property) {
+//        try {
+//            //TODO check to see attribut keeps underscore from enum name
+//            JsonNode result = apiGet("/cardinfo.php?level=" + level + "&attribute=" + attribute.name() + "&sort=" + property);
+//
+//            if (result != null) {
+//                logger.info("ApiService getAll results : {}", result.get("data"));
+//                return result.get("data");
+//
+//            }
+//        } catch (Exception exception) {
+//            exception.printStackTrace();
+//        }
+//        return null;
+//    }
 }

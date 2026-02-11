@@ -28,9 +28,14 @@ public class ApiController {
         return ResponseEntity.ok(apiService.getInformationForAllCards());
     }
 
-    @GetMapping("/get-all-cards/num={numberOfCards}")
+    @GetMapping("/get-cards/num={numberOfCards}")
     public ResponseEntity<List<DTOYughioCard>> getAllCardsInformation(@PathVariable int numberOfCards){
         return ResponseEntity.ok(apiService.getInformationForAllCards(numberOfCards));
+    }
+
+    @GetMapping("/get-cards/num={numberOfCards}&offset={offset}")
+    public ResponseEntity<List<DTOYughioCard>> getAllCardsInformation(@PathVariable int numberOfCards, @PathVariable int offset){
+        return ResponseEntity.ok(apiService.getInformationForAllCards(numberOfCards, offset));
     }
 
     @GetMapping("/get-card/name={cardName}")
