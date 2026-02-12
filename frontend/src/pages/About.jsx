@@ -5,7 +5,7 @@ function About({ language }) {
     const t = translations[language]?.about || translations['fr'].about;
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 pt-32 pb-16 px-6">
+        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 pt-10 pb-16 px-6">
             <div className="max-w-4xl mx-auto">
                 {/* En-tête */}
                 <div className="text-center mb-12">
