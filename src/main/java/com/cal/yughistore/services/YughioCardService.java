@@ -184,17 +184,35 @@ public class YughioCardService {
             throw new RuntimeException("card name cannot be blank");
         }
 
-        DTOYughioCard cardDto = DTOYughioCard.of(cardRepository.getByName(name));
-        logger.info("YughioCardService : getByName {}", cardDto.toString());
-        return cardDto;
+        DTOYughioCard result = DTOYughioCard.of(cardRepository.getByName(name));
+        logger.info("YughioCardService : getByName {}", result.toString());
+        return result;
+    }
+
+    @Transactional(readOnly = true)
+    public List<DTOYughioCard> getBySearchName(String name, int page, int num) {
+        if (name.isBlank()) {
+            throw new RuntimeException("card name cannot be blank");
+        }
+        Pageable pageWithElementCount = PageRequest.of(page, num);
+        List<DTOYughioCard> cardList = new ArrayList<>();
+
+        Page<YughioCard> cards = cardRepository.findByNameContainingIgnoreCase(name, pageWithElementCount);
+
+        for (YughioCard card : cards) {
+            cardList.add(DTOYughioCard.of(card));
+        }
+
+        logger.info("YughioCardService : getByName {}", cardList.toString());
+        return cardList;
     }
 
     @Transactional(readOnly = true)
     public List<DTOYughioCard> getByFrameTypePaged(String frameType, int page, int num) {
         Pageable pageWithElementCount = PageRequest.of(page, num);
         List<DTOYughioCard> cardList = new ArrayList<>();
-        EnumFrameType requestedType = SimpleEnumUtils.findEnumValue(EnumFrameType.class, frameType);
 
+        EnumFrameType requestedType = SimpleEnumUtils.findEnumValue(EnumFrameType.class, frameType);
         Page<YughioCard> cards = cardRepository.getAllByFrameType(requestedType, pageWithElementCount);
 
         for (YughioCard card : cards) {

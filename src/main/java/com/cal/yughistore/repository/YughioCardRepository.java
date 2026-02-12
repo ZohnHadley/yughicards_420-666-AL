@@ -14,7 +14,8 @@ public interface YughioCardRepository extends JpaRepository<YughioCard, Long> {
 
     YughioCard getById(Long id);
     YughioCard getByName(String name);
-
+    //search by name
+    Page<YughioCard> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
     Page<YughioCard> getAllByFrameType(EnumFrameType frameType, Pageable pageable);
     Page<YughioCard> getAllByType(EnumCardType type, Pageable pageable);
