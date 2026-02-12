@@ -5,16 +5,15 @@ import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Entity
-@NoArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
-public class CardProperties {
+//@Entity
+@Embeddable
+public abstract class CardProperties {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "yughioCard_id")
-    private YughioCard yughioCard;
+//    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JoinColumn(name = "yughioCard_id")
+//    private YughioCard yughioCard;
 }

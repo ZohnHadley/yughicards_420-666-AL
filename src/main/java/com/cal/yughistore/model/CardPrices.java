@@ -26,7 +26,15 @@ public class CardPrices {
     private YughioCard yughioCard;
 
     @Builder
-    public CardPrices(String cardmarket_price, String tcgplayer_price, String ebay_price, String amazon_price, String coolstuffinc_price) {
+    public CardPrices(
+            Long id,
+            String cardmarket_price,
+            String tcgplayer_price,
+            String ebay_price,
+            String amazon_price,
+            String coolstuffinc_price)
+    {
+        this.id = id;
         this.cardmarket_price = cardmarket_price;
         this.tcgplayer_price = tcgplayer_price;
         this.ebay_price = ebay_price;
