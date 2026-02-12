@@ -88,11 +88,11 @@
 
 - **Installer** tailwind: 
 
-        npm install -D tailwindcss@3 
+     - npm install -D tailwindcss@3 
 
-        npx tailwindcss init (fichier tailwind.config.js) 
+     - npx tailwindcss init (fichier tailwind.config.js) 
         
-        npx tailwindcss init –p (fichier postcss.config.js) 
+     - npx tailwindcss init –p (fichier postcss.config.js) 
         
 - **Implémentation de la Navbar** : 
 
@@ -177,7 +177,7 @@
 
 --- 
 
-### 11 févrié: (4pm - 6pm) FE - Implémentation de la page contactUs
+### 11 février: (4pm - 6pm) FE - Implémentation de la page contactUs
    - **Recherche** : Inspiration tirée des pages contactUs des magasins de cartes consultés le 3 février.
      
    - **En-tête** : Mise en place du titre principal, d’un séparateur visuel et d’un sous-titre pour introduire la section contact.
@@ -202,9 +202,27 @@
         - Message d’encouragement : Section finale colorée (rouge) avec texte invitant les visiteurs à venir et indiquant la disponibilité de l’équipe pour répondre aux questions.
     
         - Internationalisation (i18n) : Toutes les sections utilisent les traductions pour adapter le contenu automatiquement selon la langue sélectionnée (français / anglais).
- 
+---
 
- 
+### 12 février: (3pm - 5pm) FE - Implémentation de la page d'accueil(partie 1) + petite mise à jour au navbar
+
+- Navbar
+   - **Choix de la langue** : Ajout de la photo du drapeau correspondant à la langue sélectionnée.
+
+- Page d'acceuil
+   - **Recherche** : Inspiration tirée des pages d'acceuil des magasins de cartes consultés le 3 février.
+      
+   - **Hero section** : Ajout d’une image de type Yu-Gi-Oh pour la section principale.
+        - Titre principal, sous-titre et description: Texte et boutton animés avec fadeIn.
+            
+   - **Card section** : Section composée de cards présentant notre boutique, avec animations au survol des cards.
+     
+   - **i18n** : Toutes les sections utilisent les traductions pour adapter le contenu automatiquement selon la langue sélectionnée (français / anglais).
+
+   
+
+
+         
 
 
 
