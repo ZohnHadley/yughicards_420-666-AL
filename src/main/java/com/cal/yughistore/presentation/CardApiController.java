@@ -25,9 +25,9 @@ public class CardApiController {
     ///
     ///
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<String> getAllCardsInformation() {
-        return ResponseEntity.ok("Connected");
+        return ResponseEntity.ok("/api/v1");
     }
 
     /// get by id ///
