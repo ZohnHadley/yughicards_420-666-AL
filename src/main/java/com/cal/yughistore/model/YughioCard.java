@@ -1,10 +1,11 @@
 package com.cal.yughistore.model;
 
 
-import com.cal.yughistore.model.enums.EnumPropertiesConfigType;
 import com.cal.yughistore.model.enums.EnumCardType;
 import com.cal.yughistore.model.enums.EnumFrameType;
+import com.cal.yughistore.model.enums.EnumPropertiesConfigType;
 import com.cal.yughistore.model.properties.CardProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,12 +28,12 @@ public class YughioCard {
     private Long id;
 
     private int api_id;
-    private String name = "no_name";
+    private String name = "";
     private EnumCardType type = EnumCardType.NULL;
     private EnumFrameType frameType = EnumFrameType.NULL;
     @Lob
     private String description;
-    @Column(length = 500)
+    @Column(length = 1000)
     private String ygoprodeck_url;
 
     @OneToMany(
@@ -40,17 +41,18 @@ public class YughioCard {
             cascade = jakarta.persistence.CascadeType.ALL
     )
     private List<CardImages> card_images;
-    @OneToMany(
-            mappedBy = "yughioCard",
-            cascade = jakarta.persistence.CascadeType.ALL
-    )
-    private List<CardPrices> card_prices;
+//    @OneToMany(
+//            mappedBy = "yughioCard",
+//            cascade = jakarta.persistence.CascadeType.ALL
+//    )
+//    private List<CardPrices> card_prices;
 
     /// Properties (depends on card type (trap, spell, monster, etc) ) ///
     private EnumPropertiesConfigType cardConfig;
 
-//    @OneToOne(mappedBy = "yughioCard", cascade = CascadeType.ALL)
-    @Embedded
+    @OneToOne(mappedBy = "yughioCard", cascade = CascadeType.ALL)
+    @JoinColumn(insertable = false, updatable = false)
+    @JsonManagedReference
     private CardProperties cardProperties;
 
 
@@ -64,7 +66,8 @@ public class YughioCard {
             EnumFrameType frameType,
             String description,
             String ygoprodeck_url,
-//            EnumPropertiesConfigType cardConfig,
+            EnumPropertiesConfigType cardConfig,
+            CardProperties cardProperties,
             List<CardImages> card_images,
             List<CardPrices> card_prices
     ) {
@@ -77,16 +80,8 @@ public class YughioCard {
         this.description = description;
         this.ygoprodeck_url = ygoprodeck_url;
         this.cardConfig = cardConfig;
-//        this.cardProperties = cardProperties;
-        this.card_images = (card_images != null) ? card_images : new ArrayList<>();
-        this.card_prices = (card_prices != null) ? card_prices : new ArrayList<>();
-
-//        if (this.type.name().toUpperCase().contains(EnumPropertiesConfigType.TYPE_MONSTER.getName())) {
-//            this.cardProperties = new PropertiesMonsterCard();
-//        } else if (this.type.name().toUpperCase().contains(EnumPropertiesConfigType.TYPE_SPELL.getName())) {
-//            this.cardProperties = new PropertiesSpellCard();
-//        } else if (this.type.name().toUpperCase().contains(EnumPropertiesConfigType.TYPE_TRAP.getName())) {
-//            this.cardProperties = new PropertiesTrapCard();
-//        }
+        this.cardProperties = cardProperties;
+//        this.card_images = (card_images != null) ? card_images : new ArrayList<>();
+//        this.card_prices = (card_prices != null) ? card_prices : new ArrayList<>();
     }
 }

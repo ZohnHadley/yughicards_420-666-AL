@@ -30,6 +30,10 @@ public class ApiController {
         return ResponseEntity.ok("Connected");
     }
 
+    @GetMapping("/get-card/id={cardID}")
+    public ResponseEntity<DTOYughioCard> getCardInformationByID(@PathVariable int cardID) {
+        return ResponseEntity.ok(cardService.getById((long) cardID));
+    }
 
     @GetMapping("/get-card/name={cardName}")
     public ResponseEntity<DTOYughioCard> getNamedCardInformation(@PathVariable String cardName) {
