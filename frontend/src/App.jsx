@@ -28,7 +28,7 @@ function App() {
                         <Route path="/vendez-nous" element={<VendezNous />} />
                         <Route path="/inventaire" element={<YughiohInventory />} />
                         <Route path="/about" element={<About language={language}/>} />
-                        <Route path="/contact" element={<Contact />} />
+                        <Route path="/contact" element={<Contact language={language}/>} />
                     </Routes>
                 </main>
 
