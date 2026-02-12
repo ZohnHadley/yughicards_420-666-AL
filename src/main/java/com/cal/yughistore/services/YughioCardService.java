@@ -1,14 +1,17 @@
 package com.cal.yughistore.services;
 
+import com.cal.yughistore.model.CardImages;
+import com.cal.yughistore.model.CardPrices;
 import com.cal.yughistore.model.YughioCard;
 import com.cal.yughistore.model.enums.EnumCardType;
 import com.cal.yughistore.model.enums.EnumFrameType;
 import com.cal.yughistore.model.properties.CardProperties;
 import com.cal.yughistore.model.util.SimpleEnumUtils;
+import com.cal.yughistore.repository.CardImagesRepository;
+import com.cal.yughistore.repository.CardPricesRepository;
 import com.cal.yughistore.repository.CardPropertiesRepository;
 import com.cal.yughistore.repository.YughioCardRepository;
 import com.cal.yughistore.services.DTOs.DTOYughioCard;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.*;
@@ -22,10 +25,14 @@ public class YughioCardService {
     private static final Logger logger = LoggerFactory.getLogger(YughioCardService.class);
     private final YughioCardRepository cardRepository;
     private final CardPropertiesRepository cardPropertiesRepository;
+    private final CardImagesRepository cardImagesRepository;
+    private final CardPricesRepository cardPriceRepository;
 
-    public YughioCardService(YughioCardRepository cardRepository, CardPropertiesRepository cardPropertiesRepository) {
+    public YughioCardService(YughioCardRepository cardRepository, CardPropertiesRepository cardPropertiesRepository, CardImagesRepository cardImagesRepository, CardPricesRepository cardPriceRepository) {
         this.cardRepository = cardRepository;
         this.cardPropertiesRepository = cardPropertiesRepository;
+        this.cardImagesRepository = cardImagesRepository;
+        this.cardPriceRepository = cardPriceRepository;
     }
 
     @Transactional
@@ -35,21 +42,35 @@ public class YughioCardService {
         }
 
         YughioCard cardToSave = dtoCard.toYughioCard();
-        CardProperties properties = cardToSave.getCardProperties();
 
         YughioCard savedCard = cardRepository.save(cardToSave);
 
-        CardProperties savedProperties = null;
-        if (properties != null) {
-            properties.setYughioCard(savedCard); // ensure owning side is set
-            savedProperties = cardPropertiesRepository.save(properties);
-        }
 
         DTOYughioCard response = DTOYughioCard.of(savedCard);
-        response.setCardProperties(savedProperties);
+        saveCardProperties(savedCard);
+        //card images
+        for (CardImages cardImages : dtoCard.getCard_images()) {
+            cardImages.setYughioCard(savedCard);
+            cardImagesRepository.save(cardImages);
+        }
+
+        for (CardPrices cardPrices : dtoCard.getCard_prices()) {
+            cardPrices.setYughioCard(savedCard);
+            cardPriceRepository.save(cardPrices);
+        }
+
 
         logger.info("YughioCardService : saved card {}", response);
         return response;
+    }
+
+    private CardProperties saveCardProperties(YughioCard savedCard) {
+        CardProperties properties = new CardProperties();
+        if (savedCard != null) {
+            properties.setYughioCard(savedCard); // ensure owning side is set
+            properties = cardPropertiesRepository.save(savedCard.getCardProperties());
+        }
+        return properties;
     }
 
     @Transactional
@@ -64,6 +85,20 @@ public class YughioCardService {
 
         List<YughioCard> savedCards = cardRepository.saveAll(cardsToSave);
 
+        saveAllCardsProperties(savedCards);
+        saveAllCardsCardImages(savedCards);
+        saveAllCardsCardPrices(savedCards);
+
+        List<DTOYughioCard> response = new ArrayList<>(savedCards.size());
+        for (YughioCard savedCard : savedCards) {
+            response.add(DTOYughioCard.of(savedCard));
+        }
+
+        logger.info("YughioCardService : saved cards {}", response.isEmpty() ? "none" : "success");
+        return response;
+    }
+
+    private void saveAllCardsProperties(List<YughioCard> savedCards) {
         List<CardProperties> propertiesToSave = new ArrayList<>(savedCards.size());
         for (YughioCard savedCard : savedCards) {
             CardProperties properties = savedCard.getCardProperties();
@@ -75,14 +110,32 @@ public class YughioCardService {
         if (!propertiesToSave.isEmpty()) {
             cardPropertiesRepository.saveAll(propertiesToSave);
         }
+    }
 
-        List<DTOYughioCard> response = new ArrayList<>(savedCards.size());
+    private void saveAllCardsCardImages(List<YughioCard> savedCards) {
+        List<CardImages> cardsCardImagesToSave = new ArrayList<>();
         for (YughioCard savedCard : savedCards) {
-            response.add(DTOYughioCard.of(savedCard));
+            for (CardImages cardImages : savedCard.getCard_images()) {
+                cardImages.setYughioCard(savedCard);
+                cardsCardImagesToSave.add(cardImages);
+            }
         }
+        if(!cardsCardImagesToSave.isEmpty()) {
+            cardImagesRepository.saveAll(cardsCardImagesToSave);
+        }
+    }
 
-        logger.info("YughioCardService : saved cards {}", response.isEmpty() ? "none" : "success");
-        return response;
+    private void saveAllCardsCardPrices(List<YughioCard> savedCards) {
+        List<CardPrices> cardsCardPricesToSave = new ArrayList<>();
+        for (YughioCard savedCard : savedCards) {
+            for (CardPrices cardPrices : savedCard.getCard_prices()) {
+                cardPrices.setYughioCard(savedCard);
+                cardsCardPricesToSave.add(cardPrices);
+            }
+        }
+        if(!cardsCardPricesToSave.isEmpty()) {
+            cardPriceRepository.saveAll(cardsCardPricesToSave);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -103,23 +156,9 @@ public class YughioCardService {
             return List.of();
         }
 
-        List<Long> cardIds = cards.stream()
-                .map(YughioCard::getId)
-                .toList();
-
-        List<CardProperties> propertiesList = cardPropertiesRepository.findAllByYughioCard_IdIn(cardIds);
-
-        Map<Long, CardProperties> propertiesByCardId = new HashMap<>(propertiesList.size() * 2);
-        for (CardProperties props : propertiesList) {
-            if (props != null && props.getYughioCard() != null && props.getYughioCard().getId() != null) {
-                propertiesByCardId.put(props.getYughioCard().getId(), props);
-            }
-        }
-
         List<DTOYughioCard> response = new ArrayList<>(cards.size());
         for (YughioCard card : cards) {
             DTOYughioCard dto = DTOYughioCard.of(card);
-            dto.setCardProperties(propertiesByCardId.get(card.getId())); // may be null -> OK if allowed
             response.add(dto);
         }
 

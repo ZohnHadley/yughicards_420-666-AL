@@ -2,7 +2,6 @@ package com.cal.yughistore.presentation;
 
 import com.cal.yughistore.services.DTOs.DTOYughioCard;
 import com.cal.yughistore.services.YughioCardService;
-import com.cal.yughistore.services.api.ApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1")
 @CrossOrigin(origins = "http://localhost:5173")
-public class ApiController {
+public class CardApiController {
 
     private final YughioCardService cardService;
 
@@ -40,10 +39,24 @@ public class ApiController {
         return ResponseEntity.ok(cardService.getByName(cardName));
     }
 
+    /// ///
+
     @GetMapping("/get-all-cards/page={pageNumber}/num={numberOfCards}")
     public ResponseEntity<List<DTOYughioCard>> getAllCardsPagedInformation(@PathVariable int pageNumber, @PathVariable int numberOfCards) {
         return ResponseEntity.ok(cardService.getAllPaged(pageNumber, numberOfCards));
     }
+
+    @GetMapping("/get-all-cards/num={numberOfCards}")
+    public ResponseEntity<List<DTOYughioCard>> getAllCardsPagedInformation_numberOfCardsWithSetPage(@PathVariable int numberOfCards) {
+        return ResponseEntity.ok(cardService.getAllPaged(0, numberOfCards));
+    }
+
+    @GetMapping("/get-all-cards/page={pageNumber}")
+    public ResponseEntity<List<DTOYughioCard>> getAllCardsPagedInformation_pageWithSetNumberOfCards(@PathVariable int pageNumber) {
+        return ResponseEntity.ok(cardService.getAllPaged(pageNumber, 20));
+    }
+
+    /// ///
 
     @GetMapping("/get-all-cards/frame={frameType}/page={pageNumber}/num={numberOfCards}")
     public ResponseEntity<List<DTOYughioCard>> getAllCardsPagedInformationByFrameType(@PathVariable String frameType, @PathVariable int pageNumber, @PathVariable int numberOfCards) {

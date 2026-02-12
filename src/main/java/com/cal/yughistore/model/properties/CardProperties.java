@@ -17,6 +17,7 @@ public class CardProperties {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonBackReference
     private Long id;
 
     @OneToOne

@@ -1,5 +1,6 @@
 package com.cal.yughistore.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,6 +12,7 @@ import lombok.*;
 public class CardImages {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonBackReference
     private Long id;
 
     private int image_group_api_id;
@@ -19,6 +21,7 @@ public class CardImages {
     private String image_url_cropped;
 
     @ManyToOne
+    @JsonBackReference
     private YughioCard yughioCard;
 
     @Builder

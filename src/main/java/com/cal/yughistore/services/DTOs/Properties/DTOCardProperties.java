@@ -18,6 +18,7 @@ import lombok.*;
 @Setter
 @ToString
 public class DTOCardProperties {
+    //TODO : PROPERTIES DTOs ARN'T BEING USED ANYWHERE (BUT WHEN REQUIRES MORE DETAIL SEARCH ENDPOINT THEY WILL COME IN HANDY (I THINK?))
     private Long id;
     private static CardProperties getCardProperties(EnumCardType cardType) {
         if (cardType.name().toUpperCase().contains(EnumPropertiesConfigType.MONSTER.getName())) {

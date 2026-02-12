@@ -41,11 +41,11 @@ public class YughioCard {
             cascade = jakarta.persistence.CascadeType.ALL
     )
     private List<CardImages> card_images;
-//    @OneToMany(
-//            mappedBy = "yughioCard",
-//            cascade = jakarta.persistence.CascadeType.ALL
-//    )
-//    private List<CardPrices> card_prices;
+    @OneToMany(
+            mappedBy = "yughioCard",
+            cascade = jakarta.persistence.CascadeType.ALL
+    )
+    private List<CardPrices> card_prices;
 
     /// Properties (depends on card type (trap, spell, monster, etc) ) ///
     private EnumPropertiesConfigType cardConfig;
@@ -81,7 +81,7 @@ public class YughioCard {
         this.ygoprodeck_url = ygoprodeck_url;
         this.cardConfig = cardConfig;
         this.cardProperties = cardProperties;
-//        this.card_images = (card_images != null) ? card_images : new ArrayList<>();
-//        this.card_prices = (card_prices != null) ? card_prices : new ArrayList<>();
+        this.card_images = (card_images != null) ? card_images : new ArrayList<>();
+        this.card_prices = (card_prices != null) ? card_prices : new ArrayList<>();
     }
 }

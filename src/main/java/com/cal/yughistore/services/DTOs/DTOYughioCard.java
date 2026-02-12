@@ -9,7 +9,6 @@ import com.cal.yughistore.model.properties.PropertiesSpellCard;
 import com.cal.yughistore.model.properties.PropertiesTrapCard;
 import com.cal.yughistore.model.properties.CardProperties;
 import com.cal.yughistore.model.util.SimpleEnumUtils;
-import com.cal.yughistore.services.DTOs.Properties.DTOPropertiesMonsterCard;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.*;
@@ -44,12 +43,12 @@ public class DTOYughioCard {
 
     /// ///
     private List<CardImages>  card_images;
-    private List<CardPrices> card_prices = new ArrayList<>();
+    private List<CardPrices> card_prices;
 
 
 
     /// static methode ///
-    private static CardProperties getCardProperties(EnumCardType cardType) {
+    public static CardProperties getCardProperties(EnumCardType cardType) {
         if (cardType.name().toUpperCase().contains(EnumPropertiesConfigType.MONSTER.getName())) {
             return new PropertiesMonsterCard();
         } else if (cardType.name().toUpperCase().contains(EnumPropertiesConfigType.SPELL.getName())) {
@@ -60,7 +59,7 @@ public class DTOYughioCard {
         return new CardProperties();
     }
 
-    private static List<CardImages> cardImageGroupsFromNode(JsonNode node) {
+    public static List<CardImages> cardImageGroupsFromNode(JsonNode node) {
         List<CardImages> cardImages = new ArrayList<>();
 
         JsonNode imageCollectionList = node.get("card_images");
@@ -75,7 +74,7 @@ public class DTOYughioCard {
         return cardImages;
     }
 
-    private static List<CardPrices> cardPricesFromNode(JsonNode node) {
+    public static List<CardPrices> cardPricesFromNode(JsonNode node) {
         List<CardPrices> cardImages = new ArrayList<>();
         JsonNode imageCollectionList = node.get("card_prices");
         for (JsonNode imageCollection : imageCollectionList) {
@@ -152,6 +151,9 @@ public class DTOYughioCard {
 
                 .cardConfig(card.getCardConfig())
                 .cardProperties(card.getCardProperties())
+
+                .card_images(card.getCard_images())
+                .card_prices(card.getCard_prices())
 
                 .build();
     }
