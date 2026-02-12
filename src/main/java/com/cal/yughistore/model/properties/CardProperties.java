@@ -2,11 +2,13 @@ package com.cal.yughistore.model.properties;
 
 import com.cal.yughistore.model.YughioCard;
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
+@NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class CardProperties {
+public class CardProperties {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

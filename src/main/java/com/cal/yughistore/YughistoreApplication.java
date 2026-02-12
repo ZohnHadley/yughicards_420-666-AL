@@ -30,16 +30,6 @@ public class YughistoreApplication {
 	@Bean
 	CommandLineRunner commandLineRunner(ApplicationContext context) {
 		return args -> {
-//			yughioCardService.loadFromStaticFile();
-//			apiService.getInformationForNamedCard("Dark Magician");
-//			DTOYughioCard dto = DTOYughioCard.toDTO(
-//                    YughioCard
-//                    .builder()
-//							.type(EnumCardType.LINK_MONSTER)
-//                            .name("Test Card")
-//                            .build()
-//            );
-//			yughioCardService.save(apiService.getInformationForNamedCard("Dark Magician"));
 		};
 	}
 }

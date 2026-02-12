@@ -1,17 +1,24 @@
 package com.cal.yughistore.services.api;
 
-import com.cal.yughistore.model.enums.EnumCardAttribute;
+import com.cal.yughistore.model.YughioCard;
+import com.cal.yughistore.model.util.JsonUtil;
 import com.cal.yughistore.repository.YughioCardRepository;
 import com.cal.yughistore.services.DTOs.DTOYughioCard;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 @Service
 public class ApiService {
@@ -38,107 +45,62 @@ public class ApiService {
             JsonNode root = objectMapper.readTree(json);
             return root;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("ApiService : failed to fetch from api {}", e.getMessage());
         }
         return null;
     }
 
-    public List<DTOYughioCard> getInformationForAllCards() {
+    @PostConstruct
+    public void init() {
+        loadApiCardData();
+    }
+
+    public List<DTOYughioCard> loadApiCardData() {
+        List<DTOYughioCard> dtoList = new ArrayList<>();
+        List<YughioCard> cards = new ArrayList<>();
         try {
+            logger.info("ApiService : trying to load all cards data from api");
+
             JsonNode result = apiGet("/cardinfo.php");
-            if (result != null) {
-                List<DTOYughioCard> dtoList = new ArrayList<>();
+            if (result != null && !result.get("data").isEmpty()) {
                 for (JsonNode node : result.get("data")) {
-                    dtoList.add(DTOYughioCard.toDTO(node));
+                    DTOYughioCard dto = DTOYughioCard.toDTO(node);
+                    dtoList.add(dto);
                 }
-                logger.info("ApiService getAll responded? : {}", (!result.isEmpty()));
+                repository.saveAll(cards);
+
+                logger.info("ApiService : getAll responded? : {}", (!result.isEmpty()));
                 return dtoList;
             }
-        } catch (Exception exception) {
-            exception.printStackTrace();
         }
-        return null;
+        catch (Exception e) {
+            logger.error("ApiService : failed to load all cards data from api {}", e.getMessage());
+
+        }
+        return loadApiCardDataFromStaticFile();
     }
 
-    public List<DTOYughioCard> getInformationForAllCards(int numberOfCards) {
+    private List<DTOYughioCard> loadApiCardDataFromStaticFile() {
+
+        List<DTOYughioCard> dtoList = new ArrayList<>();
+        List<YughioCard> cards = new ArrayList<>();
+
         try {
-            // Use the get() method for an HTTP GET request
-            JsonNode result = apiGet("/cardinfo.php?num=" + numberOfCards + "&offset=0");
-
-            if (result != null) {
-                List<DTOYughioCard> dtoList = new ArrayList<>();
-                for (JsonNode node : result.get("data")) {
-                    dtoList.add(DTOYughioCard.toDTO(node));
-                }
-                logger.info("ApiService getAll results : {}", result.get("data"));
-                return dtoList;
+            logger.info("ApiService : loading from static file");
+            Path filePath = Paths.get("src/main/resources/static/cardinfo.php.json");
+            // Read the entire file content into a string
+            String content = Files.readString(filePath);
+            JsonNode dataList = (JsonUtil.getInstance().fromJson(content)).get("data");
+            for(JsonNode node : dataList){
+                DTOYughioCard dto = DTOYughioCard.toDTO(node);
+                dtoList.add(dto);
             }
-        } catch (Exception exception) {
-            exception.printStackTrace();
+            repository.saveAll(cards);
+
+            return dtoList;
+        } catch (IOException e) {
+            logger.error("ApiService : failed to load all cards info from static file {}", e.getMessage());
         }
-        return null;
+        return  null;
     }
-
-    public List<DTOYughioCard> getInformationForAllCards(int numberOfCards, int offset) {
-        try {
-            // Use the get() method for an HTTP GET request
-            JsonNode result = apiGet("/cardinfo.php?num=" + numberOfCards + "&offset=" + offset);
-
-            if (result != null) {
-                List<DTOYughioCard> dtoList = new ArrayList<>();
-                for (JsonNode node : result.get("data")) {
-                    dtoList.add(DTOYughioCard.toDTO(node));
-                }
-                logger.info("ApiService getAll results : {}", result.get("data"));
-                return dtoList;
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-        return null;
-    }
-
-    public DTOYughioCard getInformationForNamedCard(String cardName) {
-        try {
-            JsonNode result = apiGet("/cardinfo.php?name="+cardName);
-            if (result != null) {
-                DTOYughioCard cardDto = DTOYughioCard.toDTO(result.get("data").get(0));
-                logger.info("ApiService getAll results : {}", cardDto);
-                return cardDto;
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-        return null;
-    }
-
-    //Get all Level 4/RANK 4 Water cards and order by atk
-//    public List<DTOYughioCard> getInformationForAllWithLevelAttribOrderedByProperty(int level, EnumCardAttribute attribute, String property) {
-//        try {
-//            //TODO check to see attribut keeps underscore from enum name
-//            JsonNode result = apiGet("/cardinfo.php?level=" + level + "&attribute=" + attribute.name() + "&sort=" + property);
-//
-//            if (result != null) {
-//                logger.info("ApiService getAll results : {}", result.get("data"));
-//                return result.get("data");
-//
-//            }
-//        } catch (Exception exception) {
-//            exception.printStackTrace();
-//        }
-//        return null;
-//    }
-
-    //TODO
-    //    Get all cards belonging to "Blue-Eyes" archetype
-    //    https://db.ygoprodeck.com/api/v7/cardinfo.php?archetype=Blue-Eyes
-    //    Get all Level 4/RANK 4 Water cards and order by atk
-    //    https://db.ygoprodeck.com/api/v7/cardinfo.php?level=4&attribute=water&sort=atk
-    //    Get all cards on the TCG Banlist who are level 4 and order them by name (A-Z)
-    //    https://db.ygoprodeck.com/api/v7/cardinfo.php?banlist=tcg&level=4&sort=name
-    //    Get all Dark attribute monsters from the Metal Raiders set
-    //    https://db.ygoprodeck.com/api/v7/cardinfo.php?cardset=metal%20raiders&attribute=dark
-    //    Get all cards with "Wizard" in their name who are LIGHT attribute monsters with a race of Spellcaster
-    //    https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=Wizard&attribute=light&race=spellcaster
-    //    Get all Spell Cards that are Equip Spell Cards
 }

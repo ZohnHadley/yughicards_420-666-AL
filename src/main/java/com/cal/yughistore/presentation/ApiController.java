@@ -3,7 +3,6 @@ package com.cal.yughistore.presentation;
 import com.cal.yughistore.services.DTOs.DTOYughioCard;
 import com.cal.yughistore.services.YughioCardService;
 import com.cal.yughistore.services.api.ApiService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,31 +15,40 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:5173")
 public class ApiController {
 
-    private final ApiService apiService;
+    private final YughioCardService cardService;
+
+    ///
+    ///
+    ///
+    /// You can rework this to fit the front end and make it more easier
+    ///
+    ///
+    ///
+
     @GetMapping("/")
-    public ResponseEntity<String> getAllCardsInformation(){
+    public ResponseEntity<String> getAllCardsInformation() {
         return ResponseEntity.ok("Connected");
     }
 
-    //TODO [] : going to change so it returns a DTO instead of String (but for now it returns String)
-    @GetMapping("/get-cards-all")
-    public ResponseEntity<List<DTOYughioCard>> index(){
-        return ResponseEntity.ok(apiService.getInformationForAllCards());
-    }
-
-    @GetMapping("/get-cards/num={numberOfCards}")
-    public ResponseEntity<List<DTOYughioCard>> getAllCardsInformation(@PathVariable int numberOfCards){
-        return ResponseEntity.ok(apiService.getInformationForAllCards(numberOfCards));
-    }
-
-    @GetMapping("/get-cards/num={numberOfCards}/offset={listOffset}")
-    public ResponseEntity<List<DTOYughioCard>> getAllCardsInformation(@PathVariable int numberOfCards, @PathVariable int listOffset){
-        return ResponseEntity.ok(apiService.getInformationForAllCards(numberOfCards, listOffset));
-    }
 
     @GetMapping("/get-card/name={cardName}")
-    public ResponseEntity<DTOYughioCard> getAllCardsInformation(@PathVariable String cardName){
-        return ResponseEntity.ok(apiService.getInformationForNamedCard(cardName));
+    public ResponseEntity<DTOYughioCard> getNamedCardInformation(@PathVariable String cardName) {
+        return ResponseEntity.ok(cardService.getByName(cardName));
+    }
+
+    @GetMapping("/get-all-cards/page={pageNumber}/num={numberOfCards}")
+    public ResponseEntity<List<DTOYughioCard>> getAllCardsPagedInformation(@PathVariable int pageNumber, @PathVariable int numberOfCards) {
+        return ResponseEntity.ok(cardService.getAllPaged(pageNumber, numberOfCards));
+    }
+
+    @GetMapping("/get-all-cards/frame={frameType}/page={pageNumber}/num={numberOfCards}")
+    public ResponseEntity<List<DTOYughioCard>> getAllCardsPagedInformationByFrameType(@PathVariable String frameType, @PathVariable int pageNumber, @PathVariable int numberOfCards) {
+        return ResponseEntity.ok(cardService.getByFrameTypePaged(frameType, pageNumber, numberOfCards));
+    }
+
+    @GetMapping("/get-all-cards/type={cardType}/page={pageNumber}/num={numberOfCards}")
+    public ResponseEntity<List<DTOYughioCard>> getAllCardsPagedInformationByCardType(@PathVariable String cardType, @PathVariable int pageNumber, @PathVariable int numberOfCards) {
+        return ResponseEntity.ok(cardService.getByTypePaged(cardType, pageNumber, numberOfCards));
     }
 
 }
