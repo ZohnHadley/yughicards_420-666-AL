@@ -49,12 +49,12 @@ public class CardApiController {
 
     /// search by name + pagination ///
 
-    @GetMapping("/get-card/search={cardName}/page={pageNumber}/num={numberOfCards}")
+    @GetMapping("/get-cards/search={cardName}/page={pageNumber}/num={numberOfCards}")
     public ResponseEntity<List<DTOYughioCard>> getCardInformationBySearchName(@PathVariable String cardName, @PathVariable int pageNumber, @PathVariable int numberOfCards) {
         return ResponseEntity.ok(cardService.getBySearchName(cardName, pageNumber, numberOfCards));
     }
 
-    @GetMapping("/get-card/search={cardName}/page={pageNumber}")
+    @GetMapping("/get-cards/search={cardName}/page={pageNumber}")
     public ResponseEntity<List<DTOYughioCard>> getCardInformationBySearchName(@PathVariable String cardName, @PathVariable int pageNumber) {
         return ResponseEntity.ok(cardService.getBySearchName(cardName, pageNumber, pagination_default_number_of_elements_per_page));
     }
