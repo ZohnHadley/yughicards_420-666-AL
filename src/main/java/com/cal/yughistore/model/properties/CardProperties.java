@@ -1,18 +1,26 @@
 package com.cal.yughistore.model.properties;
 
 import com.cal.yughistore.model.YughioCard;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class CardProperties {
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@Table(name = "card_properties")
+public class CardProperties {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonBackReference
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "yughioCard_id")
+    @OneToOne
+    @JsonBackReference
     private YughioCard yughioCard;
 }

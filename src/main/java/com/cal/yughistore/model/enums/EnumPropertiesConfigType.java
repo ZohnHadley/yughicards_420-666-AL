@@ -4,9 +4,10 @@ import lombok.Getter;
 
 @Getter
 public enum EnumPropertiesConfigType {
-    TYPE_MONSTER("MONSTER"),
-    TYPE_SPELL("SPELL"),
-    TYPE_TRAP("TRAP");
+    NULL("NULL"),
+    MONSTER("MONSTER"),
+    SPELL("SPELL"),
+    TRAP("TRAP");
 
     private final String name;
 

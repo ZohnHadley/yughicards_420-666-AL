@@ -1,13 +1,21 @@
 package com.cal.yughistore.model.properties;
 
 import com.cal.yughistore.model.enums.EnumNonMonsterCardRace;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import lombok.*;
 
-@ToString
+@Entity
+@NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class PropertiesTrapCard extends CardProperties {
+    @Column(nullable = false)
     private EnumNonMonsterCardRace race;
+
+    @Builder
+    public PropertiesTrapCard(EnumNonMonsterCardRace race) {
+        this.race = race;
+    }
 }
