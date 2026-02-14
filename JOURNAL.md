@@ -204,6 +204,71 @@
         - Internationalisation (i18n) : Toutes les sections utilisent les traductions pour adapter le contenu automatiquement selon la langue sélectionnée (français / anglais).
 ---
 
+### 11 (8am - 2pm) - 12 (8am - 10pm) février : BE implémentation de l'API YGOProDeck et création de notre propre API (End-points)
+- Connexion à l’API YGOProDeck
+
+    -  **Reanalyser** l'API pour "brain storm" comment l'utiliser dans notre projet.
+  
+    -  **Essayer** d'implémenter un service (ApiService) qui appelle les différents endpoint de l'API de cartes.
+  
+        - **Crée** des methods qu'appelle les end point de l'API.
+       
+        - **Crée** des DTOs et des repository pour chaques types de cartes (MonsterCard, SpellCard, TrapCard).
+   
+    - **Réalisation** que l'implémentation des model de cartes aurait créé beaucoup de boiler-plate code :
+  
+        - **Recherche** alternative pour les classes de cartes.
+       
+        - **Lue** des blogues sur composition vs inheritance et j'ai choisi composition.
+       
+        - **Supprimer** les classes (MonsterCard, SpellCard, TrapCard).
+       
+        - **Création** des classes properties (CardProperties, MonsterCardProperties, SpellCardProperties, TrapCardProperties).
+       
+        - **Refactor** les DTOs, 
+            - Supprimer les DTOs (DTOMonsterCard, DTOSpellCard, DTOTrapCard).
+       
+            - Décider d'utiliser un seul type de DTO (DTOYughioCard) et Repository (YughioCardRepository) pour tous les types de cartes.
+          
+            - Implementer composition des CardedProperties dans le DTO(DTOYughioCard).
+          
+        - les sties consulté: ([composition-in-java](https://www.geeksforgeeks.org/java/composition-in-java/)) ([composition-aggregation-association](https://www.baeldung.com/java-composition-aggregation-association))
+
+    - **Réalisation** qu'appeler l'api dans le backend et le rediriger direct ver le frontend/controller avec un service est redundant 
+        >((à chaque requet du backend)) API -> backend -> controller -> frontend) **(nx de fois) + retard du côté reponse de l'API**.
+  
+        - **Refactor** le service ApiService: 
+      
+             >(à l'instanciation de l'application) (API où fichier.Json (sauvegarde dans le)-> backend -> repository) **(1x)**
+             >
+             >(après à chaque requet) (repository -> backend -> controller) (Peu de retard)
+      
+             - **(lors de la première exécution de l'application)** : Implémentation fonctionnalité appel API pour acquérir les informations sur tout les cartes et les sauvegarder une fois dans le backend / repository
+             - **(lors de la première exécution de l'application, Mais API n'est pas encore en ligne)** :
+                  - **Télécharger** le fichier JSON de l'api qui contienne tout les données des cartes dans les fichiers du backend.
+                  - **Implémentation** fonctionnalité appel API pour acquérir les informations du fichier JSON et les sauvegarde une fois dans le backend / repository
+  
+    - **Création** du service YughioCardService:
+         
+         -  Utilise le repo (YughioCardRepository) 
+  
+         -  Implémentation des méthodes qui me semble utile pour notre application.
+      
+    - **Création** du controller CardApiController:
+  
+         - Utilise YughioCardService
+      
+         - Apell les methods du service YughioCardService
+            
+         - Les end-points: 
+         > 1. get card by id
+         > 2. get card by name
+         > 3. get all cards (can chose page and quantity of cards per page)
+         > 4. get/ search for cards by name (can chose page and quantity of cards per page)
+         > 5. get/ search for cards by frameType (can chose page and quantity of cards per page)
+         > 6. get/ search for cards by type (can chose page and quantity of cards per page)
+
+
 ### 12 février: (3pm - 5pm) FE - Implémentation de la page d'accueil(partie 1) + petite mise à jour au navbar
 
 - Navbar
@@ -219,7 +284,6 @@
      
    - **i18n** : Toutes les sections utilisent les traductions pour adapter le contenu automatiquement selon la langue sélectionnée (français / anglais).
 
-   
 
 
          
