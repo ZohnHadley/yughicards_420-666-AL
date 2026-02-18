@@ -9,12 +9,14 @@ import YughiohInventory from "./pages/YughiohInventory";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer.jsx";
 import Contact from "./pages/Contact.jsx";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 
 function App() {
     const [language, setLanguage] = useState("fr");
 
     return (
         <Router>
+            <ScrollToTop />
             <div className="min-h-screen flex flex-col">
                 <Navbar
                     language={language}
@@ -25,7 +27,7 @@ function App() {
                 <main className="flex-grow pt-24">
                     <Routes>
                         <Route path="/" element={<Home language={language} />} />
-                        <Route path="/vendez-nous" element={<VendezNous />} />
+                        <Route path="/vendez-nous" element={<VendezNous language={language}/>} />
                         <Route path="/inventaire" element={<YughiohInventory />} />
                         <Route path="/about" element={<About language={language}/>} />
                         <Route path="/contact" element={<Contact language={language}/>} />
