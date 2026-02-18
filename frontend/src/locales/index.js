@@ -6,19 +6,27 @@ import {AboutFr} from "./francais/AboutFr.js";
 import {AboutEn} from "./english/AboutEn.js";
 import {ContactUsFr} from "./francais/ContactUsFr.js";
 import {ContactUsEn} from "./english/ContactUsEn.js";
+import {HomeFr} from "./francais/HomeFr.js";
+import {HomeEn} from "./english/HomeEn.js";
+import {VendezNousEn} from "./english/VendezNous.En.js";
+import {VendezNousFr} from "./francais/VendezNousFr.js";
 
 export const translations = {
     fr: {
         navbar: NavbarFr,
         footer: FooterFr,
         about: AboutFr,
-        contactUs: ContactUsFr
+        contactUs: ContactUsFr,
+        home: HomeFr,
+        vendezNous: VendezNousFr
     },
     en: {
         navbar: NavbarEn,
         footer: FooterEn,
         about: AboutEn,
-        contactUs: ContactUsEn
+        contactUs: ContactUsEn,
+        home: HomeEn,
+        vendezNous: VendezNousEn
     }
 }
 export const languages = [

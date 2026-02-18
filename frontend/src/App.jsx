@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Home from "./pages/Home";
+import Home from "./pages/home/Home.jsx";
 import VendezNous from "./pages/VendezNous";
 import About from "./pages/About";
 import YughiohInventory from "./pages/YughiohInventory";
