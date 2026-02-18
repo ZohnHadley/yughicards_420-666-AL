@@ -8,6 +8,8 @@ import {ContactUsFr} from "./francais/ContactUsFr.js";
 import {ContactUsEn} from "./english/ContactUsEn.js";
 import {HomeFr} from "./francais/HomeFr.js";
 import {HomeEn} from "./english/HomeEn.js";
+import {VendezNousEn} from "./english/VendezNous.En.js";
+import {VendezNousFr} from "./francais/VendezNousFr.js";
 
 export const translations = {
     fr: {
@@ -15,14 +17,16 @@ export const translations = {
         footer: FooterFr,
         about: AboutFr,
         contactUs: ContactUsFr,
-        home: HomeFr
+        home: HomeFr,
+        vendezNous: VendezNousFr
     },
     en: {
         navbar: NavbarEn,
         footer: FooterEn,
         about: AboutEn,
         contactUs: ContactUsEn,
-        home: HomeEn
+        home: HomeEn,
+        vendezNous: VendezNousEn
     }
 }
 export const languages = [
