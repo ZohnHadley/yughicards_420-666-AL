@@ -25,7 +25,7 @@ function App() {
                 <main className="flex-grow pt-24">
                     <Routes>
                         <Route path="/" element={<Home language={language} />} />
-                        <Route path="/vendez-nous" element={<VendezNous />} />
+                        <Route path="/vendez-nous" element={<VendezNous language={language}/>} />
                         <Route path="/inventaire" element={<YughiohInventory />} />
                         <Route path="/about" element={<About language={language}/>} />
                         <Route path="/contact" element={<Contact language={language}/>} />
