@@ -283,8 +283,25 @@
    - **Card section** : Section composée de cards présentant notre boutique, avec animations au survol des cards.
      
    - **i18n** : Toutes les sections utilisent les traductions pour adapter le contenu automatiquement selon la langue sélectionnée (français / anglais).
+---
+### 18 février: (2h30 - 4h30)) FE - Implémentation de la page VendezNous + composant pour aller en haut de la page lorsqu'on change de page
 
+-Page vendezNous:
 
+   - **Objectif de la page** : Expliquer en détail le processus permettant aux clients de vendre leurs cartes Yu-Gi-Oh! de manière simple.
+     
+   - **Processus de vente** : Présentation des étapes que doit suivre le client, depuis l’apport des cartes au magasin, jusqu’au paiement immédiat ou crédit boutique (avec bonus éventuel de 30 %).
+     
+   - **Critères d’achat** : Indication des cartes acceptées, selon la condition de la carte, leur rareté, leur popularité et la possibilité de vendre des collections complètes ou partielles.
+     
+   - **Pourquoi nous choisir** : Mise en avant des avantages du service, tels que prix équitables, processus rapide, expertise de l’équipe et fiabilité des transactions
+     
+   - **Call to action(CTA)** : Bouton invitant le client à contacter le magasin ou se rendre sur place pour vendre ses cartes.
+     
+   - **i18n** : Toutes les sections utilisent les fichiers de traduction pour afficher le contenu automatiquement en français ou en anglais, selon la langue sélectionnée par l’utilisateur.
+
+**Composant ScrollToTop** : Composant pour revenir en haut de la page lors du changement de page.
+  
 
          
 
