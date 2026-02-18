@@ -9,12 +9,14 @@ import YughiohInventory from "./pages/YughiohInventory";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer.jsx";
 import Contact from "./pages/Contact.jsx";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 
 function App() {
     const [language, setLanguage] = useState("fr");
 
     return (
         <Router>
+            <ScrollToTop />
             <div className="min-h-screen flex flex-col">
                 <Navbar
                     language={language}
