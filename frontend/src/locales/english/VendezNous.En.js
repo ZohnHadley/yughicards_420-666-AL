@@ -25,5 +25,13 @@ export const VendezNousEn = {
         item2: "Rare, Ultra Rare, and Secret Rare cards",
         item3: "Popular and in-demand cards",
         item4: "Complete or partial collections"
+    },
+
+    whyUs: {
+        title: "Why choose us?",
+        fair: { title: "Fair prices", description: "We offer competitive prices based on the current market." },
+        fast: { title: "Fast process", description: "Evaluation and payment on the spot, in just a few minutes." },
+        expert: { title: "Passionate experts", description: "Our team knows the world of Yu-Gi-Oh! inside and out." },
+        trust: { title: "Reliable transaction", description: "Hundreds of sellers trust us every month." }
     }
 }

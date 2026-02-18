@@ -26,4 +26,12 @@ export const VendezNousFr = {
         item3: "Cartes populaires et en demande",
         item4: "Collections complètes ou partielles"
     },
+
+    whyUs: {
+        title: "Pourquoi nous choisir?",
+        fair: { title: "Prix équitables", description: "Nous offrons des prix compétitifs basés sur le marché actuel." },
+        fast: { title: "Processus rapide", description: "Évaluation et paiement sur place, en quelques minutes." },
+        expert: { title: "Experts passionnés", description: "Notre équipe connaît parfaitement le monde de Yu-Gi-Oh!." },
+        trust: { title: "Transaction fiable", description: "Des centaines de vendeurs nous font confiance chaque mois." }
+    },
 }
