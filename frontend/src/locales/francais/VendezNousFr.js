@@ -34,4 +34,11 @@ export const VendezNousFr = {
         expert: { title: "Experts passionnés", description: "Notre équipe connaît parfaitement le monde de Yu-Gi-Oh!." },
         trust: { title: "Transaction fiable", description: "Des centaines de vendeurs nous font confiance chaque mois." }
     },
+
+    cta: {
+        title: "Prêt à vendre?",
+        description: "Passez nous voir à notre boutique ou contactez-nous pour plus d'informations. Nous sommes là pour vous aider!",
+        button: "Nous contacter"
+    }
+
 }

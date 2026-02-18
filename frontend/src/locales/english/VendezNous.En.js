@@ -33,5 +33,11 @@ export const VendezNousEn = {
         fast: { title: "Fast process", description: "Evaluation and payment on the spot, in just a few minutes." },
         expert: { title: "Passionate experts", description: "Our team knows the world of Yu-Gi-Oh! inside and out." },
         trust: { title: "Reliable transaction", description: "Hundreds of sellers trust us every month." }
+    },
+
+    cta: {
+        title: "Ready to sell?",
+        description: "Come visit us at our shop or contact us for more information. We're here to help!",
+        button: "Contact us"
     }
 }

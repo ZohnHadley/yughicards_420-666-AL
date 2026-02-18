@@ -96,6 +96,17 @@ function VendezNous({language}) {
                         ))}
                     </div>
                 </section>
+
+                <section className="bg-red-600 text-white rounded-lg shadow-lg p-8 text-center">
+                    <h2 className="text-2xl font-bold mb-4">{t.cta.title}</h2>
+                    <p className="leading-relaxed mb-6">{t.cta.description}</p>
+                    <Link
+                        to="/contact"
+                        className="inline-block bg-white text-red-600 font-bold px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                    >
+                        {t.cta.button}
+                    </Link>
+                </section>
             </div>
         </div>
     );
