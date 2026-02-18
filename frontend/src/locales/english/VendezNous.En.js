@@ -16,5 +16,14 @@ export const VendezNousEn = {
             title: "Immediate payment",
             description: "If you accept, you get paid right away — in cash or store credit with a 30% trade bonus."
         }
+    },
+
+    conditions: {
+        title: "Our buying criteria",
+        description: "We accept cards in generally good condition. Here's what we look for:",
+        item1: "Cards in good condition (Mint, Near Mint, Lightly Played)",
+        item2: "Rare, Ultra Rare, and Secret Rare cards",
+        item3: "Popular and in-demand cards",
+        item4: "Complete or partial collections"
     }
 }

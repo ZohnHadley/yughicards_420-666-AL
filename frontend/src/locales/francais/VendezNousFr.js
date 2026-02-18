@@ -17,4 +17,13 @@ export const VendezNousFr = {
             description: "Si vous acceptez, vous êtes payé sur-le-champ, en argent comptant ou en crédit boutique avec 30% de trade bonus."
         }
     },
+
+    conditions: {
+        title: "Nos critères d'achat",
+        description: "Nous acceptons les cartes en bon état général. Voici ce que nous recherchons:",
+        item1: "Cartes en bon état (Mint, Near Mint, Lightly Played)",
+        item2: "Cartes rares, ultra-rares et secrètes",
+        item3: "Cartes populaires et en demande",
+        item4: "Collections complètes ou partielles"
+    },
 }
