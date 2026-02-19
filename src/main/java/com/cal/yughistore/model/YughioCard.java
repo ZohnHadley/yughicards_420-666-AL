@@ -32,6 +32,7 @@ public class YughioCard {
     private EnumCardType type = EnumCardType.NULL;
     private EnumFrameType frameType = EnumFrameType.NULL;
     @Lob
+    @Column(columnDefinition = "TEXT")
     private String description;
     @Column(length = 1000)
     private String ygoprodeck_url;
