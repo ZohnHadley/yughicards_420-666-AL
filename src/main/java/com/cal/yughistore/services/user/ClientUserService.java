@@ -1,7 +1,6 @@
 package com.cal.yughistore.services.user;
 
 import com.cal.yughistore.model.applicaitonuser.ClientUser;
-import com.cal.yughistore.repository.user.ClientUserRepository;
 import com.cal.yughistore.services.dto.applicationuser.ClientUserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +13,10 @@ public class ClientUserService {
             ClientUserService.class
     );
 
-    private final ClientUserRepository clientUserRepository;
+    private final com.cal.yughistore.repository.user.ClientUserRepository clientUserRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public ClientUserService(ClientUserRepository clientUserRepository) {
+    public ClientUserService(com.cal.yughistore.repository.user.ClientUserRepository clientUserRepository) {
         this.clientUserRepository = clientUserRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
