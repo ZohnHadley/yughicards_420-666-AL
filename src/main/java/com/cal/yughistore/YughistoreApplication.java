@@ -1,5 +1,7 @@
 package com.cal.yughistore;
 
+import com.cal.yughistore.services.dto.applicationuser.AdminUserDTO;
+import com.cal.yughistore.services.user.AdminUserService;
 import com.cal.yughistore.services.user.ClientUserService;
 import com.cal.yughistore.services.dto.applicationuser.ClientUserDTO;
 import com.cal.yughistore.services.yughiocard.YughioCardService;
@@ -19,10 +21,12 @@ public class YughistoreApplication {
 
 	private final ApiService apiService;
 	private  final YughioCardService yughioCardService;
+	private final AdminUserService adminUserService;
 	private final ClientUserService clientUserService;
-    public YughistoreApplication(YughioCardService yughioCardService, ApiService apiService, ClientUserService clientUserService) {
+    public YughistoreApplication(YughioCardService yughioCardService, ApiService apiService, AdminUserService adminUserService, ClientUserService clientUserService) {
         this.yughioCardService = yughioCardService;
         this.apiService = apiService;
+        this.adminUserService = adminUserService;
         this.clientUserService = clientUserService;
     }
 
@@ -33,13 +37,10 @@ public class YughistoreApplication {
 	@Bean
 	CommandLineRunner commandLineRunner(ApplicationContext context) {
 		return args -> {
-			clientUserService.signup(
-                    ClientUserDTO.builder()
-							.userName("TheBigTugh")
-							.firstName("jimmy")
-							.lastName("johnson")
-							.email("johnjohn@gmail.com")
-							.password("!Test123123")
+			adminUserService.signup(
+                    AdminUserDTO.builder()
+							.email("admin@gmail.com")
+							.password("password123")
 							.build()
             );
 		};

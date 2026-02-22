@@ -1,14 +1,16 @@
 package com.cal.yughistore.services.user;
 
+import com.cal.yughistore.model.applicaitonuser.AdminUser;
 import com.cal.yughistore.model.applicaitonuser.ApplicationUser;
+import com.cal.yughistore.model.applicaitonuser.ClientUser;
 import com.cal.yughistore.model.applicaitonuser.UserSettings;
+import com.cal.yughistore.repository.user.AdminUserRepository;
 import com.cal.yughistore.repository.user.ApplicationUserRepository;
+import com.cal.yughistore.repository.user.ClientUserRepository;
 import com.cal.yughistore.repository.user.UserSettingsRepository;
 import com.cal.yughistore.security.JwtTokenProvider;
 import com.cal.yughistore.security.exceptions.UserNotFoundException;
-import com.cal.yughistore.services.dto.applicationuser.ApplicationUserDTO;
-import com.cal.yughistore.services.dto.applicationuser.LoginDTO;
-import com.cal.yughistore.services.dto.applicationuser.UserSettingsDTO;
+import com.cal.yughistore.services.dto.applicationuser.*;
 import com.cal.yughistore.services.exception.UserSettingsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,26 +18,32 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class ApplicationUserService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final ApplicationUserRepository applicationUserRepository;
-//    private final EmployerRepository employerRepository;
-//    private final EtudiantRepository studentRepository;
-//    private final GestionnaireRepository gestionnaireRepository;
-//    private final TeacherRepository teacherRepository;
+    private final AdminUserRepository adminUserRepository;
+    private final ClientUserRepository clientUserRepository;
     private final UserSettingsRepository userSettingsRepository;
 
     public ApplicationUserService(
             AuthenticationManager authenticationManager,
             JwtTokenProvider jwtTokenProvider,
             ApplicationUserRepository applicationUserRepository,
+            AdminUserRepository adminUserRepository,
+            ClientUserRepository clientUserRepository,
             UserSettingsRepository userSettingsRepository)
     {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.applicationUserRepository = applicationUserRepository;
+
+        this.adminUserRepository = adminUserRepository;
+        this.clientUserRepository = clientUserRepository;
+
         this.userSettingsRepository = userSettingsRepository;
     }
 
@@ -60,30 +68,29 @@ public class ApplicationUserService {
                                 "Étudiant introuvable avec email " + email
                         )
                 );
-        return ApplicationUserDTO.of(user);
-//        return switch (user.getRole()) {
-//            case ADMIN -> getEmployerDTO(user.getId());
-//            case CLIENT -> getStudentDTO(user.getId());
-//        };
+        return switch (user.getRole()) {
+            case ADMIN -> getAdminDTO(user.getId());
+            case CLIENT -> getStudentDTO(user.getId());
+        };
     }
 
-//    private EmployerDto getEmployerDTO(Long id) {
-//        final Optional<Employer> employerOptional = employerRepository.findById(
-//                id
-//        );
-//        return employerOptional.isPresent()
-//                ? EmployerDto.create(employerOptional.get())
-//                : EmployerDto.empty();
-//    }
-//
-//    private EtudiantDTO getStudentDTO(Long id) {
-//        final Optional<Etudiant> studentOptional = studentRepository.findById(
-//                id
-//        );
-//        return studentOptional.isPresent()
-//                ? EtudiantDTO.fromEntity(studentOptional.get())
-//                : EtudiantDTO.empty();
-//    }
+    private AdminUserDTO getAdminDTO(Long id) {
+        final Optional<AdminUser> adminUserOptional = adminUserRepository.findById(
+                id
+        );
+        return adminUserOptional.isPresent()
+                ? AdminUserDTO.of(adminUserOptional.get())
+                : new AdminUserDTO();
+    }
+
+    private ClientUserDTO getStudentDTO(Long id) {
+        final Optional<ClientUser> studentOptional = clientUserRepository.findById(
+                id
+        );
+        return studentOptional.isPresent()
+                ? ClientUserDTO.of(studentOptional.get())
+                : new ClientUserDTO();
+    }
 //
 //    private GestionnaireDTO getGestionnaireDTO(Long id) {
 //        final Optional<Gestionnaire> gestionnaireOptional =
