@@ -1,9 +1,5 @@
 package com.cal.yughistore;
 
-import com.cal.yughistore.model.YughioCard;
-import com.cal.yughistore.model.enums.EnumCardType;
-import com.cal.yughistore.model.enums.EnumPropertiesConfigType;
-import com.cal.yughistore.services.DTOs.DTOYughioCard;
 import com.cal.yughistore.services.YughioCardService;
 import com.cal.yughistore.services.api.ApiService;
 import org.springframework.boot.CommandLineRunner;

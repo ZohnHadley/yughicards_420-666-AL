@@ -1,14 +1,11 @@
 package com.cal.yughistore.repository;
 
-import com.cal.yughistore.model.YughioCard;
-import com.cal.yughistore.model.enums.EnumCardType;
-import com.cal.yughistore.model.enums.EnumFrameType;
-import org.jspecify.annotations.NonNull;
+import com.cal.yughistore.model.yughiocard.YughioCard;
+import com.cal.yughistore.model.yughiocard.enums.EnumCardType;
+import com.cal.yughistore.model.yughiocard.enums.EnumFrameType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
 
 public interface YughioCardRepository extends JpaRepository<YughioCard, Long> {
 

@@ -1,9 +1,6 @@
 package com.cal.yughistore.repository;
 
-import com.cal.yughistore.model.CardPrices;
-import com.cal.yughistore.model.properties.CardProperties;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.cal.yughistore.model.yughiocard.properties.CardProperties;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

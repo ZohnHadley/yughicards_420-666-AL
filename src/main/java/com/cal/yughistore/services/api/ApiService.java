@@ -1,8 +1,7 @@
 package com.cal.yughistore.services.api;
 
-import com.cal.yughistore.repository.CardPropertiesRepository;
 import com.cal.yughistore.repository.YughioCardRepository;
-import com.cal.yughistore.services.DTOs.DTOYughioCard;
+import com.cal.yughistore.services.DTOs.yughiocard.YughioCardDTO;
 import com.cal.yughistore.services.YughioCardService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,7 +57,7 @@ public class ApiService {
     }
 
     private void loadApiCardData() {
-        List<DTOYughioCard> dtoList = new ArrayList<>();
+        List<YughioCardDTO> dtoList = new ArrayList<>();
         try {
             logger.info("ApiService : trying to load all cards data from api");
 
@@ -67,7 +66,7 @@ public class ApiService {
             if (dataList != null && dataList.isArray() && !dataList.isEmpty()) {
 
                 for (JsonNode node : dataList) {
-                    DTOYughioCard cardDto = DTOYughioCard.of(node);
+                    YughioCardDTO cardDto = YughioCardDTO.of(node);
                     dtoList.add(cardDto);
                 }
 
@@ -83,14 +82,14 @@ public class ApiService {
 
     private void loadApiCardDataFromStaticFile() {
 
-        List<DTOYughioCard> dtoList = new ArrayList<>();
+        List<YughioCardDTO> dtoList = new ArrayList<>();
 
         try {
             logger.info("ApiService : loading from static file");
 
             InputStream is = getClass()
                     .getClassLoader()
-                    .getResourceAsStream("static/cardinfo.php.json");
+                    .getResourceAsStream("static/cardinfo_eng.json");
 
             if (is == null) {
                 throw new IllegalStateException("Static JSON file not found in resources");
@@ -100,7 +99,7 @@ public class ApiService {
             JsonNode dataList = root.get("data");
 
             for (JsonNode node : dataList) {
-                DTOYughioCard cardDto = DTOYughioCard.of(node);
+                YughioCardDTO cardDto = YughioCardDTO.of(node);
                 dtoList.add(cardDto);
             }
 
