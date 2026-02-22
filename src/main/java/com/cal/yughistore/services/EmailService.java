@@ -16,13 +16,10 @@ public class EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
-
     // Not the best security but hashicorp vault is pricy
-    private final Dotenv dotenv;
     private String key;
 
     public EmailService(Dotenv dotenv) {
-        this.dotenv = dotenv;
         this.key = dotenv.get("RESEND_KEY");
     }
 

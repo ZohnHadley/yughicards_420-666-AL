@@ -16,8 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 public class ApplicationUserService {
     private final AuthenticationManager authenticationManager;
@@ -62,7 +60,7 @@ public class ApplicationUserService {
                                 "Étudiant introuvable avec email " + email
                         )
                 );
-        return ApplicationUserDTO.from(user);
+        return ApplicationUserDTO.of(user);
 //        return switch (user.getRole()) {
 //            case ADMIN -> getEmployerDTO(user.getId());
 //            case CLIENT -> getStudentDTO(user.getId());

@@ -6,25 +6,34 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.jspecify.annotations.Nullable;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class ApplicationUserDTO {
     private Long id;
+
+    private String profilePictureUrl="";
+
+    @NotBlank(message = "Username is mandatory")
+    @Size(min = 4)
+    private String userName;
+
     @NotBlank(message = "First name is mandatory")
     @Size(min = 4)
     private String firstName;
+
     @NotBlank(message = "Last name is mandatory")
     @Size(min = 2)
-    @NotBlank(message = "Email is mandatory")
     private String lastName;
+
+    @NotBlank(message = "Email is mandatory")
     @Email private String email;
+
     @NotBlank(message = "Password is mandatory")
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,50}$",
@@ -34,14 +43,20 @@ public class ApplicationUserDTO {
     private String password;
     private Role role;
 
-    public ApplicationUserDTO(String firstName, String lastName, Role role) {
+    public ApplicationUserDTO(Long id, String profilePictureUrl, String userName, String firstName, String lastName, String email, String password) {
+        this.id = id;
+        this.profilePictureUrl = profilePictureUrl;
+        this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.role = role;
+        this.email = email;
+        this.password = password;
     }
 
     public ApplicationUserDTO(ApplicationUser user) {
         this.id = user.getId();
+        this.profilePictureUrl = user.getProfilePictureUrl();
+        this.userName = user.getUserName();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.email = user.getEmail();
@@ -49,7 +64,7 @@ public class ApplicationUserDTO {
         this.role = user.getRole();
     }
 
-    public static ApplicationUserDTO from(ApplicationUser user) {
+    public static ApplicationUserDTO of(ApplicationUser user) {
         return new ApplicationUserDTO(user);
     }
 }

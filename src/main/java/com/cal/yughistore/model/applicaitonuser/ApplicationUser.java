@@ -11,8 +11,8 @@ import java.util.Collection;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -20,6 +20,7 @@ public class ApplicationUser {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private String profilePictureUrl;
     private String userName;
 
     private String firstName;

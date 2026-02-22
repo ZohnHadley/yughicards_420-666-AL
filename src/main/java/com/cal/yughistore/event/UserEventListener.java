@@ -16,25 +16,25 @@ public class UserEventListener {
     private final EmailService emailService;
 
     @EventListener
-    public void handleEmployerCreated(UserCreatedEvent event) {
-        var employer = event.getUser();
+    public void handleClientUserCreated(UserCreatedEvent event) {
+        var ClientUser = event.getUser();
 
         try {
             emailService.sendEmail(
                 EmailMessage.builder()
-                    .to(employer.getEmail())
+                    .to(ClientUser.getEmail())
                     .subject("🎉 Compte créé avec succès !")
-                    .body(EmailTemplate.CreateAccount(employer.getFirstName()))
+                    .body(EmailTemplate.CreateAccount(ClientUser.getFirstName()))
                     .build()
             );
             log.info(
                 "Welcome email sent successfully to: {}",
-                employer.getEmail()
+                ClientUser.getEmail()
             );
         } catch (Exception e) {
             log.error(
                 "Failed to send welcome email to: {}. Error: {}",
-                employer.getEmail(),
+                ClientUser.getEmail(),
                 e.getMessage()
             );
             // Don't throw - allow application to continue even if email fails
