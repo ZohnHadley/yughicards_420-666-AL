@@ -1,7 +1,7 @@
 package com.cal.yughistore.presentation;
 
-import com.cal.yughistore.services.DTOs.yughiocard.YughioCardDTO;
-import com.cal.yughistore.services.YughioCardService;
+import com.cal.yughistore.services.dto.yughiocard.YughioCardDTO;
+import com.cal.yughistore.services.yughiocard.YughioCardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

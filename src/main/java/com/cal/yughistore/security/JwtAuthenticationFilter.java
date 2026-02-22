@@ -1,8 +1,8 @@
 package com.cal.yughistore.security;
 
 import com.cal.yughistore.model.applicaitonuser.ApplicationUser;
-import com.cal.yughistore.repository.ApplicationUserRepository;
-import com.cal.yughistore.security.exception.UserNotFoundException;
+import com.cal.yughistore.repository.user.ApplicationUserRepository;
+import com.cal.yughistore.security.exceptions.UserNotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

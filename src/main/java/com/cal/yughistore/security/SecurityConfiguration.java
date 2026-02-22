@@ -1,7 +1,7 @@
 package com.cal.yughistore.security;
 
 import com.cal.yughistore.model.applicaitonuser.auth.Role;
-import com.cal.yughistore.repository.ApplicationUserRepository;
+import com.cal.yughistore.repository.user.ApplicationUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

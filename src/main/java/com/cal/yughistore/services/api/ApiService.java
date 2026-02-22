@@ -1,8 +1,8 @@
 package com.cal.yughistore.services.api;
 
 import com.cal.yughistore.repository.YughioCardRepository;
-import com.cal.yughistore.services.DTOs.yughiocard.YughioCardDTO;
-import com.cal.yughistore.services.YughioCardService;
+import com.cal.yughistore.services.dto.yughiocard.YughioCardDTO;
+import com.cal.yughistore.services.yughiocard.YughioCardService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;

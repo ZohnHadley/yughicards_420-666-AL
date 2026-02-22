@@ -1,8 +1,8 @@
 package com.cal.yughistore;
 
-import com.cal.yughistore.services.ClientUserService;
-import com.cal.yughistore.services.DTOs.applicationuser.ClientUserDTO;
-import com.cal.yughistore.services.YughioCardService;
+import com.cal.yughistore.services.user.ClientUserService;
+import com.cal.yughistore.services.dto.applicationuser.ClientUserDTO;
+import com.cal.yughistore.services.yughiocard.YughioCardService;
 import com.cal.yughistore.services.api.ApiService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -31,10 +31,10 @@ public class YughistoreApplication {
 		return args -> {
 			clientUserService.registerUser(
                     ClientUserDTO.builder()
-							.userName("Zohnhadley")
-							.firstName("Zohan")
-							.lastName("Hadley")
-							.email("zohnhadley@gmail.com")
+							.userName("TheBigTugh")
+							.firstName("jimmy")
+							.lastName("johnson")
+							.email("johnjohn@gmail.com")
 							.password("test123123")
 							.build()
             );

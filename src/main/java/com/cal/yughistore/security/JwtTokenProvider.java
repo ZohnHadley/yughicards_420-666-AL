@@ -1,6 +1,6 @@
 package com.cal.yughistore.security;
 
-import com.cal.yughistore.security.exception.InvalidJwtTokenException;
+import com.cal.yughistore.security.exceptions.InvalidJwtTokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

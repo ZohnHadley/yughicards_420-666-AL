@@ -11,15 +11,15 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.web.bind.annotation.*;
 
-import com.cal.yughistore.security.exception.InvalidJwtTokenException;
-import com.cal.yughistore.security.exception.UserNotFoundException;
-import com.cal.yughistore.services.ApplicationUserService;
-import com.cal.yughistore.services.AuthService;
-import com.cal.yughistore.services.DTOs.util.*;
-import com.cal.yughistore.services.DTOs.applicationuser.ApplicationUserDTO;
-import com.cal.yughistore.services.DTOs.applicationuser.LoginDTO;
-import com.cal.yughistore.services.DTOs.applicationuser.PasswordRequestDTO;
-import com.cal.yughistore.services.DTOs.applicationuser.UserSettingsDTO;
+import com.cal.yughistore.security.exceptions.InvalidJwtTokenException;
+import com.cal.yughistore.security.exceptions.UserNotFoundException;
+import com.cal.yughistore.services.user.ApplicationUserService;
+import com.cal.yughistore.services.utils.AuthService;
+import com.cal.yughistore.services.dto.utils.*;
+import com.cal.yughistore.services.dto.applicationuser.ApplicationUserDTO;
+import com.cal.yughistore.services.dto.applicationuser.LoginDTO;
+import com.cal.yughistore.services.dto.applicationuser.PasswordRequestDTO;
+import com.cal.yughistore.services.dto.applicationuser.UserSettingsDTO;
 
 @RequiredArgsConstructor
 @RestController
