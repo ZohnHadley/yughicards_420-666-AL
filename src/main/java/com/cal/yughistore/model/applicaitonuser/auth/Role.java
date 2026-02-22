@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public enum Role {
-    ADMIN("ROLE_ADMIN"),
-    CLIENT("ROLE_CLIENT");
+    ADMIN("ADMIN"),
+    CLIENT("CLIENT");
 
     private final String string;
     private final Set<Role> managedRoles = new HashSet<>();

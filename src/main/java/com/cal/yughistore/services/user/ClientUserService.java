@@ -22,7 +22,7 @@ public class ClientUserService {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    public ClientUserDTO registerUser(ClientUserDTO clienUsertDTO) {
+    public ClientUserDTO signup(ClientUserDTO clienUsertDTO) {
         if (
                 clientUserRepository.existsByCredentialsEmail((clienUsertDTO.getEmail())
                 )) {

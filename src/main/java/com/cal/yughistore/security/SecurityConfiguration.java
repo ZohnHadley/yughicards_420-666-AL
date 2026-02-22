@@ -41,98 +41,76 @@ public class SecurityConfiguration {
     private final ApplicationUserRepository applicationUserRepository;
     private final JwtAuthenticationEntryPoint authenticationEntryPoint;
 
-    private static final String EMPLOYER_REGISTER_PATH =
-        "/api/v1/employer/register";
     private static final String USER_PATH = "/api/v1/user/**";
     private static final String USER_PASSWORD_RESET_PATH =
-        "/api/v1/user/password-reset/**";
-    private static final String EMPLOYER_PATH = "/api/v1/employer/**";
-    private static final String STUDENT_PATH = "/api/v1/student/**";
-    private static final String STUDENT_REGISTER_PATH =
-        "/api/v1/student/register";
-    private static final String INTERNSHIP_PATH =
-        "/api/v1/internship-offers/**";
-    private static final String TEACHER_PATH = "/api/v1/teacher/**";
-    private static final String TEACHER_REGISTER_PATH =
-        "/api/v1/teacher/register";
+            "/api/v1/user/password-reset/**";
+    private static final String ADMIN_PATH = "/api/v1/admin/**";
+    private static final String CLIENT_PATH = "/api/v1/client/**";
+    private static final String YUGHIO_CARD_DATA_PATH =
+            "/api/v1/internship-offers/**";
 
     // Swagger/OpenAPI paths
     private static final String SWAGGER_UI_PATH = "/swagger-ui/**";
     private static final String SWAGGER_UI_HTML_PATH = "/swagger-ui.html";
     private static final String API_DOCS_PATH = "/v3/api-docs/**";
     private static final String SWAGGER_RESOURCES_PATH =
-        "/swagger-resources/**";
+            "/swagger-resources/**";
     private static final String SWAGGER_CONFIG_PATH = "/swagger-ui/index.html";
     private static final String WEBJARS_PATH = "/webjars/**";
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
-        throws Exception {
+            throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable)
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .authorizeHttpRequests(
-                auth ->
-                    auth
-                        // Swagger/OpenAPI - Allow all Swagger resources without authentication
-                        .requestMatchers(
-                            SWAGGER_UI_PATH,
-                            SWAGGER_UI_HTML_PATH,
-                            API_DOCS_PATH,
-                            SWAGGER_RESOURCES_PATH,
-                            SWAGGER_CONFIG_PATH,
-                            WEBJARS_PATH
-                        )
-                        .permitAll()
-                        // User
-                        .requestMatchers(USER_PATH)
-                        .permitAll()
-                        .requestMatchers(POST, USER_PASSWORD_RESET_PATH)
-                        .permitAll()
-                        .requestMatchers(GET, USER_PATH)
-                        .hasAnyAuthority(Role.CLIENT.name())
-                        // Employer
-//                        .requestMatchers(POST, EMPLOYER_REGISTER_PATH)
-//                        .permitAll()
-//                        .requestMatchers(GET, USER_PATH)
-//                        .hasAnyAuthority(Role.EMPLOYER.name())
-//                        .requestMatchers(EMPLOYER_PATH)
-//                        .hasAuthority(Role.EMPLOYER.name())
-//                        // Student
-//                        .requestMatchers(POST, STUDENT_REGISTER_PATH)
-//                        .permitAll()
-//                        .requestMatchers(STUDENT_PATH)
-//                        .hasAnyAuthority(Role.STUDENT.name())
-//                        // Teacher
-//                        .requestMatchers(POST, TEACHER_REGISTER_PATH)
-//                        .permitAll()
-//                        .requestMatchers(TEACHER_PATH)
-//                        .hasAuthority(Role.TEACHER.name())
-//                        // Internships
-//                        .requestMatchers(INTERNSHIP_PATH)
-//                        .permitAll()
-//                        .requestMatchers(GET, INTERNSHIP_PATH)
-//                        .hasAnyAuthority(Role.STUDENT.name())
-                        .anyRequest()
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(
+                        auth ->
+                                auth
+                                        // Swagger/OpenAPI - Allow all Swagger resources without authentication
+                                        .requestMatchers(
+                                                SWAGGER_UI_PATH,
+                                                SWAGGER_UI_HTML_PATH,
+                                                API_DOCS_PATH,
+                                                SWAGGER_RESOURCES_PATH,
+                                                SWAGGER_CONFIG_PATH,
+                                                WEBJARS_PATH
+                                        )
+                                        .permitAll()
+                                        // User
+                                        .requestMatchers(USER_PATH)
+                                        .permitAll()
+                                        .requestMatchers(POST, USER_PASSWORD_RESET_PATH)
+                                        .hasAnyAuthority(Role.CLIENT.name())
+
+                                        .requestMatchers(GET, USER_PATH)
+                                        .hasAnyAuthority(Role.CLIENT.name())
+
+                                        // Yughio Card Data
+                                        .requestMatchers(YUGHIO_CARD_DATA_PATH)
+                                        .permitAll()
+                                        .requestMatchers(GET, YUGHIO_CARD_DATA_PATH)
+                                        .permitAll()
+                                        .anyRequest()
 
 
-                        .authenticated() // Changed from denyAll() to authenticated() - more common, adjust if denyAll is strictly needed
-            )
-            .headers(headers ->
-                headers.frameOptions(Customizer.withDefaults()).disable()
-            ) // for h2-console
-            .sessionManagement(secuManagement -> {
-                secuManagement.sessionCreationPolicy(
-                    SessionCreationPolicy.STATELESS
+                                        .authenticated() // Changed from denyAll() to authenticated() - more common, adjust if denyAll is strictly needed
+                )
+                .headers(headers ->
+                        headers.frameOptions(Customizer.withDefaults()).disable()
+                ) // for h2-console
+                .sessionManagement(secuManagement -> {
+                    secuManagement.sessionCreationPolicy(
+                            SessionCreationPolicy.STATELESS
+                    );
+                })
+                .addFilterBefore(
+                        jwtAuthenticationFilter(),
+                        UsernamePasswordAuthenticationFilter.class
+                )
+                .exceptionHandling(configurer ->
+                        configurer.authenticationEntryPoint(authenticationEntryPoint)
                 );
-            })
-            .addFilterBefore(
-                jwtAuthenticationFilter(),
-                UsernamePasswordAuthenticationFilter.class
-            )
-            .exceptionHandling(configurer ->
-                configurer.authenticationEntryPoint(authenticationEntryPoint)
-            );
 
         return http.build();
     }
@@ -148,28 +126,28 @@ public class SecurityConfiguration {
 
         // 2. Specify allowed HTTP methods
         configuration.setAllowedMethods(
-            Arrays.asList(
-                HttpMethod.GET.name(),
-                HttpMethod.POST.name(),
-                HttpMethod.PUT.name(),
-                HttpMethod.DELETE.name(),
-                HttpMethod.OPTIONS.name() // Crucial for preflight requests
-            )
+                Arrays.asList(
+                        HttpMethod.GET.name(),
+                        HttpMethod.POST.name(),
+                        HttpMethod.PUT.name(),
+                        HttpMethod.DELETE.name(),
+                        HttpMethod.OPTIONS.name() // Crucial for preflight requests
+                )
         );
 
         // 3. Specify allowed headers
         //    Include standard headers and importantly "Authorization" for JWT,
         //    and "Content-Type". Add any other custom headers your frontend sends.
         configuration.setAllowedHeaders(
-            Arrays.asList(
-                "Authorization",
-                "Cache-Control",
-                "Content-Type",
-                "Accept",
-                "X-Requested-With",
-                "*"
-                // Add any other headers needed by your frontend
-            )
+                Arrays.asList(
+                        "Authorization",
+                        "Cache-Control",
+                        "Content-Type",
+                        "Accept",
+                        "X-Requested-With",
+                        "*"
+                        // Add any other headers needed by your frontend
+                )
         );
 
         // 4. Allow credentials (cookies, Authorization headers)
@@ -181,7 +159,7 @@ public class SecurityConfiguration {
         // configuration.setExposedHeaders(List.of("Custom-Header"));
 
         UrlBasedCorsConfigurationSource source =
-            new UrlBasedCorsConfigurationSource();
+                new UrlBasedCorsConfigurationSource();
         // Apply this configuration to all paths /**
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -200,7 +178,7 @@ public class SecurityConfiguration {
 
     @Bean
     public AuthenticationManager authenticationManager(
-        AuthenticationConfiguration authenticationConfiguration
+            AuthenticationConfiguration authenticationConfiguration
     ) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }

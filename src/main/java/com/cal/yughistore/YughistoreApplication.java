@@ -13,6 +13,10 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class YughistoreApplication {
 
+	/// user password requirements
+	///***user password must contain at least 1 special character & 1 upper case & 1 number***
+	///
+
 	private final ApiService apiService;
 	private  final YughioCardService yughioCardService;
 	private final ClientUserService clientUserService;
@@ -29,13 +33,13 @@ public class YughistoreApplication {
 	@Bean
 	CommandLineRunner commandLineRunner(ApplicationContext context) {
 		return args -> {
-			clientUserService.registerUser(
+			clientUserService.signup(
                     ClientUserDTO.builder()
 							.userName("TheBigTugh")
 							.firstName("jimmy")
 							.lastName("johnson")
 							.email("johnjohn@gmail.com")
-							.password("test123123")
+							.password("!Test123123")
 							.build()
             );
 		};
