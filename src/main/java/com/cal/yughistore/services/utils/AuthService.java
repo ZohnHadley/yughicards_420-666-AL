@@ -13,6 +13,8 @@ import com.cal.yughistore.services.dto.applicationuser.ApplicationUserDTO;
 import com.cal.yughistore.services.dto.applicationuser.LoginDTO;
 import com.cal.yughistore.services.dto.applicationuser.PasswordRequestDTO;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -30,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-
+    private Logger logger = LoggerFactory.getLogger(AuthService.class);
     private final ApplicationUserRepository applicationUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final ApplicationUserService userAppService;
@@ -45,7 +47,7 @@ public class AuthService {
 
     private record LoginAttempt(int attempts, LocalDateTime lastAttempt) {}
 
-    public String userLogin(LoginDTO LoginDTO) {
+    public String login(LoginDTO LoginDTO) {
 
         String email = LoginDTO.getEmail();
         String password = LoginDTO.getPassword();
@@ -66,7 +68,7 @@ public class AuthService {
 
         ApplicationUser user = applicationUserRepository.findApplicationUserByEmail(email)
                 .orElseThrow();
-
+        logger.info("User found = {} " + passwordEncoder.matches(LoginDTO.getPassword(), user.getPassword()) + " " + user.getPassword(), user.getEmail());
         if (!passwordEncoder.matches(LoginDTO.getPassword(), user.getPassword())) {
             registerFailedAttempt(email);
             throw new BadCredentialsException("Votre courriel ou mot de passe est erroné.");

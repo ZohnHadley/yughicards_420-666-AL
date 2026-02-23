@@ -37,12 +37,16 @@ public class YughistoreApplication {
 	@Bean
 	CommandLineRunner commandLineRunner(ApplicationContext context) {
 		return args -> {
-			adminUserService.signup(
-                    AdminUserDTO.builder()
-							.email("admin@gmail.com")
-							.password("password123")
-							.build()
-            );
+			try {
+				adminUserService.signup(
+						AdminUserDTO.builder()
+								.email("admin@gmail.com")
+								.password("!Password123")
+								.build()
+				);
+			}catch (Exception e){
+				System.out.println(e.getMessage());
+			}
 		};
 	}
 }

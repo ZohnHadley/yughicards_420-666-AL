@@ -85,7 +85,7 @@ public class ApplicaitonUserController {
 	@PostMapping("/signin")
 	public ResponseEntity<JWTAuthResponseDTO> signIn(@RequestBody LoginDTO LoginDTO) {
 		try {
-			String accessToken = authService.userLogin(LoginDTO);
+			String accessToken = authService.login(LoginDTO);
 			return ResponseEntity.ok(new JWTAuthResponseDTO(accessToken));
 		}
 		catch (AuthenticationCredentialsNotFoundException e) {

@@ -28,6 +28,7 @@ public class AdminUserService {
             throw new RuntimeException("Email already in use");
         }
         System.out.println("service");
+        adminUserDTO.setPassword(passwordEncoder.encode(adminUserDTO.getPassword()));
         AdminUser savedClientUser = adminUserRepository.save(adminUserDTO.toAdminUser());
         logger.info("Admin created = {}", savedClientUser.getEmail());
 
