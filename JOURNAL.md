@@ -301,7 +301,38 @@
    - **i18n** : Toutes les sections utilisent les fichiers de traduction pour afficher le contenu automatiquement en français ou en anglais, selon la langue sélectionnée par l’utilisateur.
 
 **Composant ScrollToTop** : Composant pour revenir en haut de la page lors du changement de page.
-  
+
+---
+### 22 février: (10am - 2pm)) BE - Implémentation de la fonctionnalité d'inscription pour les utilisateurs:
+
+   - **Recherche** : 
+     - Utilisation de code de notre projet "OS2.0/ProjetOse_public" qui avait aussi le besoin de la fonctionnalité d'inscription d'utilisateur.
+     - Regarder l'utilisation des endpoints et les méthodes des services.
+
+   - **Remue-méninges** de ce qu'on aurait besoin :
+     - Type d'utilisateur (client et admin).
+     - Champs d'inscription pour un utilisateur client (username, nom, nom de famille, courriel, mot de passe).
+     - Validation des champs d'inscription :
+       - Champs obligatoires et non vides :
+         - Username.
+         - Nom.
+         - Nom de famille.
+         - Courriel.
+         - Mot de passe. 
+       - Champs de courriel valide :
+         - Doit contenir @.
+         - Doit contenir un point.
+       - Mot de passe valide.
+         - Doit contenir au moins 1 caractère unique.
+         - Doit contenir au moins 1 majuscule.
+         - Doit contenir au moins 1 chiffre. 
+
+   - **Reimplementation** des bouts de code essentiel pour l'inscription d'utilisateur selon nos besoins.
+     - Implémentation des class pour les couches : **Model, Repository, Service, Controller, Security Jwt**
+     - **Refactor** du code implémenté pour fonctionner avec notre codebase.
+   - **Resources**:
+     - Projet Ose (ProjetOse_public): ([GITHUB](https://github.com/ZohnHadley/ProjetOse_public))
+
 
          
 
