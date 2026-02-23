@@ -21,7 +21,7 @@ public class ClientUserService {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    public ClientUserDTO signup(ClientUserDTO clientUserDTO) {
+    public ClientUserDTO userSignup(ClientUserDTO clientUserDTO) {
         if (
                 clientUserRepository.existsByCredentialsEmail((clientUserDTO.getEmail())
                 )) {

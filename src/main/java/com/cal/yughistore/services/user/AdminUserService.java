@@ -21,7 +21,7 @@ public class AdminUserService {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    public AdminUserDTO signup(AdminUserDTO adminUserDTO) {
+    public AdminUserDTO userSignup(AdminUserDTO adminUserDTO) {
         if (
                 adminUserRepository.existsByCredentialsEmail((adminUserDTO.getEmail())
                 )) {

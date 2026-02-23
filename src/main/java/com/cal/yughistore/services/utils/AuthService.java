@@ -47,7 +47,7 @@ public class AuthService {
 
     private record LoginAttempt(int attempts, LocalDateTime lastAttempt) {}
 
-    public String login(LoginDTO LoginDTO) {
+    public String userSigning(LoginDTO LoginDTO) {
 
         String email = LoginDTO.getEmail();
         String password = LoginDTO.getPassword();
@@ -68,14 +68,13 @@ public class AuthService {
 
         ApplicationUser user = applicationUserRepository.findApplicationUserByEmail(email)
                 .orElseThrow();
-        logger.info("User found = {} " + passwordEncoder.matches(LoginDTO.getPassword(), user.getPassword()) + " " + user.getPassword(), user.getEmail());
         if (!passwordEncoder.matches(LoginDTO.getPassword(), user.getPassword())) {
             registerFailedAttempt(email);
             throw new BadCredentialsException("Votre courriel ou mot de passe est erroné.");
         }
 
         loginAttempts.remove(email);
-
+        logger.info("Login successful for user {}", email);
         return userAppService.authenticateUser(LoginDTO);
     }
 

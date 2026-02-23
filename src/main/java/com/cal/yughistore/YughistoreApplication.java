@@ -3,7 +3,6 @@ package com.cal.yughistore;
 import com.cal.yughistore.services.dto.applicationuser.AdminUserDTO;
 import com.cal.yughistore.services.user.AdminUserService;
 import com.cal.yughistore.services.user.ClientUserService;
-import com.cal.yughistore.services.dto.applicationuser.ClientUserDTO;
 import com.cal.yughistore.services.yughiocard.YughioCardService;
 import com.cal.yughistore.services.api.ApiService;
 import org.springframework.boot.CommandLineRunner;
@@ -38,7 +37,7 @@ public class YughistoreApplication {
 	CommandLineRunner commandLineRunner(ApplicationContext context) {
 		return args -> {
 			try {
-				adminUserService.signup(
+				adminUserService.userSignup(
 						AdminUserDTO.builder()
 								.email("admin@gmail.com")
 								.password("!Password123")
