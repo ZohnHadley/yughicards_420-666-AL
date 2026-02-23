@@ -59,7 +59,9 @@ public class ApplicationUserService {
     }
 
     public ApplicationUserDTO getMe(String token) {
-        token = token.startsWith("Bearer") ? token.substring(7) : token;
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
         String email = jwtTokenProvider.getEmailFromJWT(token);
         ApplicationUser user = applicationUserRepository
                 .findApplicationUserByEmail(email)
