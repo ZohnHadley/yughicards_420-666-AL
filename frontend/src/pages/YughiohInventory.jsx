@@ -82,7 +82,7 @@ export default function YughiohInventory({ language = "fr" }) {
                                 <div key={card.id} className="bg-[#0d1117] border border-[#c9973a]/20 rounded-xl overflow-hidden cursor-pointer group transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lg hover:border-[#c9973a]/50 flex flex-col">
                                     <div className="relative overflow-hidden aspect-[0.71] bg-gradient-to-br from-[#0d1520] to-[#1a1400]">
                                         <img
-                                            src={`http://localhost:8080/${card.imageUrl}`}
+                                            src={card.card_images?.[0]?.image_url || "/fallback.png"}
                                             alt={card.name}
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                             onError={e => e.target.style.display = "none"}
