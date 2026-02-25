@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "yughioCard")
 @Table(name = "card_properties")
 public class CardProperties {
 

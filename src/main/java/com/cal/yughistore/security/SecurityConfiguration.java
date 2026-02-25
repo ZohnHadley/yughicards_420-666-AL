@@ -42,7 +42,7 @@ public class SecurityConfiguration {
     private final JwtAuthenticationEntryPoint authenticationEntryPoint;
     private static final String YUGHIO_CARD_DATA_PATH =
             "/api/v1/get-all-cards/**";
-
+    private static final String YUGHIO_CARD_SINGLE_PATH = "/api/v1/get-card/**";
     private static final String USER_PATH = "/api/v1/user/**";
     private static final String USER_PASSWORD_RESET_PATH =
             "/api/v1/user/password-reset/**";
@@ -84,6 +84,7 @@ public class SecurityConfiguration {
                         // Yu-Gi-Oh cards endpoints
                         .requestMatchers(YUGHIO_CARD_DATA_PATH).permitAll()
                         .requestMatchers(GET, YUGHIO_CARD_DATA_PATH).permitAll()
+                        .requestMatchers(YUGHIO_CARD_SINGLE_PATH).permitAll()
 
                         // Tout le reste nécessite auth
                         .anyRequest().authenticated()

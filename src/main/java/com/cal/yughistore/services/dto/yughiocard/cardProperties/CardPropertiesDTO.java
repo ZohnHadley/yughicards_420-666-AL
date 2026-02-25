@@ -16,7 +16,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "yughioCard")
 public class CardPropertiesDTO {
     //TODO : PROPERTIES DTOs ARN'T BEING USED ANYWHERE (BUT WHEN REQUIRES MORE DETAIL SEARCH ENDPOINT THEY WILL COME IN HANDY (I THINK?))
     private Long id;

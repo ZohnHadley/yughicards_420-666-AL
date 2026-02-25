@@ -79,34 +79,39 @@ export default function YughiohInventory({ language = "fr" }) {
                     <>
                         <div className="grid grid-cols-5 gap-5">
                             {cards.map((card) => (
-                                <div key={card.id} className="bg-[#0d1117] border border-[#c9973a]/20 rounded-xl overflow-hidden cursor-pointer group transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lg hover:border-[#c9973a]/50 flex flex-col">
-                                    <div className="relative overflow-hidden aspect-[0.71] bg-gradient-to-br from-[#0d1520] to-[#1a1400]">
-                                        <img
-                                            src={card.card_images?.[0]?.image_url || "/fallback.png"}
-                                            alt={card.name}
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                            onError={e => e.target.style.display = "none"}
-                                        />
-                                        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#0d1117] to-transparent" />
-                                    </div>
-                                    <div className="p-3 flex flex-col gap-2 flex-1">
-                                        <p className="text-xs font-bold tracking-wide leading-snug line-clamp-2" style={{ fontFamily: "Georgia, serif" }}>
-                                            {card.name}
-                                        </p>
-                                        {card.type && <p className="text-[11px] italic text-[#7a6f5e]">{card.type}</p>}
-                                        <div className="flex items-center justify-between pt-2 border-t border-[#c9973a]/10 mt-auto">
-                      <span className="text-sm font-bold text-[#e8c06a]">
-                        {card.price ? `${card.price} €` : "—"}
-                      </span>
-                                            <button
-                                                onClick={(e) => addToCart(card, e)}
-                                                className="w-7 h-7 rounded-full border border-[#c9973a]/40 text-[#c9973a] text-lg flex items-center justify-center hover:bg-[#c9973a] hover:text-[#080a0f] transition-all duration-200 hover:scale-110 active:scale-95"
-                                            >
-                                                +
-                                            </button>
+                                card.card_images.map((image, idx) => (
+                                    <div
+                                        key={`${card.id}-${idx}`}
+                                        className="bg-[#0d1117] border border-[#c9973a]/20 rounded-xl overflow-hidden cursor-pointer group transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lg hover:border-[#c9973a]/50 flex flex-col"
+                                    >
+                                        <div className="relative overflow-hidden aspect-[0.71] bg-gradient-to-br from-[#0d1520] to-[#1a1400]">
+                                            <img
+                                                src={image.image_url}
+                                                alt={card.name}
+                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                onError={e => e.target.style.display = "none"}
+                                            />
+                                            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#0d1117] to-transparent" />
+                                        </div>
+                                        <div className="p-3 flex flex-col gap-2 flex-1">
+                                            <p className="text-xs font-bold tracking-wide leading-snug line-clamp-2" style={{ fontFamily: "Georgia, serif" }}>
+                                                {card.name}
+                                            </p>
+                                            {card.type && <p className="text-[11px] italic text-[#7a6f5e]">{card.type}</p>}
+                                            <div className="flex items-center justify-between pt-2 border-t border-[#c9973a]/10 mt-auto">
+          <span className="text-sm font-bold text-[#e8c06a]">
+            {card.card_prices?.[0]?.cardmarket_price ? `${card.card_prices[0].cardmarket_price} €` : "—"}
+          </span>
+                                                <button
+                                                    onClick={(e) => addToCart(card, e)}
+                                                    className="w-7 h-7 rounded-full border border-[#c9973a]/40 text-[#c9973a] text-lg flex items-center justify-center hover:bg-[#c9973a] hover:text-[#080a0f] transition-all duration-200 hover:scale-110 active:scale-95"
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                ))
                             ))}
                         </div>
 

@@ -19,7 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table
-@ToString
+@ToString(exclude = {"card_images", "card_prices", "cardProperties"})
 public class YughioCard {
 
     /// base card properties (all cards have these) ///

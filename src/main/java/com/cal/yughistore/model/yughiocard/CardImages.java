@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString(exclude = "yughioCard")
 public class CardImages {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

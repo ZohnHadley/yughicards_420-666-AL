@@ -23,7 +23,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"card_images", "card_prices", "cardProperties"})
 public class YughioCardDTO {
     private static final Logger logger = LoggerFactory.getLogger(YughioCardDTO.class);
 
