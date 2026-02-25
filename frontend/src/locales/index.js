@@ -10,6 +10,9 @@ import {HomeFr} from "./francais/HomeFr.js";
 import {HomeEn} from "./english/HomeEn.js";
 import {VendezNousEn} from "./english/VendezNous.En.js";
 import {VendezNousFr} from "./francais/VendezNousFr.js";
+import YughiohInventory from "../pages/YughiohInventory.jsx";
+import {YughiohInventoryFr} from "./francais/YughioInventoryFr.js";
+import {YughiohInventoryEn} from "./english/YughiohInventoryEn.js";
 
 export const translations = {
     fr: {
@@ -18,7 +21,8 @@ export const translations = {
         about: AboutFr,
         contactUs: ContactUsFr,
         home: HomeFr,
-        vendezNous: VendezNousFr
+        vendezNous: VendezNousFr,
+        yughiohInventory: YughiohInventoryFr
     },
     en: {
         navbar: NavbarEn,
@@ -26,7 +30,8 @@ export const translations = {
         about: AboutEn,
         contactUs: ContactUsEn,
         home: HomeEn,
-        vendezNous: VendezNousEn
+        vendezNous: VendezNousEn,
+        yughiohInventory: YughiohInventoryEn
     }
 }
 export const languages = [
