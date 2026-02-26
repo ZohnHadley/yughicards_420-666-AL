@@ -356,9 +356,29 @@
     - **Refactor** du code implémenté pour fonctionner avec notre codebase.
 - **Resources**:
     - Projet Ose (ProjetOse_public): ([GITHUB](https://github.com/ZohnHadley/ProjetOse_public))
+        
+---
+### 25 février: (4pm - )) BE - Implémentation de la page pour afficher les cartes + moteur de recherche dans la page shop :
+   **FE service**: Implémentation du service frontend permettant de communiquer avec les endpoints du backend.
+   
+   **store**: Appeler le service
+   
+   **Afficher les cartes**: Afficher les cartes(monster,spell and trap) sur la page avec les éléments suivant:
+      - Nom
+      - Type de carte
+      - image
+      - Nombre en stock/rupture de stock
+      - Nom du paquet
+      - Le code du paquet
+      - Rareté de la carte
+      - Condition de la carte
+      - Prix de la carte
+      
+   **Boutton ajouté au panier**: Un boutton qui permet d'ajouté la carte au panier.
+   
+   **pagination** : Permet de changer de page pour voir le reste des cartes.
 
-         
-
+   **moteur de recherche**: Permet à l’utilisateur de trouver rapidement une carte spécifique sans parcourir toute la pagination.
 
 
 
