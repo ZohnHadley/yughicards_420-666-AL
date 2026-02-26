@@ -1,5 +1,6 @@
 package com.cal.yughistore.model.yughiocard;
 
+import com.cal.yughistore.model.yughiocard.enums.EnumCardSetRarity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -20,7 +21,7 @@ public class CardSets {
 
     String set_name;
     String set_code;
-    String set_rarity;
+    EnumCardSetRarity set_rarity;
     String set_rarity_code;
     Double set_price;
 
@@ -32,7 +33,7 @@ public class CardSets {
     public CardSets(
             String set_name,
             String set_code,
-            String set_rarity,
+            EnumCardSetRarity set_rarity,
             String set_rarity_code,
             Double set_price
     ){

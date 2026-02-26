@@ -78,11 +78,13 @@ public class YughioCardDTO {
             if (cardSetCollection == null || cardSetCollection.isNull() || !cardSetCollection.isObject()) {
                 continue;
             }
+            EnumCardSetRarity cardSetRarity = SimpleEnumUtils.findEnumValue(EnumCardSetRarity.class, cardSetCollection.path("set_rarity").asText().replaceAll("\\s", "_").replaceAll("-", "_"));
+
             cardSets.add(
                     CardSets.builder()
                             .set_name(cardSetCollection.path("set_name").asText(""))
                             .set_code(cardSetCollection.path("set_code").asText(""))
-                            .set_rarity(cardSetCollection.path("set_rarity").asText(""))
+                            .set_rarity(cardSetRarity)
                             .set_rarity_code(cardSetCollection.path("set_rarity_code").asText(""))
                             .set_price(cardSetCollection.path("set_price").asDouble(-1))
                             .build()
