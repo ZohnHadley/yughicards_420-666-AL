@@ -47,7 +47,8 @@ public class ApiService {
     @PostConstruct
     public void init() {
         if (yughioCardService.count() == 0) {
-            loadApiCardData();
+//            loadApiCardData();
+            loadApiCardDataFromStaticFile();
         } else {
             logger.info("Cards already exist. Skipping API load.");
         }
