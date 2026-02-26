@@ -5,23 +5,21 @@ import { translations } from "../locales/index.js";
 const PAGE_SIZE = 20;
 const USD_TO_CAD = 1.36;
 
-// ── Palette assignée dynamiquement aux raretés présentes ──────────────────
 const PALETTE = [
-    { c: "#9ca3af", b: "rgba(156,163,175,0.08)", e: "rgba(156,163,175,0.25)" }, // gris   — Common
-    { c: "#60a5fa", b: "rgba(96,165,250,0.08)",  e: "rgba(96,165,250,0.28)"  }, // bleu   — Rare
-    { c: "#a78bfa", b: "rgba(167,139,250,0.08)", e: "rgba(167,139,250,0.3)"  }, // violet — Super Rare
-    { c: "#fbbf24", b: "rgba(251,191,36,0.08)",  e: "rgba(251,191,36,0.35)"  }, // or     — Ultra Rare
-    { c: "#f472b6", b: "rgba(244,114,182,0.1)",  e: "rgba(244,114,182,0.4)"  }, // rose   — Secret Rare
-    { c: "#e879f9", b: "rgba(232,121,249,0.1)",  e: "rgba(232,121,249,0.45)" }, // fuchsia
-    { c: "#34d399", b: "rgba(52,211,153,0.08)",  e: "rgba(52,211,153,0.3)"   }, // vert
-    { c: "#fb923c", b: "rgba(251,146,60,0.08)",  e: "rgba(251,146,60,0.3)"   }, // orange
-    { c: "#e2e8f0", b: "rgba(226,232,240,0.06)", e: "rgba(226,232,240,0.3)"  }, // blanc  — Ghost Rare
-    { c: "#bfdbfe", b: "rgba(191,219,254,0.08)", e: "rgba(191,219,254,0.35)" }, // bleu clair
-    { c: "#fde68a", b: "rgba(253,230,138,0.08)", e: "rgba(253,230,138,0.35)" }, // jaune
-    { c: "#c9973a", b: "rgba(201,151,58,0.1)",   e: "rgba(201,151,58,0.4)"   }, // or foncé
+    { c: "#9ca3af", b: "rgba(156,163,175,0.08)", e: "rgba(156,163,175,0.25)" },
+    { c: "#60a5fa", b: "rgba(96,165,250,0.08)",  e: "rgba(96,165,250,0.28)"  },
+    { c: "#a78bfa", b: "rgba(167,139,250,0.08)", e: "rgba(167,139,250,0.3)"  },
+    { c: "#fbbf24", b: "rgba(251,191,36,0.08)",  e: "rgba(251,191,36,0.35)"  },
+    { c: "#f472b6", b: "rgba(244,114,182,0.1)",  e: "rgba(244,114,182,0.4)"  },
+    { c: "#e879f9", b: "rgba(232,121,249,0.1)",  e: "rgba(232,121,249,0.45)" },
+    { c: "#34d399", b: "rgba(52,211,153,0.08)",  e: "rgba(52,211,153,0.3)"   },
+    { c: "#fb923c", b: "rgba(251,146,60,0.08)",  e: "rgba(251,146,60,0.3)"   },
+    { c: "#e2e8f0", b: "rgba(226,232,240,0.06)", e: "rgba(226,232,240,0.3)"  },
+    { c: "#bfdbfe", b: "rgba(191,219,254,0.08)", e: "rgba(191,219,254,0.35)" },
+    { c: "#fde68a", b: "rgba(253,230,138,0.08)", e: "rgba(253,230,138,0.35)" },
+    { c: "#c9973a", b: "rgba(201,151,58,0.1)",   e: "rgba(201,151,58,0.4)"   },
 ];
 
-// Construit rarity -> style à partir des vraies raretés dans les données
 function buildRarityMap(cards) {
     const map = new Map();
     let i = 0;
@@ -41,8 +39,13 @@ const DEFAULT_STYLE = PALETTE[0];
 // ── CardTile ───────────────────────────────────────────────────────────────
 function CardTile({ card, set, img, rarityMap, onAdd, delay }) {
     const rStyle = (set?.set_rarity && rarityMap.get(set.set_rarity)) ?? DEFAULT_STYLE;
-    const usd    = parseFloat(card.card_prices?.[0]?.cardmarket_price || set?.set_price || 0);
-    const cad    = usd > 0 ? (usd * USD_TO_CAD).toFixed(2) : null;
+
+    // Prix : utilise set_price si dispo (propre à ce set), sinon cardmarket comme fallback
+    const rawPrice = set?.set_price && parseFloat(set.set_price) > 0
+        ? parseFloat(set.set_price)
+        : parseFloat(card.card_prices?.[0]?.cardmarket_price || 0);
+    const cad = rawPrice > 0 ? (rawPrice * USD_TO_CAD).toFixed(2) : null;
+
     const oos    = !card.stock || card.stock <= 0;
     const imgUrl = img?.image_url_small ?? img?.image_url;
 
@@ -59,45 +62,48 @@ function CardTile({ card, set, img, rarityMap, onAdd, delay }) {
                     ? <img src={imgUrl} alt={card.name}
                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                            onError={e => e.target.style.display = "none"} />
-                    : <div className="w-full h-full flex items-center justify-center text-[#7a6f5e] text-[10px] italic">no image</div>
+                    : <div className="w-full h-full flex items-center justify-center text-[#7a6f5e] text-xs italic">no image</div>
                 }
                 <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[#0d1117] to-transparent" />
-                <div className={`absolute top-2 right-2 text-[9px] font-bold px-1.5 py-[2px] rounded-md leading-none
-          ${oos ? "bg-red-950/90 text-red-400" : "bg-black/70 text-emerald-400"}`}>
+                <div className={`absolute top-2 right-2 text-[10px] font-bold px-2 py-[3px] rounded-md leading-none
+                    ${oos ? "bg-red-950/90 text-red-400" : "bg-black/70 text-emerald-400"}`}>
                     {oos ? "Épuisé" : `×${card.stock}`}
                 </div>
             </div>
 
             {/* Body */}
-            <div className="p-2.5 flex flex-col gap-1.5 flex-1">
+            <div className="p-3 flex flex-col gap-2 flex-1">
 
                 {/* Nom */}
-                <p className="text-[11px] font-bold leading-snug line-clamp-2"
+                <p className="text-xs font-bold leading-snug line-clamp-2"
                    style={{ fontFamily: "Georgia,serif", color: "#e8dcc8" }}>
                     {card.name}
                 </p>
 
                 {/* Type */}
                 {card.type && (
-                    <p className="text-[9px] italic text-[#6a6050] line-clamp-1">
+                    <p className="text-[11px] italic text-[#6a6050] line-clamp-1">
                         {card.type?.toString().replaceAll("_", " ")}
                     </p>
                 )}
 
                 {/* Rareté */}
                 {set?.set_rarity && (
-                    <span className="self-start text-[8px] font-bold px-1.5 py-[2px] rounded-full tracking-wide leading-none"
+                    <span className="self-start text-[10px] font-bold px-2 py-[3px] rounded-full tracking-wide leading-none"
                           style={{ color: rStyle.c, background: rStyle.b, border: `1px solid ${rStyle.e}` }}>
-            {set.set_rarity}
-          </span>
+                        {set.set_rarity}
+                    </span>
                 )}
 
                 {/* Set name + code */}
                 {set && (
-                    <div className="text-[9px] leading-tight space-y-0.5">
-                        {set.set_name && <p className="text-[#9a8e7a] line-clamp-1">{set.set_name}</p>}
+                    <div className="text-[11px] leading-snug space-y-0.5">
+                        {set.set_name && (
+                            <p className="text-[#9a8e7a] line-clamp-1">{set.set_name}</p>
+                        )}
                         {set.set_code && (
-                            <p className="font-mono tracking-wider" style={{ color: rStyle.c, opacity: 0.7 }}>
+                            <p className="font-mono tracking-wider font-semibold"
+                               style={{ color: rStyle.c, opacity: 0.8 }}>
                                 {set.set_code}
                             </p>
                         )}
@@ -107,15 +113,15 @@ function CardTile({ card, set, img, rarityMap, onAdd, delay }) {
                 {/* Prix + bouton */}
                 <div className="flex items-center justify-between pt-2 border-t border-white/5 mt-auto">
                     {cad
-                        ? <span className="text-xs font-bold text-[#e8c06a]">
-                ${cad} <span className="text-[8px] text-[#7a6f5e] font-normal">CAD</span>
-              </span>
-                        : <span className="text-xs text-[#7a6f5e]">—</span>
+                        ? <span className="text-sm font-bold text-[#e8c06a]">
+                            ${cad} <span className="text-[10px] text-[#7a6f5e] font-normal">CAD</span>
+                          </span>
+                        : <span className="text-sm text-[#7a6f5e]">—</span>
                     }
                     <button
                         onClick={(e) => onAdd({ card, set }, e)}
                         disabled={oos}
-                        className="w-6 h-6 rounded-full border text-base flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-25 disabled:cursor-not-allowed"
+                        className="w-7 h-7 rounded-full border text-lg flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-25 disabled:cursor-not-allowed"
                         style={{ borderColor: rStyle.e, color: rStyle.c }}
                         onMouseEnter={e => { if (!oos) { e.currentTarget.style.background = rStyle.c; e.currentTarget.style.color = "#080a0f"; }}}
                         onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = rStyle.c; }}
@@ -149,16 +155,13 @@ export default function YughiohInventory({ language = "fr" }) {
         else if (!val.trim()) fetchAllCards(0, PAGE_SIZE);
     };
 
-    // Rareté → couleur, construit depuis les vraies données
     const rarityMap = useMemo(() => buildRarityMap(cards), [cards]);
 
-    // ⬇ C'est ici le fix principal :
-    // Chaque carte × chaque set = une tuile distincte
-    const variants = useMemo(() =>
+    // Flatten: 1 tuile par (carte × set)
+    const allVariants = useMemo(() =>
         cards.flatMap((card) => {
             const sets = card.card_sets ?? [];
             if (sets.length === 0) {
-                // Carte sans set connu — affiche quand même avec infos minimales
                 return [{ card, set: null, img: card.card_images?.[0], key: `${card.id}-noset` }];
             }
             return sets.map((set, i) => ({
@@ -168,6 +171,17 @@ export default function YughiohInventory({ language = "fr" }) {
                 key: `${card.id}-${set.set_code}-${i}`,
             }));
         }), [cards]);
+
+// 👇 pagination réelle sur les tuiles
+    const variants = useMemo(() => {
+        const start = page * PAGE_SIZE;
+        const end = start + PAGE_SIZE;
+        return allVariants.slice(start, end);
+    }, [allVariants, page]);
+
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }, [page]);
 
     const addToCart = ({ card, set }, e) => {
         e.stopPropagation();
@@ -194,19 +208,19 @@ export default function YughiohInventory({ language = "fr" }) {
                                className="bg-[#131920] border border-[#c9973a]/20 rounded-lg py-2 pl-8 pr-4 text-sm text-[#e8dcc8] placeholder-[#7a6f5e] italic outline-none focus:border-[#c9973a]/50 focus:ring-2 focus:ring-[#c9973a]/20 w-56 transition" />
                     </div>
                     <span className="text-xs tracking-widest text-[#c9973a] border border-[#c9973a]/20 bg-[#131920] rounded-full px-4 py-1.5">
-            {variants.length} {t.cardsLabel}
-          </span>
+                        {variants.length} {t.cardsLabel}
+                    </span>
                 </div>
             </header>
 
-            {/* Légende raretés — 100% dynamique depuis les données réelles */}
+            {/* Légende raretés — taille augmentée */}
             {rarityMap.size > 0 && (
-                <div className="px-8 pt-3 pb-1 flex flex-wrap gap-1.5">
+                <div className="px-8 pt-4 pb-2 flex flex-wrap gap-2">
                     {[...rarityMap.entries()].map(([name, s]) => (
-                        <span key={name} className="text-[8px] px-2 py-0.5 rounded-full font-bold tracking-wide"
+                        <span key={name} className="text-xs px-3 py-1 rounded-full font-bold tracking-wide"
                               style={{ color: s.c, background: s.b, border: `1px solid ${s.e}` }}>
-              {name}
-            </span>
+                            {name}
+                        </span>
                     ))}
                 </div>
             )}
@@ -227,7 +241,8 @@ export default function YughiohInventory({ language = "fr" }) {
                     </div>
                 ) : (
                     <>
-                        <div className="grid grid-cols-[repeat(auto-fill,minmax(155px,1fr))] gap-3.5">
+                        {/* Grille fixe 5 colonnes */}
+                        <div className="grid grid-cols-5 gap-4">
                             {variants.map(({ card, set, img, key }, i) => (
                                 <CardTile
                                     key={key}
@@ -270,11 +285,11 @@ export default function YughiohInventory({ language = "fr" }) {
             )}
 
             <style>{`
-        @keyframes fadeUp {
-          from { opacity:0; transform:translateY(10px) }
-          to   { opacity:1; transform:translateY(0) }
-        }
-      `}</style>
+                @keyframes fadeUp {
+                    from { opacity:0; transform:translateY(10px) }
+                    to   { opacity:1; transform:translateY(0) }
+                }
+            `}</style>
         </div>
     );
 }
