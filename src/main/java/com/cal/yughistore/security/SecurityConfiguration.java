@@ -40,16 +40,13 @@ public class SecurityConfiguration {
     private final JwtTokenProvider jwtTokenProvider;
     private final ApplicationUserRepository applicationUserRepository;
     private final JwtAuthenticationEntryPoint authenticationEntryPoint;
-    private static final String YUGHIO_CARD_DATA_PATH =
-            "/api/v1/get-all-cards/**";
-    private static final String YUGHIO_CARD_SINGLE_PATH = "/api/v1/get-card/**";
+
     private static final String USER_PATH = "/api/v1/user/**";
     private static final String USER_PASSWORD_RESET_PATH =
             "/api/v1/user/password-reset/**";
     private static final String ADMIN_PATH = "/api/v1/admin/**";
     private static final String CLIENT_PATH = "/api/v1/client/**";
-   /* private static final String YUGHIO_CARD_DATA_PATH =
-            "/api/v1/internship-offers/**";*/
+    private static final String YUGHIO_CARD_DATA_PATH ="/api/v1/cards/**";
 
     // Swagger/OpenAPI paths
     private static final String SWAGGER_UI_PATH = "/swagger-ui/**";
@@ -66,28 +63,40 @@ public class SecurityConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(auth -> auth
-                        // Swagger/OpenAPI - Public
-                        .requestMatchers(
-                                SWAGGER_UI_PATH,
-                                SWAGGER_UI_HTML_PATH,
-                                API_DOCS_PATH,
-                                SWAGGER_RESOURCES_PATH,
-                                SWAGGER_CONFIG_PATH,
-                                WEBJARS_PATH
-                        ).permitAll()
+                .authorizeHttpRequests(
+                        auth ->
+                                auth
+                                        // Swagger/OpenAPI - Allow all Swagger resources without authentication
+                                        .requestMatchers(
+                                                SWAGGER_UI_PATH,
+                                                SWAGGER_UI_HTML_PATH,
+                                                API_DOCS_PATH,
+                                                SWAGGER_RESOURCES_PATH,
+                                                SWAGGER_CONFIG_PATH,
+                                                WEBJARS_PATH
+                                        )
+                                        .permitAll()
+                                        // User
+                                        .requestMatchers(USER_PATH)
+                                        .permitAll()
+                                        .requestMatchers(GET, USER_PATH)
+                                        .permitAll()
 
-                        // User endpoints
-                        .requestMatchers(USER_PATH).permitAll()
-                        .requestMatchers(POST, USER_PASSWORD_RESET_PATH).hasAnyAuthority(Role.CLIENT.name())
+                                        .requestMatchers(POST, USER_PASSWORD_RESET_PATH)
+                                        .hasAnyAuthority(Role.CLIENT.name())
 
-                        // Yu-Gi-Oh cards endpoints
-                        .requestMatchers(YUGHIO_CARD_DATA_PATH).permitAll()
-                        .requestMatchers(GET, YUGHIO_CARD_DATA_PATH).permitAll()
-                        .requestMatchers(YUGHIO_CARD_SINGLE_PATH).permitAll()
+                                        .requestMatchers(GET, USER_PATH)
+                                        .hasAnyAuthority(Role.CLIENT.name())
 
-                        // Tout le reste nécessite auth
-                        .anyRequest().authenticated()
+                                        // Yughio Card Data
+                                        .requestMatchers(YUGHIO_CARD_DATA_PATH)
+                                        .permitAll()
+                                        .requestMatchers(GET, YUGHIO_CARD_DATA_PATH)
+                                        .permitAll()
+                                        .anyRequest()
+
+
+                                        .authenticated() // Changed from denyAll() to authenticated() - more common, adjust if denyAll is strictly needed
                 )
                 .headers(headers ->
                         headers.frameOptions(Customizer.withDefaults()).disable()

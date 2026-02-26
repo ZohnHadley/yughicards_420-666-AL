@@ -10,7 +10,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/cards")
 @CrossOrigin(origins = "http://localhost:5173")
 public class CardApiController {
 
@@ -18,17 +18,9 @@ public class CardApiController {
     private final int pagination_default_number_of_elements_per_page = 10;
 
     ///
+    ///TODO : REPLACE ALL SEARCH ENDPOINT INTO ONE ENDPOINT WITH PARAMETERS
     ///
     ///
-    /// You can rework this to fit the front end and make it more easier
-    ///
-    ///
-    ///
-
-    @GetMapping("")
-    public ResponseEntity<String> getAllCardsInformation() {
-        return ResponseEntity.ok("/api/v1");
-    }
 
     /// get by id ///
 
@@ -114,5 +106,55 @@ public class CardApiController {
     }
 
     /// ///
+
+    /// get all cards by rarity + pagination ///
+    @GetMapping("/get-all-cards/rarity={rarity}/page={pageNumber}/num={numberOfCards}")
+    public ResponseEntity<List<YughioCardDTO>> getAllCardsPagedInformationByRarity(@PathVariable String rarity, @PathVariable int pageNumber, @PathVariable int numberOfCards) {
+        return ResponseEntity.ok(cardService.getBySetRarity(rarity, pageNumber, numberOfCards));
+    }
+
+    @GetMapping("/get-all-cards/rarity={rarity}/page={pageNumber}")
+    public ResponseEntity<List<YughioCardDTO>> getAllCardsPagedInformationByRarity(@PathVariable String rarity, @PathVariable int pageNumber) {
+        return ResponseEntity.ok(cardService.getBySetRarity(rarity, pageNumber, pagination_default_number_of_elements_per_page));
+    }
+
+    /// ///
+
+    /// get all cards by price between + pagination ///
+    @GetMapping("/get-all-cards/price-between={minPrice}-{maxPrice}/page={pageNumber}/num={numberOfCards}")
+    public ResponseEntity<List<YughioCardDTO>> getAllCardsPagedInformationByPriceBetween(@PathVariable Double minPrice, @PathVariable Double maxPrice, @PathVariable int pageNumber, @PathVariable int numberOfCards) {
+        return ResponseEntity.ok(cardService.getByPriceBetween(minPrice, maxPrice, pageNumber, numberOfCards));
+    }
+
+    @GetMapping("/get-all-cards/price-between={minPrice}-{maxPrice}/page={pageNumber}")
+    public ResponseEntity<List<YughioCardDTO>> getAllCardsPagedInformationByPriceBetween(@PathVariable Double minPrice, @PathVariable Double maxPrice, @PathVariable int pageNumber) {
+        return ResponseEntity.ok(cardService.getByPriceBetween(minPrice, maxPrice, pageNumber, pagination_default_number_of_elements_per_page));
+    }
+
+    /// ///
+
+    /// get all cards by price greater than + pagination ///
+    @GetMapping("/get-all-cards/price-greater-than={price}/page={pageNumber}/num={numberOfCards}")
+    public ResponseEntity<List<YughioCardDTO>> getAllCardsPagedInformationByPriceGreaterThan(@PathVariable Double price, @PathVariable int pageNumber, @PathVariable int numberOfCards) {
+        return ResponseEntity.ok(cardService.getPriceGreaterThan(price, pageNumber, numberOfCards));
+    }
+
+    @GetMapping("/get-all-cards/price-greater-than={price}/page={pageNumber}")
+    public ResponseEntity<List<YughioCardDTO>> getAllCardsPagedInformationByPriceGreaterThan(@PathVariable Double price, @PathVariable int pageNumber) {
+        return ResponseEntity.ok(cardService.getPriceGreaterThan(price, pageNumber, pagination_default_number_of_elements_per_page));
+    }
+
+    /// ///
+
+    /// get all cards by price lesser than + pagination ///
+    @GetMapping("/get-all-cards/price-lesser-than={price}/page={pageNumber}/num={numberOfCards}")
+    public ResponseEntity<List<YughioCardDTO>> getAllCardsPagedInformationByPriceLesserThan(@PathVariable Double price, @PathVariable int pageNumber, @PathVariable int numberOfCards) {
+        return ResponseEntity.ok(cardService.getPriceLesserThan(price, pageNumber, numberOfCards));
+    }
+
+    @GetMapping("/get-all-cards/price-lesser-than={price}/page={pageNumber}")
+    public ResponseEntity<List<YughioCardDTO>> getAllCardsPagedInformationByPriceLesserThan(@PathVariable Double price, @PathVariable int pageNumber) {
+        return ResponseEntity.ok(cardService.getPriceLesserThan(price, pageNumber, pagination_default_number_of_elements_per_page));
+    }
 
 }

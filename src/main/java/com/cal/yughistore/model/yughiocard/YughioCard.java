@@ -1,6 +1,7 @@
 package com.cal.yughistore.model.yughiocard;
 
 
+import com.cal.yughistore.model.yughiocard.enums.EnumCardStockStatus;
 import com.cal.yughistore.model.yughiocard.enums.EnumCardType;
 import com.cal.yughistore.model.yughiocard.enums.EnumFrameType;
 import com.cal.yughistore.model.yughiocard.enums.EnumPropertiesConfigType;
@@ -19,7 +20,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table
-@ToString(exclude = {"card_images", "card_prices", "cardProperties"})
+@ToString
 public class YughioCard {
 
     /// base card properties (all cards have these) ///
@@ -27,7 +28,7 @@ public class YughioCard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int api_id;
+    private int apiId;
     private String name = "";
     private EnumCardType type = EnumCardType.NULL;
     private EnumFrameType frameType = EnumFrameType.NULL;
@@ -37,26 +38,24 @@ public class YughioCard {
     @Column(length = 1000)
     private String ygoprodeck_url;
 
-    @Column(nullable = true)
-    private Integer stock = 0;
-
-    private String rarity = "";
-
-    @Column(length = 200)
-    private String setName = "";
-    @Column(length = 50)
-    private String setCode = "";
+    private EnumCardStockStatus stockStatus = EnumCardStockStatus.OUT_OF_STOCK;
+    private int quantity_in_stock = 0;
 
     @OneToMany(
             mappedBy = "yughioCard",
             cascade = jakarta.persistence.CascadeType.ALL
     )
-    private List<CardImages> card_images;
+    private List<CardSets> cardSets;
     @OneToMany(
             mappedBy = "yughioCard",
             cascade = jakarta.persistence.CascadeType.ALL
     )
-    private List<CardPrices> card_prices;
+    private List<CardImages> cardImages;
+    @OneToMany(
+            mappedBy = "yughioCard",
+            cascade = jakarta.persistence.CascadeType.ALL
+    )
+    private List<CardPrices> cardPrices;
 
     /// Properties (depends on card type (trap, spell, monster, etc) ) ///
     private EnumPropertiesConfigType cardConfig;
@@ -66,45 +65,39 @@ public class YughioCard {
     @JsonManagedReference
     private CardProperties cardProperties;
 
-    @OneToMany(mappedBy = "yughioCard", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<CardSet> card_sets = new ArrayList<>();
-
 
 
     @Builder
     public YughioCard(
             Long id,
-            int api_id,
+            int apiId,
             String name,
             EnumCardType type,
-            Integer stock,
             EnumFrameType frameType,
             String description,
             String ygoprodeck_url,
+            EnumCardStockStatus stockStatus,
+            int quantity_in_stock,
             EnumPropertiesConfigType cardConfig,
             CardProperties cardProperties,
-            List<CardImages> card_images,
-            List<CardPrices> card_prices,
-            String rarity,
-            String setName,
-            String setCode
+            List<CardSets> cardSets,
+            List<CardImages> cardImages,
+            List<CardPrices> cardPrices
     ) {
 
         this.id = id;
-        this.api_id = api_id;
+        this.apiId = apiId;
         this.name = name;
         this.type = type;
         this.frameType = frameType;
         this.description = description;
         this.ygoprodeck_url = ygoprodeck_url;
+        this.stockStatus = stockStatus;
+        this.quantity_in_stock = quantity_in_stock;
         this.cardConfig = cardConfig;
         this.cardProperties = cardProperties;
-        this.card_images = (card_images != null) ? card_images : new ArrayList<>();
-        this.card_prices = (card_prices != null) ? card_prices : new ArrayList<>();
-        this.stock = stock;
-        this.rarity = rarity;
-        this.setName = setName;
-        this.setCode = setCode;
+        this.cardSets = (cardSets != null) ? cardSets : new ArrayList<>();
+        this.cardImages = (cardImages != null) ? cardImages : new ArrayList<>();
+        this.cardPrices = (cardPrices != null) ? cardPrices : new ArrayList<>();
     }
 }
