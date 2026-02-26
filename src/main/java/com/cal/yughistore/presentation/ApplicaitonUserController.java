@@ -42,7 +42,7 @@ public class ApplicaitonUserController {
 		System.out.println("Données reçues : " + clientUserDTO);
 
 		// Sauvegarde de l'étudiant
-		ClientUserDTO savedClientUser = clientUserService.signup(
+		ClientUserDTO savedClientUser = clientUserService.userSignup(
 				clientUserDTO
 		);
 
@@ -85,7 +85,7 @@ public class ApplicaitonUserController {
 	@PostMapping("/signin")
 	public ResponseEntity<JWTAuthResponseDTO> signIn(@RequestBody LoginDTO LoginDTO) {
 		try {
-			String accessToken = authService.userLogin(LoginDTO);
+			String accessToken = authService.userSigning(LoginDTO);
 			return ResponseEntity.ok(new JWTAuthResponseDTO(accessToken));
 		}
 		catch (AuthenticationCredentialsNotFoundException e) {

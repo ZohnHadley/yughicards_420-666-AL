@@ -21,14 +21,15 @@ public class ClientUserService {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    public ClientUserDTO signup(ClientUserDTO clienUsertDTO) {
+    public ClientUserDTO userSignup(ClientUserDTO clientUserDTO) {
         if (
-                clientUserRepository.existsByCredentialsEmail((clienUsertDTO.getEmail())
+                clientUserRepository.existsByCredentialsEmail((clientUserDTO.getEmail())
                 )) {
             throw new RuntimeException("Email already in use");
         }
         System.out.println("service");
-        ClientUser savedClientUser = clientUserRepository.save(clienUsertDTO.toClientUser());
+        clientUserDTO.setPassword(passwordEncoder.encode(clientUserDTO.getPassword()));
+        ClientUser savedClientUser = clientUserRepository.save(clientUserDTO.toClientUser());
         logger.info("Client created = {}", savedClientUser.getEmail());
 
         return ClientUserDTO.of(savedClientUser);

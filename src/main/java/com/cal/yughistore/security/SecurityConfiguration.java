@@ -80,6 +80,9 @@ public class SecurityConfiguration {
                                         // User
                                         .requestMatchers(USER_PATH)
                                         .permitAll()
+                                        .requestMatchers(GET, USER_PATH)
+                                        .permitAll()
+
                                         .requestMatchers(POST, USER_PASSWORD_RESET_PATH)
                                         .hasAnyAuthority(Role.CLIENT.name())
 
