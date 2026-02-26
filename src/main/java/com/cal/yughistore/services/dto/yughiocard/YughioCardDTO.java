@@ -2,6 +2,7 @@ package com.cal.yughistore.services.dto.yughiocard;
 
 import com.cal.yughistore.model.yughiocard.CardImages;
 import com.cal.yughistore.model.yughiocard.CardPrices;
+import com.cal.yughistore.model.yughiocard.CardSets;
 import com.cal.yughistore.model.yughiocard.YughioCard;
 import com.cal.yughistore.model.yughiocard.enums.*;
 import com.cal.yughistore.model.yughiocard.properties.PropertiesMonsterCard;
@@ -36,6 +37,8 @@ public class YughioCardDTO {
     private String description = "";
     private String ygoprodeck_url = "";
 
+    private int quantity_in_stock = 0;
+
     /// Properties (depends on card type (trap, spell, monster, etc) ) ///
     private EnumPropertiesConfigType cardConfig;
     private CardProperties cardProperties;
@@ -43,6 +46,7 @@ public class YughioCardDTO {
     /// ///
     private List<CardImages>  card_images;
     private List<CardPrices> card_prices;
+    private List<CardSets> card_sets;
 
 
 
@@ -56,6 +60,27 @@ public class YughioCardDTO {
             return new PropertiesTrapCard();
         }
         return new CardProperties();
+    }
+
+    private static List<CardSets> cardSetsFromNode(JsonNode node) {
+        List<CardSets> cardSets = new ArrayList<>();
+
+        JsonNode cardSetCollectionList = node.get("card_sets");
+        if (cardSetCollectionList == null) {
+            return cardSets;
+        }
+        for (JsonNode cardSetCollection : cardSetCollectionList) {
+            cardSets.add(
+                    CardSets.builder()
+                            .set_name(cardSetCollection.get("set_name").asText(""))
+                            .set_code(cardSetCollection.get("set_code").asText(""))
+                            .set_rarity(cardSetCollection.get("set_rarity").asText(""))
+                            .set_rarity_code(cardSetCollection.get("set_rarity_code").asText(""))
+                            .set_price(cardSetCollection.get("set_price").asDouble(-1))
+                            .build()
+            );
+        }
+        return cardSets;
     }
 
     private static List<CardImages> cardImageGroupsFromNode(JsonNode node) {
@@ -78,11 +103,11 @@ public class YughioCardDTO {
         JsonNode imageCollectionList = node.get("card_prices");
         for (JsonNode imageCollection : imageCollectionList) {
             cardImages.add(CardPrices.builder()
-                    .cardmarket_price(imageCollection.get("cardmarket_price").asText(""))
-                    .tcgplayer_price(imageCollection.get("tcgplayer_price").asText(""))
-                    .ebay_price(imageCollection.get("ebay_price").asText(""))
-                    .amazon_price(imageCollection.get("amazon_price").asText(""))
-                    .coolstuffinc_price(imageCollection.get("coolstuffinc_price").asText(""))
+                    .cardmarket_price(imageCollection.get("cardmarket_price").asDouble(-1))
+                    .tcgplayer_price(imageCollection.get("tcgplayer_price").asDouble(-1))
+                    .ebay_price(imageCollection.get("ebay_price").asDouble(-1))
+                    .amazon_price(imageCollection.get("amazon_price").asDouble(-1))
+                    .coolstuffinc_price(imageCollection.get("coolstuffinc_price").asDouble(-1))
                     .build());
         }
         return cardImages;
@@ -131,7 +156,7 @@ public class YughioCardDTO {
 
                 .cardConfig(cardConfigType)
                 .cardProperties(cardProperties)
-
+                .card_sets(cardSetsFromNode(node))
                 .card_images(cardImageGroupsFromNode(node))
                 .card_prices(cardPricesFromNode(node))
                 .build();
@@ -147,10 +172,12 @@ public class YughioCardDTO {
                 .frameType(card.getFrameType())
                 .description(card.getDescription())
                 .ygoprodeck_url(card.getYgoprodeck_url())
+                .quantity_in_stock(card.getQuantity_in_stock())
 
                 .cardConfig(card.getCardConfig())
                 .cardProperties(card.getCardProperties())
 
+                .card_sets(card.getCard_sets())
                 .card_images(card.getCard_images())
                 .card_prices(card.getCard_prices())
 
@@ -167,10 +194,12 @@ public class YughioCardDTO {
                 .frameType(this.frameType)
                 .description(this.description)
                 .ygoprodeck_url(this.ygoprodeck_url)
-
+                .quantity_in_stock(this.quantity_in_stock)
+                
                 .cardConfig(this.cardConfig)
                 .cardProperties(this.cardProperties)
 
+                .card_sets(this.card_sets)
                 .card_images(this.card_images)
                 .card_prices(this.card_prices)
                 .build();

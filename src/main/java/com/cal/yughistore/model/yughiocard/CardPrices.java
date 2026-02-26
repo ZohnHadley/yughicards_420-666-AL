@@ -15,11 +15,11 @@ public class CardPrices {
     @JsonBackReference
     private Long id;
 
-    private String cardmarket_price;
-    private String tcgplayer_price;
-    private String ebay_price;
-    private String amazon_price;
-    private String coolstuffinc_price;
+    private Double cardmarket_price;
+    private Double tcgplayer_price;
+    private Double ebay_price;
+    private Double amazon_price;
+    private Double coolstuffinc_price;
 
     @ManyToOne
     @JsonBackReference
@@ -28,11 +28,11 @@ public class CardPrices {
     @Builder
     public CardPrices(
             Long id,
-            String cardmarket_price,
-            String tcgplayer_price,
-            String ebay_price,
-            String amazon_price,
-            String coolstuffinc_price)
+            Double cardmarket_price,
+            Double tcgplayer_price,
+            Double ebay_price,
+            Double amazon_price,
+            Double coolstuffinc_price)
     {
         this.id = id;
         this.cardmarket_price = cardmarket_price;

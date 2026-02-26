@@ -37,6 +37,13 @@ public class YughioCard {
     @Column(length = 1000)
     private String ygoprodeck_url;
 
+    private int quantity_in_stock = 0;
+
+    @OneToMany(
+            mappedBy = "yughioCard",
+            cascade = jakarta.persistence.CascadeType.ALL
+    )
+    private List<CardSets> card_sets;
     @OneToMany(
             mappedBy = "yughioCard",
             cascade = jakarta.persistence.CascadeType.ALL
@@ -57,7 +64,6 @@ public class YughioCard {
     private CardProperties cardProperties;
 
 
-
     @Builder
     public YughioCard(
             Long id,
@@ -67,8 +73,10 @@ public class YughioCard {
             EnumFrameType frameType,
             String description,
             String ygoprodeck_url,
+            int quantity_in_stock,
             EnumPropertiesConfigType cardConfig,
             CardProperties cardProperties,
+            List<CardSets> card_sets,
             List<CardImages> card_images,
             List<CardPrices> card_prices
     ) {
@@ -80,8 +88,10 @@ public class YughioCard {
         this.frameType = frameType;
         this.description = description;
         this.ygoprodeck_url = ygoprodeck_url;
+        this.quantity_in_stock = quantity_in_stock;
         this.cardConfig = cardConfig;
         this.cardProperties = cardProperties;
+        this.card_sets = (card_sets != null) ? card_sets : new ArrayList<>();
         this.card_images = (card_images != null) ? card_images : new ArrayList<>();
         this.card_prices = (card_prices != null) ? card_prices : new ArrayList<>();
     }
