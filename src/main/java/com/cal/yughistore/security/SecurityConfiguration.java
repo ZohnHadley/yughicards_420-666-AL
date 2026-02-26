@@ -9,11 +9,9 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,41 +26,32 @@ import org.springframework.web.filter.CorsFilter;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
-
 @Configuration
-@EnableWebSecurity
-@EnableMethodSecurity // Enables @PreAuthorize, @PostAuthorize, etc.
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final ApplicationUserRepository applicationUserRepository;
     private final JwtAuthenticationEntryPoint authenticationEntryPoint;
-    private static final String YUGHIO_CARD_DATA_PATH =
-            "/api/v1/get-all-cards/**";
+
+    private static final String YUGHIO_CARD_DATA_PATH = "/api/v1/get-all-cards/**";
     private static final String YUGHIO_CARD_SINGLE_PATH = "/api/v1/get-card/**";
     private static final String USER_PATH = "/api/v1/user/**";
-    private static final String USER_PASSWORD_RESET_PATH =
-            "/api/v1/user/password-reset/**";
+    private static final String USER_PASSWORD_RESET_PATH = "/api/v1/user/password-reset/**";
     private static final String ADMIN_PATH = "/api/v1/admin/**";
     private static final String CLIENT_PATH = "/api/v1/client/**";
-   /* private static final String YUGHIO_CARD_DATA_PATH =
-            "/api/v1/internship-offers/**";*/
 
     // Swagger/OpenAPI paths
     private static final String SWAGGER_UI_PATH = "/swagger-ui/**";
     private static final String SWAGGER_UI_HTML_PATH = "/swagger-ui.html";
     private static final String API_DOCS_PATH = "/v3/api-docs/**";
-    private static final String SWAGGER_RESOURCES_PATH =
-            "/swagger-resources/**";
+    private static final String SWAGGER_RESOURCES_PATH = "/swagger-resources/**";
     private static final String SWAGGER_CONFIG_PATH = "/swagger-ui/index.html";
     private static final String WEBJARS_PATH = "/webjars/**";
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)
-            throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -79,31 +68,20 @@ public class SecurityConfiguration {
 
                         // User endpoints
                         .requestMatchers(USER_PATH).permitAll()
-                        .requestMatchers(POST, USER_PASSWORD_RESET_PATH).hasAnyAuthority(Role.CLIENT.name())
+                        .requestMatchers(HttpMethod.POST, USER_PASSWORD_RESET_PATH).hasAnyAuthority(Role.CLIENT.name())
 
                         // Yu-Gi-Oh cards endpoints
                         .requestMatchers(YUGHIO_CARD_DATA_PATH).permitAll()
-                        .requestMatchers(GET, YUGHIO_CARD_DATA_PATH).permitAll()
+                        .requestMatchers(HttpMethod.GET, YUGHIO_CARD_DATA_PATH).permitAll()
                         .requestMatchers(YUGHIO_CARD_SINGLE_PATH).permitAll()
 
                         // Tout le reste nécessite auth
                         .anyRequest().authenticated()
                 )
-                .headers(headers ->
-                        headers.frameOptions(Customizer.withDefaults()).disable()
-                ) // for h2-console
-                .sessionManagement(secuManagement -> {
-                    secuManagement.sessionCreationPolicy(
-                            SessionCreationPolicy.STATELESS
-                    );
-                })
-                .addFilterBefore(
-                        jwtAuthenticationFilter(),
-                        UsernamePasswordAuthenticationFilter.class
-                )
-                .exceptionHandling(configurer ->
-                        configurer.authenticationEntryPoint(authenticationEntryPoint)
-                );
+                .headers(headers -> headers.frameOptions(f -> f.disable())) // for h2-console
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(configurer -> configurer.authenticationEntryPoint(authenticationEntryPoint));
 
         return http.build();
     }
@@ -112,49 +90,35 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 1. Specify allowed origins (VERY IMPORTANT!)
-        //    Must match your React app's URL exactly (e.g., http://localhost:3000)
-        //    Do NOT use "*" if you need credentials (like sending Authorization headers)
-        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Adjust if your frontend runs elsewhere
+        // ⚡ IMPORTANT : port exact de votre frontend
+        configuration.setAllowedOrigins(List.of("http://localhost:5174"));
 
-        // 2. Specify allowed HTTP methods
-        configuration.setAllowedMethods(
-                Arrays.asList(
-                        HttpMethod.GET.name(),
-                        HttpMethod.POST.name(),
-                        HttpMethod.PUT.name(),
-                        HttpMethod.DELETE.name(),
-                        HttpMethod.OPTIONS.name() // Crucial for preflight requests
-                )
-        );
+        // Autoriser tous les principaux methods
+        configuration.setAllowedMethods(Arrays.asList(
+                HttpMethod.GET.name(),
+                HttpMethod.POST.name(),
+                HttpMethod.PUT.name(),
+                HttpMethod.DELETE.name(),
+                HttpMethod.OPTIONS.name()
+        ));
 
-        // 3. Specify allowed headers
-        //    Include standard headers and importantly "Authorization" for JWT,
-        //    and "Content-Type". Add any other custom headers your frontend sends.
-        configuration.setAllowedHeaders(
-                Arrays.asList(
-                        "Authorization",
-                        "Cache-Control",
-                        "Content-Type",
-                        "Accept",
-                        "X-Requested-With",
-                        "*"
-                        // Add any other headers needed by your frontend
-                )
-        );
+        // Autoriser headers utilisés par le frontend
+        configuration.setAllowedHeaders(Arrays.asList(
+                "Authorization",
+                "Cache-Control",
+                "Content-Type",
+                "Accept",
+                "X-Requested-With"
+        ));
 
-        // 4. Allow credentials (cookies, Authorization headers)
-        //    Required if your frontend sends credentials.
+        // Permet JWT / credentials
         configuration.setAllowCredentials(true);
 
-        // 5. (Optional) Specify exposed headers
-        //    If your frontend needs to read headers from the response (e.g., a custom header)
+        // Expose headers si nécessaire
         // configuration.setExposedHeaders(List.of("Custom-Header"));
 
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
-        // Apply this configuration to all paths /**
-        source.registerCorsConfiguration("/**", configuration);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // Appliquer à tous les endpoints
         return source;
     }
 
@@ -170,14 +134,12 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration
-    ) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
