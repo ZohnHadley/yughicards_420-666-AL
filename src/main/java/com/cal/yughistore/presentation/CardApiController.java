@@ -10,7 +10,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/cards")
 @CrossOrigin(origins = "http://localhost:5173")
 public class CardApiController {
 
@@ -23,12 +23,6 @@ public class CardApiController {
     /// You can rework this to fit the front end and make it more easier
     ///
     ///
-    ///
-
-    @GetMapping("")
-    public ResponseEntity<String> getAllCardsInformation() {
-        return ResponseEntity.ok("/api/v1");
-    }
 
     /// get by id ///
 

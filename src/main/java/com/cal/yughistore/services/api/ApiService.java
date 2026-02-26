@@ -18,7 +18,6 @@ import java.util.List;
 @Service
 public class ApiService {
     private static final Logger logger = LoggerFactory.getLogger(ApiService.class);
-    private final YughioCardRepository cardRepository;
     private final YughioCardService yughioCardService;
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
@@ -27,7 +26,6 @@ public class ApiService {
     public ApiService(YughioCardRepository cardRepository, YughioCardService yughioCardService,
                       RestClient.Builder builder,
                       ObjectMapper objectMapper) {
-        this.cardRepository = cardRepository;
         this.yughioCardService = yughioCardService;
         this.restClient = builder.baseUrl(url).build();
         this.objectMapper = objectMapper;
@@ -48,9 +46,8 @@ public class ApiService {
 
     @PostConstruct
     public void init() {
-        if (cardRepository.count() == 0) {
+        if (yughioCardService.count() == 0) {
             loadApiCardData();
-//            loadApiCardDataFromStaticFile();
         } else {
             logger.info("Cards already exist. Skipping API load.");
         }

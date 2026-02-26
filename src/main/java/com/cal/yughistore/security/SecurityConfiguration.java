@@ -46,8 +46,7 @@ public class SecurityConfiguration {
             "/api/v1/user/password-reset/**";
     private static final String ADMIN_PATH = "/api/v1/admin/**";
     private static final String CLIENT_PATH = "/api/v1/client/**";
-    private static final String YUGHIO_CARD_DATA_PATH =
-            "/api/v1/internship-offers/**";
+    private static final String YUGHIO_CARD_DATA_PATH ="/api/v1/cards/**";
 
     // Swagger/OpenAPI paths
     private static final String SWAGGER_UI_PATH = "/swagger-ui/**";

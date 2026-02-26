@@ -18,5 +18,5 @@ public interface YughioCardRepository extends JpaRepository<YughioCard, Long> {
     Page<YughioCard> getAllByType(EnumCardType type, Pageable pageable);
 
 
-
+    boolean existsYughioCardByApiId(int apiId);
 }

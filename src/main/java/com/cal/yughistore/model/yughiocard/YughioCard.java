@@ -1,6 +1,7 @@
 package com.cal.yughistore.model.yughiocard;
 
 
+import com.cal.yughistore.model.yughiocard.enums.EnumCardStockStatus;
 import com.cal.yughistore.model.yughiocard.enums.EnumCardType;
 import com.cal.yughistore.model.yughiocard.enums.EnumFrameType;
 import com.cal.yughistore.model.yughiocard.enums.EnumPropertiesConfigType;
@@ -27,7 +28,7 @@ public class YughioCard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int api_id;
+    private int apiId;
     private String name = "";
     private EnumCardType type = EnumCardType.NULL;
     private EnumFrameType frameType = EnumFrameType.NULL;
@@ -37,23 +38,24 @@ public class YughioCard {
     @Column(length = 1000)
     private String ygoprodeck_url;
 
+    private EnumCardStockStatus stockStatus = EnumCardStockStatus.OUT_OF_STOCK;
     private int quantity_in_stock = 0;
 
     @OneToMany(
             mappedBy = "yughioCard",
             cascade = jakarta.persistence.CascadeType.ALL
     )
-    private List<CardSets> card_sets;
+    private List<CardSets> cardSets;
     @OneToMany(
             mappedBy = "yughioCard",
             cascade = jakarta.persistence.CascadeType.ALL
     )
-    private List<CardImages> card_images;
+    private List<CardImages> cardImages;
     @OneToMany(
             mappedBy = "yughioCard",
             cascade = jakarta.persistence.CascadeType.ALL
     )
-    private List<CardPrices> card_prices;
+    private List<CardPrices> cardPrices;
 
     /// Properties (depends on card type (trap, spell, monster, etc) ) ///
     private EnumPropertiesConfigType cardConfig;
@@ -67,32 +69,34 @@ public class YughioCard {
     @Builder
     public YughioCard(
             Long id,
-            int api_id,
+            int apiId,
             String name,
             EnumCardType type,
             EnumFrameType frameType,
             String description,
             String ygoprodeck_url,
+            EnumCardStockStatus stockStatus,
             int quantity_in_stock,
             EnumPropertiesConfigType cardConfig,
             CardProperties cardProperties,
-            List<CardSets> card_sets,
-            List<CardImages> card_images,
-            List<CardPrices> card_prices
+            List<CardSets> cardSets,
+            List<CardImages> cardImages,
+            List<CardPrices> cardPrices
     ) {
 
         this.id = id;
-        this.api_id = api_id;
+        this.apiId = apiId;
         this.name = name;
         this.type = type;
         this.frameType = frameType;
         this.description = description;
         this.ygoprodeck_url = ygoprodeck_url;
+        this.stockStatus = stockStatus;
         this.quantity_in_stock = quantity_in_stock;
         this.cardConfig = cardConfig;
         this.cardProperties = cardProperties;
-        this.card_sets = (card_sets != null) ? card_sets : new ArrayList<>();
-        this.card_images = (card_images != null) ? card_images : new ArrayList<>();
-        this.card_prices = (card_prices != null) ? card_prices : new ArrayList<>();
+        this.cardSets = (cardSets != null) ? cardSets : new ArrayList<>();
+        this.cardImages = (cardImages != null) ? cardImages : new ArrayList<>();
+        this.cardPrices = (cardPrices != null) ? cardPrices : new ArrayList<>();
     }
 }

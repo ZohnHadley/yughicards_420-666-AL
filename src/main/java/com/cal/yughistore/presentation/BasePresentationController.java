@@ -9,12 +9,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("")
+@RequestMapping("/")
 @CrossOrigin(origins = "http://localhost:5173")
 public class BasePresentationController {
 
     @GetMapping("")
-    public ResponseEntity<String> getAllCardsInformation() {
+    public ResponseEntity<String> getIndex() {
         return ResponseEntity.ok("connected");
+    }
+
+    @GetMapping("/api/v1")
+    public ResponseEntity<String> getApi() {
+        return ResponseEntity.ok("/api/v1");
     }
 }
