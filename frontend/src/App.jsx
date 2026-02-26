@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/home/Home.jsx";
 import VendezNous from "./pages/VendezNous";
 import About from "./pages/About";
-import YughiohInventory from "./pages/YughiohInventory";
+import YughiohInventory from "./pages/YughiohInventory.jsx";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer.jsx";
@@ -28,7 +28,7 @@ function App() {
                     <Routes>
                         <Route path="/" element={<Home language={language} />} />
                         <Route path="/vendez-nous" element={<VendezNous language={language}/>} />
-                        <Route path="/inventaire" element={<YughiohInventory />} />
+                        <Route path="/inventaire" element={<YughiohInventory language={language}/>} />
                         <Route path="/about" element={<About language={language}/>} />
                         <Route path="/contact" element={<Contact language={language}/>} />
                     </Routes>

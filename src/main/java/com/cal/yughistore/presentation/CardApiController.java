@@ -106,6 +106,13 @@ public class CardApiController {
         return ResponseEntity.ok(cardService.getByTypePaged(cardType, pageNumber, pagination_default_number_of_elements_per_page));
     }
 
+    // Get all versions (sets + raretés) of a card by name
+    @GetMapping("/get-card/all-versions/name={cardName}")
+    public ResponseEntity<List<YughioCardDTO>> getAllVersionsOfCard(@PathVariable String cardName) {
+        List<YughioCardDTO> cards = cardService.getAllVersionsOfCard(cardName);
+        return ResponseEntity.ok(cards);
+    }
+
     /// ///
 
 }

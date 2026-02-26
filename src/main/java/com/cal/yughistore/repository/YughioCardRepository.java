@@ -7,16 +7,28 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface YughioCardRepository extends JpaRepository<YughioCard, Long> {
 
-    YughioCard getById(Long id);
-    YughioCard getByName(String name);
-    //search by name
+    // Récupérer une carte exacte par nom (ignore case)
+    Optional<YughioCard> findByNameIgnoreCase(String name);
+
+    // Récupérer toutes les versions/sets d’une carte par nom (paged)
+    Page<YughioCard> findAllByNameIgnoreCaseOrderBySetNameAsc(String name, Pageable pageable);
+
+    // Recherche par nom partiel
     Page<YughioCard> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
+    // Recherche par frameType
     Page<YughioCard> getAllByFrameType(EnumFrameType frameType, Pageable pageable);
+
+    // Recherche par type
     Page<YughioCard> getAllByType(EnumCardType type, Pageable pageable);
 
+    // Récupère toutes les versions (sets et raretés) d'une carte exacte
+    List<YughioCard> findAllByNameIgnoreCaseOrderByRarityAsc(String name);
 
 
 }
