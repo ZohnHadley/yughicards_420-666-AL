@@ -93,13 +93,11 @@ export default function YughiohInventory({language = "fr"}) {
         let list = allVariants;
 
         if (filter === "Monster") {
-            list = list.filter(({card}) =>
-                card.type && !card.type.includes("Spell") && !card.type.includes("Trap")
-            );
+            list = list.filter(({card}) => card.type?.toUpperCase().includes("MONSTER"));
         } else if (filter === "Spell") {
-            list = list.filter(({card}) => card.type?.includes("Spell"));
+            list = list.filter(({card}) => card.type?.toUpperCase().includes("SPELL"));
         } else if (filter === "Trap") {
-            list = list.filter(({card}) => card.type?.includes("Trap"));
+            list = list.filter(({card}) => card.type?.toUpperCase().includes("TRAP"));
         }
 
         if (stockOnly) {
