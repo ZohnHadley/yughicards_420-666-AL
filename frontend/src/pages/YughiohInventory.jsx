@@ -1,6 +1,7 @@
 import React, {useEffect, useState, useMemo} from "react";
 import {useYughioInventoryStore} from "../store/YughiohInventoryStore.js";
 import {translations} from "../locales/index.js";
+import CardTile from "../components/CardTile.jsx";
 
 const PAGE_SIZE = 20;
 const USD_TO_CAD = 1.36;
@@ -36,170 +37,24 @@ function buildRarityMap(cards) {
 
 const DEFAULT_STYLE = PALETTE[0];
 
-// ── CardTile ───────────────────────────────────────────────────────────────
-function CardTile({card, set, img, rarityMap, onAdd, delay, t}) {
-    const rStyle = (set?.set_rarity && rarityMap.get(set.set_rarity)) ?? DEFAULT_STYLE;
-    const [qty, setQty] = useState(1);
-
-    const rawPrice = set?.set_price && parseFloat(set.set_price) > 0
-        ? parseFloat(set.set_price)
-        : parseFloat(card.card_prices?.[0]?.cardmarket_price || 0);
-    const cad = rawPrice > 0 ? (rawPrice * USD_TO_CAD).toFixed(2) : null;
-
-    const oos = !card.stock || card.stock <= 0;
-    const maxQty = Math.min(3, card.stock ?? 3);
-    const imgUrl = img?.image_url_small ?? img?.image_url;
-
-    const handleAdd = (e) => {
-        onAdd({card, set, qty}, e);
-        setQty(1); // reset after confirm
-    };
-
-    return (
-        <div
-            className="flex flex-col bg-[#0d1117] rounded-xl overflow-hidden group transition-all duration-300 hover:-translate-y-1.5"
-            style={{border: `1px solid ${rStyle.e}`, animation: `fadeUp .3s ease ${delay}ms both`}}
-            onMouseEnter={e => e.currentTarget.style.boxShadow = `0 8px 28px rgba(0,0,0,.6), 0 0 14px ${rStyle.e}`}
-            onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}
-        >
-            {/* Image */}
-            <div className="relative overflow-hidden aspect-[0.71] bg-gradient-to-br from-[#0c1420] to-[#130e00]">
-                {imgUrl
-                    ? <img src={imgUrl} alt={card.name}
-                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                           onError={e => e.target.style.display = "none"}/>
-                    : <div className="w-full h-full flex items-center justify-center text-[#7a6f5e] text-xs italic">no
-                        image</div>
-                }
-                <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[#0d1117] to-transparent"/>
-                <div className={`absolute top-2 right-2 text-[10px] font-bold px-2 py-[3px] rounded-md leading-none
-    ${oos ? "bg-red-950/90 text-red-400" : "bg-black/70 text-emerald-400"}`}>
-                    {oos ? t.outOfStock : `×${card.stock}`}
-                </div>
-            </div>
-
-            {/* Body */}
-            <div className="p-3 flex flex-col gap-2 flex-1">
-
-                {/* Nom */}
-                <p className="text-xs font-bold leading-snug line-clamp-2"
-                   style={{fontFamily: "Georgia,serif", color: "#e8dcc8"}}>
-                    {card.name}
-                </p>
-
-                {/* Type + Rareté sur la même ligne */}
-                <div className="flex items-center justify-between gap-1 min-w-0">
-                    {card.type && (
-                        <p className="text-[11px] italic text-[#c9973a] opacity-80 truncate flex-1">
-                            {card.type?.toString().replaceAll("_", " ")}
-                        </p>
-                    )}
-                    {set?.set_rarity && (
-                        <span
-                            className="shrink-0 text-[9px] font-bold px-2 py-[3px] rounded-full tracking-wide leading-none whitespace-nowrap"
-                            style={{color: rStyle.c, background: rStyle.b, border: `1px solid ${rStyle.e}`}}>
-                            {set.set_rarity}
-                        </span>
-                    )}
-                </div>
-
-                {/* Set name + code */}
-                {set && (
-                    <div className="text-[11px] leading-snug space-y-0.5">
-                        {set.set_name && (
-                            <p className="text-[#9a8e7a] line-clamp-1">{set.set_name}</p>
-                        )}
-                        {set.set_code && (
-                            <p className="font-mono tracking-wider font-semibold"
-                               style={{color: rStyle.c, opacity: 0.8}}>
-                                {set.set_code}
-                            </p>
-                        )}
-                    </div>
-                )}
-
-                {/* Prix */}
-                <div className="pt-2 border-t border-white/5 mt-auto flex flex-col gap-2">
-                    <div className="flex items-center justify-between">
-                        {cad
-                            ? <span className="text-sm font-bold text-[#e8c06a]">
-                                ${cad} <span className="text-[10px] text-[#7a6f5e] font-normal">CAD</span>
-                              </span>
-                            : <span className="text-sm text-[#7a6f5e]">—</span>
-                        }
-                        {/* Sous-total si qty > 1 */}
-                        {cad && qty > 1 && (
-                            <span className="text-[10px] text-[#9a8e7a]">
-                                = ${(parseFloat(cad) * qty).toFixed(2)}
-                            </span>
-                        )}
-                    </div>
-
-                    {/* Sélecteur quantité + bouton confirmer */}
-                    {!oos && (
-                        <div className="flex items-center gap-2">
-                            {/* − / qty / + */}
-                            <div className="flex items-center rounded-lg overflow-hidden border"
-                                 style={{borderColor: rStyle.e}}>
-                                <button
-                                    onClick={() => setQty(q => Math.max(1, q - 1))}
-                                    disabled={qty <= 1}
-                                    className="w-7 h-7 text-base flex items-center justify-center transition-all duration-150 hover:opacity-80 disabled:opacity-25 disabled:cursor-not-allowed"
-                                    style={{color: rStyle.c, background: rStyle.b}}
-                                >−
-                                </button>
-                                <span className="w-6 text-center text-xs font-bold tabular-nums"
-                                      style={{color: rStyle.c}}>
-                                    {qty}
-                                </span>
-                                <button
-                                    onClick={() => setQty(q => Math.min(maxQty, q + 1))}
-                                    disabled={qty >= maxQty}
-                                    className="w-7 h-7 text-base flex items-center justify-center transition-all duration-150 hover:opacity-80 disabled:opacity-25 disabled:cursor-not-allowed"
-                                    style={{color: rStyle.c, background: rStyle.b}}
-                                >+
-                                </button>
-                            </div>
-
-                            {/* Bouton confirmer */}
-                            <button
-                                onClick={handleAdd}
-                                className="flex-1 h-7 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all duration-200 hover:brightness-110 active:scale-95"
-                                style={{background: rStyle.b, color: rStyle.c, border: `1px solid ${rStyle.e}`}}
-                                onMouseEnter={e => {
-                                    e.currentTarget.style.background = rStyle.c;
-                                    e.currentTarget.style.color = "#080a0f";
-                                }}
-                                onMouseLeave={e => {
-                                    e.currentTarget.style.background = rStyle.b;
-                                    e.currentTarget.style.color = rStyle.c;
-                                }}
-                            >
-                                Ajouter
-                            </button>
-                        </div>
-                    )}
-
-                    {/* Épuisé fallback */}
-                    {oos && (
-                        <div
-                            className="w-full h-7 rounded-lg flex items-center justify-center text-[10px] font-bold tracking-widest uppercase text-red-400/50 border border-red-500/20 cursor-not-allowed">
-                            Épuisé
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
-}
-
-// ── Page ───────────────────────────────────────────────────────────────────
 export default function YughiohInventory({language = "fr"}) {
     const t = translations[language].yughiohInventory;
     const {cards, loading, error, fetchAllCards, searchCards} = useYughioInventoryStore();
+
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(0);
     const [toast, setToast] = useState(null);
+
+    const [filter, setFilter] = useState("All");
+    const [sortBy, setSortBy] = useState("default");
+    const [stockOnly, setStockOnly] = useState(false);
+
+    const TYPE_TABS = [
+        {key: "All",     label: t.filterAll    ?? "Tout"},
+        {key: "Monster", label: t.filterMonster ?? "Monstre"},
+        {key: "Spell",   label: t.filterSpell   ?? "Magie"},
+        {key: "Trap",    label: t.filterTrap    ?? "Piège"},
+    ];
 
     useEffect(() => {
         if (search.trim().length > 1) searchCards(search.trim(), page, PAGE_SIZE);
@@ -213,6 +68,10 @@ export default function YughiohInventory({language = "fr"}) {
         if (val.trim().length > 1) searchCards(val.trim(), 0, PAGE_SIZE);
         else if (!val.trim()) fetchAllCards(0, PAGE_SIZE);
     };
+
+    const handleFilterChange = (val) => { setFilter(val); setPage(0); };
+    const handleSortChange   = (val) => { setSortBy(val);  setPage(0); };
+    const handleStockToggle  = ()    => { setStockOnly(s => !s); setPage(0); };
 
     const rarityMap = useMemo(() => buildRarityMap(cards), [cards]);
 
@@ -230,11 +89,44 @@ export default function YughiohInventory({language = "fr"}) {
             }));
         }), [cards]);
 
+    const filteredVariants = useMemo(() => {
+        let list = allVariants;
+
+        if (filter === "Monster") {
+            list = list.filter(({card}) =>
+                card.type && !card.type.includes("Spell") && !card.type.includes("Trap")
+            );
+        } else if (filter === "Spell") {
+            list = list.filter(({card}) => card.type?.includes("Spell"));
+        } else if (filter === "Trap") {
+            list = list.filter(({card}) => card.type?.includes("Trap"));
+        }
+
+        if (stockOnly) {
+            list = list.filter(({card}) => card.stock > 0);
+        }
+
+        if (sortBy === "priceLow") {
+            list = [...list].sort((a, b) => {
+                const pa = parseFloat(a.set?.set_price || a.card.card_prices?.[0]?.cardmarket_price || 0);
+                const pb = parseFloat(b.set?.set_price || b.card.card_prices?.[0]?.cardmarket_price || 0);
+                return pa - pb;
+            });
+        } else if (sortBy === "priceHigh") {
+            list = [...list].sort((a, b) => {
+                const pa = parseFloat(a.set?.set_price || a.card.card_prices?.[0]?.cardmarket_price || 0);
+                const pb = parseFloat(b.set?.set_price || b.card.card_prices?.[0]?.cardmarket_price || 0);
+                return pb - pa;
+            });
+        }
+
+        return list;
+    }, [allVariants, filter, sortBy, stockOnly]);
+
     const variants = useMemo(() => {
         const start = page * PAGE_SIZE;
-        const end = start + PAGE_SIZE;
-        return allVariants.slice(start, end);
-    }, [allVariants, page]);
+        return filteredVariants.slice(start, start + PAGE_SIZE);
+    }, [filteredVariants, page]);
 
     useEffect(() => {
         window.scrollTo({top: 0, behavior: "smooth"});
@@ -251,8 +143,7 @@ export default function YughiohInventory({language = "fr"}) {
         <div className="min-h-screen bg-[#080a0f] text-[#e8dcc8] font-serif">
 
             {/* Header */}
-            <header
-                className="px-8 pt-10 pb-6 border-b border-[#c9973a]/20 flex flex-wrap items-end justify-between gap-4">
+            <header className="px-8 pt-10 pb-6 border-b border-[#c9973a]/20 flex flex-wrap items-end justify-between gap-4">
                 <div>
                     <p className="text-[10px] tracking-[0.4em] text-[#c9973a] uppercase mb-2 font-sans">
                         ⟡ {t.eyebrow}
@@ -267,14 +158,71 @@ export default function YughiohInventory({language = "fr"}) {
                         <input type="text" placeholder={t.searchPlaceholder} value={search} onChange={handleSearch}
                                className="bg-[#131920] border border-[#c9973a]/20 rounded-lg py-2 pl-8 pr-4 text-sm text-[#e8dcc8] placeholder-[#7a6f5e] italic outline-none focus:border-[#c9973a]/50 focus:ring-2 focus:ring-[#c9973a]/20 w-56 transition"/>
                     </div>
-                    <span
-                        className="text-xs tracking-widest text-[#c9973a] border border-[#c9973a]/20 bg-[#131920] rounded-full px-4 py-1.5">
+                    <span className="text-xs tracking-widest text-[#c9973a] border border-[#c9973a]/20 bg-[#131920] rounded-full px-4 py-1.5">
                         {variants.length} {t.cardsLabel}
                     </span>
                 </div>
             </header>
 
-            {/* Légende raretés */}
+            {/* ── Filter Bar ── */}
+            <div className="px-8 pt-4 pb-4 border-b border-[#c9973a]/10 flex flex-wrap items-center gap-3">
+
+                {/* Type tabs */}
+                <div className="flex rounded-xl overflow-hidden" style={{border: "1px solid rgba(201,151,58,0.25)"}}>
+                    {TYPE_TABS.map(({key, label}, idx) => (
+                        <button
+                            key={key}
+                            onClick={() => handleFilterChange(key)}
+                            className="px-5 py-2 text-xs font-bold tracking-widest uppercase transition-all duration-200"
+                            style={{
+                                background: filter === key ? "rgba(201,151,58,0.22)" : "rgba(255,255,255,0.02)",
+                                color: filter === key ? "#e8c06a" : "#9a8e7a",
+                                borderRight: idx < TYPE_TABS.length - 1 ? "1px solid rgba(201,151,58,0.15)" : "none",
+                            }}
+                        >
+                            {label}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Separator */}
+                <div className="w-px h-6 bg-[#c9973a]/20 mx-1" />
+
+                {/* Sort select */}
+                <select
+                    value={sortBy}
+                    onChange={e => handleSortChange(e.target.value)}
+                    className="px-4 py-2 rounded-xl text-xs font-bold tracking-wide uppercase outline-none transition-all cursor-pointer"
+                    style={{
+                        background: "rgba(255,255,255,0.04)",
+                        color: "#c9a96e",
+                        border: "1px solid rgba(201,151,58,0.25)",
+                    }}
+                >
+                    <option value="default">{t.sortBy ?? "Trier par…"}</option>
+                    <option value="priceLow">{t.sortPriceLow  ?? "Prix ↑"}</option>
+                    <option value="priceHigh">{t.sortPriceHigh ?? "Prix ↓"}</option>
+                </select>
+
+                {/* In Stock toggle */}
+                <button
+                    onClick={handleStockToggle}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold tracking-wide uppercase transition-all duration-200"
+                    style={{
+                        background: stockOnly ? "rgba(52,211,153,0.15)" : "rgba(255,255,255,0.04)",
+                        color: stockOnly ? "#34d399" : "#9a8e7a",
+                        border: `1px solid ${stockOnly ? "rgba(52,211,153,0.45)" : "rgba(201,151,58,0.25)"}`,
+                    }}
+                >
+                    <span
+                        className="w-2.5 h-2.5 rounded-full transition-colors shrink-0"
+                        style={{background: stockOnly ? "#34d399" : "rgba(255,255,255,0.15)"}}
+                    />
+                    {t.inStock ?? "En stock"}
+                </button>
+            </div>
+
+            {/* Rarity legend */}
             {rarityMap.size > 0 && (
                 <div className="px-8 pt-4 pb-2 flex flex-wrap gap-2">
                     {[...rarityMap.entries()].map(([name, s]) => (
@@ -286,12 +234,11 @@ export default function YughiohInventory({language = "fr"}) {
                 </div>
             )}
 
-            {/* Contenu */}
+            {/* Content */}
             <main className="px-8 py-6">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
-                        <div
-                            className="w-10 h-10 border-2 border-[#c9973a]/20 border-t-[#c9973a] rounded-full animate-spin"/>
+                        <div className="w-10 h-10 border-2 border-[#c9973a]/20 border-t-[#c9973a] rounded-full animate-spin"/>
                         <p className="text-xs tracking-[0.3em] text-[#7a6f5e] uppercase">{t.loadingText}</p>
                     </div>
                 ) : error ? (
@@ -329,7 +276,7 @@ export default function YughiohInventory({language = "fr"}) {
                                 {t.prevPage}
                             </button>
                             <span className="text-xs text-[#7a6f5e] tracking-widest tabular-nums">Page {page + 1}</span>
-                            <button onClick={() => setPage(p => p + 1)} disabled={cards.length < PAGE_SIZE}
+                            <button onClick={() => setPage(p => p + 1)} disabled={variants.length < PAGE_SIZE}
                                     className="px-5 py-2 text-xs tracking-widest border border-[#c9973a]/30 rounded-lg text-[#c9973a] hover:bg-[#c9973a]/10 transition disabled:opacity-30 disabled:cursor-not-allowed">
                                 {t.nextPage}
                             </button>

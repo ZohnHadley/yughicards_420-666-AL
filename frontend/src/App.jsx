@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/home/Home.jsx";
 import VendezNous from "./pages/VendezNous";
 import About from "./pages/About";
-import YughiohInventory from "./pages/YughiohInventory";
+import YughiohInventory from "./pages/YughiohInventory.jsx";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer.jsx";

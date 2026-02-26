@@ -9,5 +9,14 @@ export const YughiohInventoryEn = {
     prevPage: "← Previous",
     nextPage: "Next →",
     toastAdd: "added",
-    outOfStock: "Out of stock"
+    outOfStock: "Out of stock",
+    filterMonster: "Monster",
+    filterSpell: "Spell",
+    filterTrap: "Trap",
+    sortBy: "Sort by…",
+    sortPriceLow: "Price ↑",
+    sortPriceHigh: "Price ↓",
+    sortRarity: "Rarity",
+    sortAtk: "ATK",
+    inStock: "In Stock",
 };

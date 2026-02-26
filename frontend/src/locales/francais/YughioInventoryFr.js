@@ -9,5 +9,15 @@ export const YughiohInventoryFr = {
     prevPage: "← Précédent",
     nextPage: "Suivant →",
     toastAdd: "ajoutée",
-    outOfStock: "Épuisé"
+    outOfStock: "Épuisé",
+    filterAll: "Tout",
+    filterMonster: "Monstre",
+    filterSpell: "Magie",
+    filterTrap: "Piège",
+    sortBy: "Trier par…",
+    sortPriceLow: "Prix ↑",
+    sortPriceHigh: "Prix ↓",
+    sortRarity: "Rareté",
+    sortAtk: "ATK",
+    inStock: "En stock",
 };
