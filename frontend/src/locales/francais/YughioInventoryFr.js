@@ -8,5 +8,6 @@ export const YughiohInventoryFr = {
     loadingText: "Invocation en cours...",
     prevPage: "← Précédent",
     nextPage: "Suivant →",
-    toastAdd: "ajoutée"
+    toastAdd: "ajoutée",
+    outOfStock: "Épuisé"
 };

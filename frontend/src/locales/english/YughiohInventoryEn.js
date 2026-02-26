@@ -8,5 +8,6 @@ export const YughiohInventoryEn = {
     loadingText: "Summoning cards...",
     prevPage: "← Previous",
     nextPage: "Next →",
-    toastAdd: "added"
+    toastAdd: "added",
+    outOfStock: "Out of stock"
 };
