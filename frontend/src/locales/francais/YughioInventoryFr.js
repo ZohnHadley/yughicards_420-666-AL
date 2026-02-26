@@ -1,5 +1,6 @@
 export const YughiohInventoryFr = {
-    title: "Card Vault",
+    title: "Coffre à Cartes",
+    eyebrow: "Collection Yughi-Cards",
     subtitle: "Découvrez les cartes légendaires et puissantes",
     searchPlaceholder: "Rechercher une carte...",
     cardsLabel: "cartes",

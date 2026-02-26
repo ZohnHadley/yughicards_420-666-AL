@@ -39,15 +39,21 @@ const DEFAULT_STYLE = PALETTE[0];
 // ── CardTile ───────────────────────────────────────────────────────────────
 function CardTile({ card, set, img, rarityMap, onAdd, delay }) {
     const rStyle = (set?.set_rarity && rarityMap.get(set.set_rarity)) ?? DEFAULT_STYLE;
+    const [qty, setQty] = useState(1);
 
-    // Prix : utilise set_price si dispo (propre à ce set), sinon cardmarket comme fallback
     const rawPrice = set?.set_price && parseFloat(set.set_price) > 0
         ? parseFloat(set.set_price)
         : parseFloat(card.card_prices?.[0]?.cardmarket_price || 0);
     const cad = rawPrice > 0 ? (rawPrice * USD_TO_CAD).toFixed(2) : null;
 
     const oos    = !card.stock || card.stock <= 0;
+    const maxQty = Math.min(3, card.stock ?? 3);
     const imgUrl = img?.image_url_small ?? img?.image_url;
+
+    const handleAdd = (e) => {
+        onAdd({ card, set, qty }, e);
+        setQty(1); // reset after confirm
+    };
 
     return (
         <div
@@ -80,20 +86,20 @@ function CardTile({ card, set, img, rarityMap, onAdd, delay }) {
                     {card.name}
                 </p>
 
-                {/* Type */}
-                {card.type && (
-                    <p className="text-[11px] italic text-[#6a6050] line-clamp-1">
-                        {card.type?.toString().replaceAll("_", " ")}
-                    </p>
-                )}
-
-                {/* Rareté */}
-                {set?.set_rarity && (
-                    <span className="self-start text-[10px] font-bold px-2 py-[3px] rounded-full tracking-wide leading-none"
-                          style={{ color: rStyle.c, background: rStyle.b, border: `1px solid ${rStyle.e}` }}>
-                        {set.set_rarity}
-                    </span>
-                )}
+                {/* Type + Rareté sur la même ligne */}
+                <div className="flex items-center justify-between gap-1 min-w-0">
+                    {card.type && (
+                        <p className="text-[11px] italic text-[#c9973a] opacity-80 truncate flex-1">
+                            {card.type?.toString().replaceAll("_", " ")}
+                        </p>
+                    )}
+                    {set?.set_rarity && (
+                        <span className="shrink-0 text-[9px] font-bold px-2 py-[3px] rounded-full tracking-wide leading-none whitespace-nowrap"
+                              style={{ color: rStyle.c, background: rStyle.b, border: `1px solid ${rStyle.e}` }}>
+                            {set.set_rarity}
+                        </span>
+                    )}
+                </div>
 
                 {/* Set name + code */}
                 {set && (
@@ -110,24 +116,66 @@ function CardTile({ card, set, img, rarityMap, onAdd, delay }) {
                     </div>
                 )}
 
-                {/* Prix + bouton */}
-                <div className="flex items-center justify-between pt-2 border-t border-white/5 mt-auto">
-                    {cad
-                        ? <span className="text-sm font-bold text-[#e8c06a]">
-                            ${cad} <span className="text-[10px] text-[#7a6f5e] font-normal">CAD</span>
-                          </span>
-                        : <span className="text-sm text-[#7a6f5e]">—</span>
-                    }
-                    <button
-                        onClick={(e) => onAdd({ card, set }, e)}
-                        disabled={oos}
-                        className="w-7 h-7 rounded-full border text-lg flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-25 disabled:cursor-not-allowed"
-                        style={{ borderColor: rStyle.e, color: rStyle.c }}
-                        onMouseEnter={e => { if (!oos) { e.currentTarget.style.background = rStyle.c; e.currentTarget.style.color = "#080a0f"; }}}
-                        onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = rStyle.c; }}
-                    >
-                        +
-                    </button>
+                {/* Prix */}
+                <div className="pt-2 border-t border-white/5 mt-auto flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                        {cad
+                            ? <span className="text-sm font-bold text-[#e8c06a]">
+                                ${cad} <span className="text-[10px] text-[#7a6f5e] font-normal">CAD</span>
+                              </span>
+                            : <span className="text-sm text-[#7a6f5e]">—</span>
+                        }
+                        {/* Sous-total si qty > 1 */}
+                        {cad && qty > 1 && (
+                            <span className="text-[10px] text-[#9a8e7a]">
+                                = ${(parseFloat(cad) * qty).toFixed(2)}
+                            </span>
+                        )}
+                    </div>
+
+                    {/* Sélecteur quantité + bouton confirmer */}
+                    {!oos && (
+                        <div className="flex items-center gap-2">
+                            {/* − / qty / + */}
+                            <div className="flex items-center rounded-lg overflow-hidden border"
+                                 style={{ borderColor: rStyle.e }}>
+                                <button
+                                    onClick={() => setQty(q => Math.max(1, q - 1))}
+                                    disabled={qty <= 1}
+                                    className="w-7 h-7 text-base flex items-center justify-center transition-all duration-150 hover:opacity-80 disabled:opacity-25 disabled:cursor-not-allowed"
+                                    style={{ color: rStyle.c, background: rStyle.b }}
+                                >−</button>
+                                <span className="w-6 text-center text-xs font-bold tabular-nums"
+                                      style={{ color: rStyle.c }}>
+                                    {qty}
+                                </span>
+                                <button
+                                    onClick={() => setQty(q => Math.min(maxQty, q + 1))}
+                                    disabled={qty >= maxQty}
+                                    className="w-7 h-7 text-base flex items-center justify-center transition-all duration-150 hover:opacity-80 disabled:opacity-25 disabled:cursor-not-allowed"
+                                    style={{ color: rStyle.c, background: rStyle.b }}
+                                >+</button>
+                            </div>
+
+                            {/* Bouton confirmer */}
+                            <button
+                                onClick={handleAdd}
+                                className="flex-1 h-7 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all duration-200 hover:brightness-110 active:scale-95"
+                                style={{ background: rStyle.b, color: rStyle.c, border: `1px solid ${rStyle.e}` }}
+                                onMouseEnter={e => { e.currentTarget.style.background = rStyle.c; e.currentTarget.style.color = "#080a0f"; }}
+                                onMouseLeave={e => { e.currentTarget.style.background = rStyle.b; e.currentTarget.style.color = rStyle.c; }}
+                            >
+                                Ajouter
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Épuisé fallback */}
+                    {oos && (
+                        <div className="w-full h-7 rounded-lg flex items-center justify-center text-[10px] font-bold tracking-widest uppercase text-red-400/50 border border-red-500/20 cursor-not-allowed">
+                            Épuisé
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
@@ -157,7 +205,6 @@ export default function YughiohInventory({ language = "fr" }) {
 
     const rarityMap = useMemo(() => buildRarityMap(cards), [cards]);
 
-    // Flatten: 1 tuile par (carte × set)
     const allVariants = useMemo(() =>
         cards.flatMap((card) => {
             const sets = card.card_sets ?? [];
@@ -172,7 +219,6 @@ export default function YughiohInventory({ language = "fr" }) {
             }));
         }), [cards]);
 
-// 👇 pagination réelle sur les tuiles
     const variants = useMemo(() => {
         const start = page * PAGE_SIZE;
         const end = start + PAGE_SIZE;
@@ -183,10 +229,10 @@ export default function YughiohInventory({ language = "fr" }) {
         window.scrollTo({ top: 0, behavior: "smooth" });
     }, [page]);
 
-    const addToCart = ({ card, set }, e) => {
+    const addToCart = ({ card, set, qty }, e) => {
         e.stopPropagation();
         const label = [card.name, set?.set_code, set?.set_rarity].filter(Boolean).join(" · ");
-        setToast(`✦ ${label} ajoutée`);
+        setToast(`✦ ${qty}× ${label} ajoutée${qty > 1 ? "s" : ""}`);
         setTimeout(() => setToast(null), 2200);
     };
 
@@ -196,7 +242,9 @@ export default function YughiohInventory({ language = "fr" }) {
             {/* Header */}
             <header className="px-8 pt-10 pb-6 border-b border-[#c9973a]/20 flex flex-wrap items-end justify-between gap-4">
                 <div>
-                    <p className="text-[10px] tracking-[0.4em] text-[#c9973a] uppercase mb-2 font-sans">⟡ Yughistore Collection</p>
+                    <p className="text-[10px] tracking-[0.4em] text-[#c9973a] uppercase mb-2 font-sans">
+                        ⟡ {t.eyebrow}
+                    </p>
                     <h1 className="text-5xl font-black tracking-tight bg-gradient-to-br from-[#e8c06a] via-[#c9973a] to-[#a07828] bg-clip-text text-transparent"
                         style={{ fontFamily: "Georgia,serif" }}>{t.title}</h1>
                     <p className="text-[#7a6f5e] italic mt-1 text-sm">{t.subtitle}</p>
@@ -213,7 +261,7 @@ export default function YughiohInventory({ language = "fr" }) {
                 </div>
             </header>
 
-            {/* Légende raretés — taille augmentée */}
+            {/* Légende raretés */}
             {rarityMap.size > 0 && (
                 <div className="px-8 pt-4 pb-2 flex flex-wrap gap-2">
                     {[...rarityMap.entries()].map(([name, s]) => (
@@ -241,7 +289,6 @@ export default function YughiohInventory({ language = "fr" }) {
                     </div>
                 ) : (
                     <>
-                        {/* Grille fixe 5 colonnes */}
                         <div className="grid grid-cols-5 gap-4">
                             {variants.map(({ card, set, img, key }, i) => (
                                 <CardTile
