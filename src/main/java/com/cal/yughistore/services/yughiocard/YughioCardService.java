@@ -9,16 +9,15 @@ import com.cal.yughistore.model.yughiocard.enums.EnumCardType;
 import com.cal.yughistore.model.yughiocard.enums.EnumFrameType;
 import com.cal.yughistore.model.yughiocard.properties.CardProperties;
 import com.cal.yughistore.repository.CardSetsRepository;
+import com.cal.yughistore.services.dto.yughiocard.*;
 import com.cal.yughistore.utils.SimpleEnumUtils;
 import com.cal.yughistore.repository.CardImagesRepository;
 import com.cal.yughistore.repository.CardPricesRepository;
 import com.cal.yughistore.repository.propertie.CardPropertiesRepository;
 import com.cal.yughistore.repository.YughioCardRepository;
-import com.cal.yughistore.services.dto.yughiocard.YughioCardDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.*;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +45,7 @@ public class YughioCardService {
     }
 
     public Boolean checkIfExist(YughioCardDTO dtoCard) {
-        return cardRepository.existsYughioCardByApiId(dtoCard.getApiId());
+        return cardRepository.existsYughioCardByApiId(dtoCard.getApi_id());
     }
 
 
@@ -63,18 +62,22 @@ public class YughioCardService {
         saveCardProperties(savedCard);
 
         //card sets
-        for (CardSets cardSets : dtoCard.getCard_sets()) {
-            cardSets.setYughioCard(savedCard);
-            cardSetsRepository.save(cardSets);
+        for (CardSetsDTO cardSetsDto : dtoCard.getCard_sets()) {
+            CardSets cardSet = cardSetsDto.toCardSets();
+            cardSet.setYughioCard(savedCard);
+            cardSetsRepository.save(cardSet);
         }
 
         //card images
-        for (CardImages cardImages : dtoCard.getCard_images()) {
+        for (CardImagesDTO cardImagesDTO : dtoCard.getCard_images()) {
+            CardImages cardImages = cardImagesDTO.toCardImages();
             cardImages.setYughioCard(savedCard);
             cardImagesRepository.save(cardImages);
         }
+
         //card prices
-        for (CardPrices cardPrices : dtoCard.getCard_prices()) {
+        for (CardPricesDTO cardPricesDTO : dtoCard.getCard_prices()) {
+            CardPrices cardPrices = cardPricesDTO.toCardPrices();
             cardPrices.setYughioCard(savedCard);
             cardPriceRepository.save(cardPrices);
         }
@@ -202,6 +205,42 @@ public class YughioCardService {
     }
 
     @Transactional(readOnly = true)
+    public List<YughioCardSetVarientDTO> getAllCardSetsPaged(int page, int num) {
+        if (page < 0) {
+            throw new IllegalArgumentException("page must be >= 0");
+        }
+        if (num <= 0) {
+            throw new IllegalArgumentException("num must be > 0");
+        }
+
+        Pageable pageable = PageRequest.of(page, num, Sort.by(Sort.Direction.ASC, "id"));
+        Page<CardSets> cardSets = cardSetsRepository.findAll(pageable);
+
+
+
+        List<YughioCardSetVarientDTO> cardList = new ArrayList<>();
+        for (CardSets cardSet : cardSets) {
+            YughioCardSetVarientDTO varientDTO = YughioCardSetVarientDTO.of(cardSet.getYughioCard());
+            varientDTO.setName(cardSet.getSetName());
+            varientDTO.setSet_code(cardSet.getSetCode());
+            varientDTO.setSet_rarity(cardSet.getSetRarity());
+            varientDTO.setSet_rarity_code(cardSet.getSetRarityCode());
+            varientDTO.setSet_price(cardSet.getSetPrice());
+            cardList.add(varientDTO);
+        }
+
+
+        if (cardList.isEmpty()) {
+            logger.info("YughioCardService : getting all cards paged (page={}, size={}) -> 0 results", page, num);
+            return List.of();
+        }
+
+        logger.info("YughioCardService : getting all cards paged (page={}, size={}) -> {} results",
+                page, num, cardList.size());
+        return cardList;
+    }
+
+    @Transactional(readOnly = true)
     public YughioCardDTO getById(Long id) {
         if (id == null || id == -1) {
             throw new RuntimeException("card id cannot be blank");
@@ -322,7 +361,9 @@ public class YughioCardService {
             throw new RuntimeException("rarity cannot be null");
         }
         EnumCardSetRarity requestedRarity = SimpleEnumUtils.findEnumValue(EnumCardSetRarity.class, rarity.toUpperCase().replaceAll("\\s", "_").replaceAll("-", "_"));
+
         Page<CardSets> cardSets = cardSetsRepository.getCardSetsBySetRarity(requestedRarity, PageRequest.of(page, num));
+
         List<YughioCardDTO> cardList = new ArrayList<>();
         for (CardSets cardSet : cardSets) {
             cardList.add(YughioCardDTO.of(cardSet.getYughioCard()));

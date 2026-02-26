@@ -1,6 +1,7 @@
 package com.cal.yughistore.presentation;
 
 import com.cal.yughistore.services.dto.yughiocard.YughioCardDTO;
+import com.cal.yughistore.services.dto.yughiocard.YughioCardSetVarientDTO;
 import com.cal.yughistore.services.yughiocard.YughioCardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -72,6 +73,18 @@ public class CardApiController {
 
     /// ///
 
+    /// get all card sets + pagination ///
+
+    @GetMapping("/get-all-card-sets/page={pageNumber}/num={numberOfCards}")
+    public ResponseEntity<List<YughioCardSetVarientDTO>> getAllCardSetsPagedInformation(@PathVariable int pageNumber, @PathVariable int numberOfCards) {
+        return ResponseEntity.ok(cardService.getAllCardSetsPaged(pageNumber, numberOfCards));
+    }
+
+    @GetMapping("/get-all-card-sets/page={pageNumber}")
+    public ResponseEntity<List<YughioCardSetVarientDTO>> getAllCardSetsPagedInformation(@PathVariable int pageNumber) {
+        return ResponseEntity.ok(cardService.getAllCardSetsPaged(pageNumber, pagination_default_number_of_elements_per_page));
+    }
+
     /// get all cards by frameType + pagination ///
 
     @GetMapping("/get-all-cards/frame={frameType}/page={pageNumber}/num={numberOfCards}")
@@ -98,12 +111,12 @@ public class CardApiController {
         return ResponseEntity.ok(cardService.getByTypePaged(cardType, pageNumber, pagination_default_number_of_elements_per_page));
     }
 
-    // Get all versions (sets + raretés) of a card by name
-    @GetMapping("/get-card/all-versions/name={cardName}")
-    public ResponseEntity<List<YughioCardDTO>> getAllVersionsOfCard(@PathVariable String cardName) {
-        List<YughioCardDTO> cards = cardService.getAllVersionsOfCard(cardName);
-        return ResponseEntity.ok(cards);
-    }
+//    // Get all versions (sets + raretés) of a card by name
+//    @GetMapping("/get-card/all-versions/name={cardName}")
+//    public ResponseEntity<List<YughioCardDTO>> getAllVersionsOfCard(@PathVariable String cardName) {
+//        List<YughioCardDTO> cards = cardService.getAllVersionsOfCard(cardName);
+//        return ResponseEntity.ok(cards);
+//    }
 
     /// ///
 

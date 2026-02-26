@@ -25,22 +25,28 @@ public class CardSets {
     String setRarityCode;
     Double setPrice;
 
+    Integer quantityInStock = 0;
+
     @ManyToOne
     @JsonBackReference
     private YughioCard yughioCard;
 
     @Builder
     public CardSets(
+            Long id,
             String setName,
             String setCode,
             EnumCardSetRarity setRarity,
             String setRarityCode,
-            Double setPrice
+            Double setPrice,
+            Integer quantityInStock
     ){
+        this.id = id;
         this.setName = setName;
         this.setCode = setCode;
         this.setRarity = setRarity;
         this.setRarityCode = setRarityCode;
         this.setPrice = setPrice;
+        this.quantityInStock = quantityInStock;
     }
 }

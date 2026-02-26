@@ -10,7 +10,7 @@ export function useYughioInventoryStore() {
         setLoading(true);
         setError(null);
         try {
-            const data = await YughioCardService.getAllCards(page, size);
+            const data = await YughioCardService.getAllCardsSets(page, size);
             setCards(data);
         } catch (err) {
             setError(err.message);

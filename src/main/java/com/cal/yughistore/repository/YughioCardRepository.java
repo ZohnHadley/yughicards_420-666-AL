@@ -14,10 +14,10 @@ public interface YughioCardRepository extends JpaRepository<YughioCard, Long>, J
     YughioCard getByName(String name);
 
     // Récupérer une carte exacte par nom (ignore case)
-    Optional<YughioCard> findByNameIgnoreCase(String name);
-
-    // Récupérer toutes les versions/sets d’une carte par nom (paged)
-    Page<YughioCard> findAllByNameIgnoreCaseOrderBySetNameAsc(String name, Pageable pageable);
+//    Optional<YughioCard> findByNameIgnoreCase(String name);
+//
+//    // Récupérer toutes les versions/sets d’une carte par nom (paged)
+//    Page<YughioCard> findAllByNameIgnoreCaseOrderBySetNameAsc(String name, Pageable pageable);
 
     // Recherche par nom partiel
     Page<YughioCard> findByNameContainingIgnoreCase(String name, Pageable pageable);

@@ -16,7 +16,7 @@ public class CardImages {
     @JsonBackReference
     private Long id;
 
-    private int imageGroupApiId;
+    private Integer imageGroupApiId;
     private String imageUrl;
     private String imageUrlSmall;
     private String imageUrlCropped;
@@ -27,11 +27,13 @@ public class CardImages {
 
     @Builder
     public CardImages(
-            int imageGroupApiId,
+            Long id,
+            Integer imageGroupApiId,
             String imageUrl,
             String imageUrlSmall,
             String imageUrlCropped
     ) {
+        this.id = id;
         this.imageGroupApiId = imageGroupApiId;
         this.imageUrl = imageUrl;
         this.imageUrlSmall = imageUrlSmall;

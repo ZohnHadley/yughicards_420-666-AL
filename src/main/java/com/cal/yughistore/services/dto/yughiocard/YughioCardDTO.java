@@ -1,15 +1,11 @@
 package com.cal.yughistore.services.dto.yughiocard;
 
-import com.cal.yughistore.model.yughiocard.CardImages;
-import com.cal.yughistore.model.yughiocard.CardPrices;
-import com.cal.yughistore.model.yughiocard.CardSets;
 import com.cal.yughistore.model.yughiocard.YughioCard;
 import com.cal.yughistore.model.yughiocard.enums.*;
 import com.cal.yughistore.model.yughiocard.properties.PropertiesMonsterCard;
 import com.cal.yughistore.model.yughiocard.properties.PropertiesSpellCard;
 import com.cal.yughistore.model.yughiocard.properties.PropertiesTrapCard;
 import com.cal.yughistore.model.yughiocard.properties.CardProperties;
-import com.cal.yughistore.utils.SimpleEnumUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 import org.slf4j.Logger;
@@ -17,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.cal.yughistore.services.dto.yughiocard.util.CardDtoUtil.*;
 
 @Data
 @Builder
@@ -29,168 +27,109 @@ public class YughioCardDTO {
     private static final Logger logger = LoggerFactory.getLogger(YughioCardDTO.class);
 
     /// base card properties (all cards have these) ///
-    private Long id;
-    private int apiId = -1;
+    @Builder.Default
+    private Long id = -1L;
+
+    @Builder.Default
+    private int api_id = -1;
+
+    @Builder.Default
     private String name = "";
+
+    @Builder.Default
     private EnumCardType type = EnumCardType.NULL;
-    private EnumFrameType frameType = EnumFrameType.NULL;
+
+    @Builder.Default
+    private EnumFrameType frame_type = EnumFrameType.NULL;
+
+    @Builder.Default
     private String description = "";
+
+    @Builder.Default
     private String ygoprodeck_url = "";
 
+    @Builder.Default
     private EnumCardStockStatus stock_status = EnumCardStockStatus.OUT_OF_STOCK;
+
+    @Builder.Default
     private int quantity_in_stock = 0;
 
     /// Properties (depends on card type (trap, spell, monster, etc) ) ///
-    private EnumPropertiesConfigType cardConfig;
-    private CardProperties cardProperties;
+    @Builder.Default
+    private EnumPropertiesConfigType card_config = EnumPropertiesConfigType.NULL;
+
+    private CardProperties card_properties;
 
     /// ///
-    private List<CardImages>  card_images;
-    private List<CardPrices> card_prices;
-    private List<CardSets> card_sets;
+    @Builder.Default
+    private List<CardSetsDTO> card_sets = new ArrayList<>();
+
+    @Builder.Default
+    private List<CardImagesDTO> card_images = new ArrayList<>();
+
+    @Builder.Default
+    private List<CardPricesDTO> card_prices = new ArrayList<>();
+
 
 
 
     /// static methode ///
-    public static CardProperties getCardProperties(EnumCardType cardType) {
-        if (cardType.name().toUpperCase().contains(EnumPropertiesConfigType.MONSTER.getName())) {
-            return new PropertiesMonsterCard();
-        } else if (cardType.name().toUpperCase().contains(EnumPropertiesConfigType.SPELL.getName())) {
-            return new PropertiesSpellCard();
-        } else if (cardType.name().toUpperCase().contains(EnumPropertiesConfigType.TRAP.getName())) {
-            return new PropertiesTrapCard();
-        }
-        return new CardProperties();
-    }
-
-    private static List<CardSets> cardSetsFromNode(JsonNode node) {
-        List<CardSets> cardSets = new ArrayList<>();
-        if (node == null) {
-            return cardSets;
-        }
-
-        JsonNode cardSetCollectionList = node.get("card_sets");
-        if (cardSetCollectionList == null || cardSetCollectionList.isNull() || !cardSetCollectionList.isArray()) {
-            return cardSets; // missing/nullable field => no sets
-        }
-
-        for (JsonNode cardSetCollection : cardSetCollectionList) {
-            if (cardSetCollection == null || cardSetCollection.isNull() || !cardSetCollection.isObject()) {
-                continue;
-            }
-            EnumCardSetRarity cardSetRarity = SimpleEnumUtils.findEnumValue(EnumCardSetRarity.class, cardSetCollection.path("set_rarity").asText().replaceAll("\\s", "_").replaceAll("-", "_"));
-
-            cardSets.add(
-                    CardSets.builder()
-                            .setName(cardSetCollection.path("set_name").asText(""))
-                            .setCode(cardSetCollection.path("set_code").asText(""))
-                            .setRarity(cardSetRarity)
-                            .setRarityCode(cardSetCollection.path("set_rarity_code").asText(""))
-                            .setPrice(cardSetCollection.path("set_price").asDouble(-1))
-                            .build()
-            );
-        }
-
-        return cardSets;
-    }
-
-    private static List<CardImages> cardImageGroupsFromNode(JsonNode node) {
-        List<CardImages> cardImages = new ArrayList<>();
-        if (node == null) {
-            return cardImages;
-        }
-
-        JsonNode imageCollectionList = node.get("card_images");
-        if (imageCollectionList == null || imageCollectionList.isNull() || !imageCollectionList.isArray()) {
-            return cardImages;
-        }
-        for (JsonNode imageCollection : imageCollectionList) {
-            cardImages.add(CardImages.builder()
-                    .imageGroupApiId(imageCollection.get("id").asInt())
-                    .imageUrl(imageCollection.get("image_url").asText(""))
-                    .imageUrlSmall(imageCollection.get("image_url_small").asText(""))
-                    .imageUrlCropped(imageCollection.get("image_url_cropped").asText(""))
-                    .build());
-        }
-        return cardImages;
-    }
-
-    private static List<CardPrices> cardPricesFromNode(JsonNode node) {
-        List<CardPrices> cardPrices = new ArrayList<>();
-        if (node == null) {
-            return cardPrices;
-        }
-
-        JsonNode priceCollectionList = node.get("card_prices");
-        if (priceCollectionList == null || priceCollectionList.isNull() || !priceCollectionList.isArray()) {
-            return cardPrices;
-        }
-        for (JsonNode imageCollection : priceCollectionList) {
-            cardPrices.add(CardPrices.builder()
-                    .cardmarketPrice(imageCollection.get("cardmarket_price").asDouble(-1))
-                    .tcgplayerPrice(imageCollection.get("tcgplayer_price").asDouble(-1))
-                    .ebayPrice(imageCollection.get("ebay_price").asDouble(-1))
-                    .amazonPrice(imageCollection.get("amazon_price").asDouble(-1))
-                    .coolstuffincPrice(imageCollection.get("coolstuffinc_price").asDouble(-1))
-                    .build());
-        }
-        return cardPrices;
-    }
-
+    ///
     public static YughioCardDTO of(JsonNode node) {
-        EnumCardType cardType = SimpleEnumUtils.findEnumValue(EnumCardType.class, node.get("type").asText().replaceAll("\\s", "_").replaceAll("-", "_"));
-        EnumFrameType frameType = SimpleEnumUtils.findEnumValue(EnumFrameType.class, node.get("frameType").asText().replaceAll("\\s", "_").replaceAll("-", "_"));
+        EnumCardType cardType = findPropertyEnumValue(EnumCardType.class, node.path("type").asText(""));
+        EnumFrameType frameType = findPropertyEnumValue(EnumFrameType.class, node.path("frameType").asText(""));
 
         EnumCardStockStatus stockStatus = EnumCardStockStatus.OUT_OF_STOCK;
-        if(node.get("stock_status") != null){
-            stockStatus =  SimpleEnumUtils.findEnumValue(EnumCardStockStatus.class, node.get("stock_status").asText().replaceAll("\\s", "_").replaceAll("-", "_"));
+        String stockStatusText = node.path("stock_status").asText(null);
+        if (stockStatusText != null && !stockStatusText.isBlank()) {
+            stockStatus = findPropertyEnumValue(EnumCardStockStatus.class, stockStatusText);
         }
 
-        CardProperties cardProperties = getCardProperties(cardType);
-        EnumPropertiesConfigType cardConfigType = EnumPropertiesConfigType.NULL;
-        if (cardProperties != null) {
-            if (cardProperties.getClass().equals(PropertiesMonsterCard.class)) {
-                cardConfigType = EnumPropertiesConfigType.MONSTER;
-                PropertiesMonsterCard monster = ((PropertiesMonsterCard) cardProperties);
-                monster.setAtk(node.get("atk").asInt());
-                monster.setDef(node.get("def").asInt());
-                monster.setLevel(node.get("level").asInt());
+        CardProperties cardProperties = checkCardProperties(cardType);
+        EnumPropertiesConfigType cardConfigType;
 
-                EnumMonsterCardRace race = SimpleEnumUtils.findEnumValue(EnumMonsterCardRace.class, node.get("race").asText().replaceAll("\\s", "_").replaceAll("-", "_"));
-                EnumCardAttribute attribute = SimpleEnumUtils.findEnumValue(EnumCardAttribute.class, node.get("attribute").asText().replaceAll("\\s", "_").replaceAll("-", "_"));
+        switch (cardProperties) {
+            case PropertiesMonsterCard monster -> {
+                cardConfigType = EnumPropertiesConfigType.MONSTER;
+
+                monster.setAtk(node.path("atk").asInt());
+                monster.setDef(node.path("def").asInt());
+                monster.setLevel(node.path("level").asInt());
+
+                EnumMonsterCardRace race = findPropertyEnumValue(EnumMonsterCardRace.class, node.path("race").asText(""));
+                EnumCardAttribute attribute = findPropertyEnumValue(EnumCardAttribute.class, node.path("attribute").asText(""));
 
                 monster.setRace(race);
                 monster.setAttribute(attribute);
-            }else if (cardProperties.getClass().equals(PropertiesSpellCard.class)) {
+            }
+            case PropertiesSpellCard propertiesSpellCard -> {
                 cardConfigType = EnumPropertiesConfigType.SPELL;
-                PropertiesSpellCard propertiesSpellCard = ((PropertiesSpellCard) cardProperties);
-                EnumNonMonsterCardRace race = SimpleEnumUtils.findEnumValue(EnumNonMonsterCardRace.class, node.get("race").asText());
+
+                EnumNonMonsterCardRace race = findPropertyEnumValue(EnumNonMonsterCardRace.class, node.path("race").asText(""));
                 propertiesSpellCard.setRace(race);
             }
-            else if (cardProperties.getClass().equals(PropertiesTrapCard.class)) {
+            case PropertiesTrapCard propertiesTrapCard -> {
                 cardConfigType = EnumPropertiesConfigType.TRAP;
-                PropertiesTrapCard propertiesTrapCard = ((PropertiesTrapCard) cardProperties);
-                EnumNonMonsterCardRace race = SimpleEnumUtils.findEnumValue(EnumNonMonsterCardRace.class, node.get("race").asText());
+
+                EnumNonMonsterCardRace race = findPropertyEnumValue(EnumNonMonsterCardRace.class, node.path("race").asText(""));
                 propertiesTrapCard.setRace(race);
             }
+            default -> cardConfigType = EnumPropertiesConfigType.NULL;
         }
 
         return YughioCardDTO.builder()
-                .apiId(node.get("id").asInt())
-                .name(node.get("name").asText().replaceAll("\"", ""))
+                .api_id(node.path("id").asInt(-1))
+                .name(node.path("name").asText("").replace("\"", ""))
                 .type(cardType)
-                .frameType(frameType)
-                .description(node.get("desc").asText())
-                .ygoprodeck_url(node.get("ygoprodeck_url").asText())
-
+                .frame_type(frameType)
+                .description(node.path("desc").asText(""))
+                .ygoprodeck_url(node.path("ygoprodeck_url").asText(""))
                 .stock_status(stockStatus)
-
-                .cardConfig(cardConfigType)
-                .cardProperties(cardProperties)
-
-                .card_sets(cardSetsFromNode(node))
-                .card_images(cardImageGroupsFromNode(node))
-                .card_prices(cardPricesFromNode(node))
+                .card_config(cardConfigType)
+                .card_properties(cardProperties)
+                .card_sets(cardSetsDTOFromNode(node))
+                .card_images(cardImageDTOFromNode(node))
+                .card_prices(cardPricesDTOFromNode(node))
                 .build();
     }
 
@@ -198,21 +137,21 @@ public class YughioCardDTO {
     public static YughioCardDTO of(YughioCard card) {
         return YughioCardDTO.builder()
                 .id(card.getId())
-                .apiId(card.getApiId())
+                .api_id(card.getApiId())
                 .name(card.getName())
                 .type(card.getType())
-                .frameType(card.getFrameType())
+                .frame_type(card.getFrameType())
                 .description(card.getDescription())
                 .ygoprodeck_url(card.getYgoprodeck_url())
                 .stock_status(card.getStockStatus())
                 .quantity_in_stock(card.getQuantity_in_stock())
 
-                .cardConfig(card.getCardConfig())
-                .cardProperties(card.getCardProperties())
+                .card_config(card.getCardConfig())
+                .card_properties(card.getCardProperties())
 
-                .card_sets(card.getCardSets())
-                .card_images(card.getCardImages())
-                .card_prices(card.getCardPrices())
+                .card_sets(cardSetsDTOFromList(card.getCardSets()))
+                .card_images(cardImageDTOFromList(card.getCardImages()))
+                .card_prices(cardPricesDTOFromList(card.getCardPrices()))
 
                 .build();
     }
@@ -220,24 +159,21 @@ public class YughioCardDTO {
     /// Non-static methodes ///
 
     public YughioCard toYughioCard() {
-        YughioCard card = YughioCard.builder()
-                .apiId(this.apiId)
+        return YughioCard.builder()
+                //                .id(this.id)
+                .apiId(this.api_id)
                 .name(this.name)
                 .type(this.type)
-                .frameType(this.frameType)
+                .frameType(this.frame_type)
                 .description(this.description)
                 .ygoprodeck_url(this.ygoprodeck_url)
                 .stockStatus(this.stock_status)
                 .quantity_in_stock(this.quantity_in_stock)
-
-                .cardConfig(this.cardConfig)
-                .cardProperties(this.cardProperties)
-
-                .cardSets(this.card_sets)
-                .cardImages(this.card_images)
-                .cardPrices(this.card_prices)
+                .cardConfig(this.card_config)
+                .cardProperties(this.card_properties)
+                .cardSets(cardSetsFromList(this.card_sets))
+                .cardImages(cardImagesFromList(this.card_images))
+                .cardPrices(cardPricesFromList(this.card_prices))
                 .build();
-
-        return card;
     }
 }
