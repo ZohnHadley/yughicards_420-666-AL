@@ -37,6 +37,16 @@ public class YughioCard {
     @Column(length = 1000)
     private String ygoprodeck_url;
 
+    @Column(nullable = true)
+    private Integer stock = 0;
+
+    private String rarity = "";
+
+    @Column(length = 200)
+    private String setName = "";
+    @Column(length = 50)
+    private String setCode = "";
+
     @OneToMany(
             mappedBy = "yughioCard",
             cascade = jakarta.persistence.CascadeType.ALL
@@ -56,6 +66,10 @@ public class YughioCard {
     @JsonManagedReference
     private CardProperties cardProperties;
 
+    @OneToMany(mappedBy = "yughioCard", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<CardSet> card_sets = new ArrayList<>();
+
 
 
     @Builder
@@ -64,13 +78,17 @@ public class YughioCard {
             int api_id,
             String name,
             EnumCardType type,
+            Integer stock,
             EnumFrameType frameType,
             String description,
             String ygoprodeck_url,
             EnumPropertiesConfigType cardConfig,
             CardProperties cardProperties,
             List<CardImages> card_images,
-            List<CardPrices> card_prices
+            List<CardPrices> card_prices,
+            String rarity,
+            String setName,
+            String setCode
     ) {
 
         this.id = id;
@@ -84,5 +102,9 @@ public class YughioCard {
         this.cardProperties = cardProperties;
         this.card_images = (card_images != null) ? card_images : new ArrayList<>();
         this.card_prices = (card_prices != null) ? card_prices : new ArrayList<>();
+        this.stock = stock;
+        this.rarity = rarity;
+        this.setName = setName;
+        this.setCode = setCode;
     }
 }

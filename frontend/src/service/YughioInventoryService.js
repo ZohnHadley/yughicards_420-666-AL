@@ -16,5 +16,11 @@ export const YughioCardService = {
         const res = await fetch(`http://localhost:8080/api/v1/get-all-cards/search=${name}/page=${page}/num=${size}`);
         if (!res.ok) throw new Error("Erreur lors de la recherche de cartes");
         return res.json();
+    },
+
+    getAllVersionsByName: async (name) => {
+        const res = await fetch(`http://localhost:8080/api/v1/get-card/all-versions/name=${name}`);
+        if (!res.ok) throw new Error("Erreur lors de la récupération des versions de la carte");
+        return res.json();
     }
 };
