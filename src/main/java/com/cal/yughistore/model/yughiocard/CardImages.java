@@ -15,10 +15,10 @@ public class CardImages {
     @JsonBackReference
     private Long id;
 
-    private int image_group_api_id;
-    private String image_url;
-    private String image_url_small;
-    private String image_url_cropped;
+    private int imageGroupApiId;
+    private String imageUrl;
+    private String imageUrlSmall;
+    private String imageUrlCropped;
 
     @ManyToOne
     @JsonBackReference
@@ -26,15 +26,15 @@ public class CardImages {
 
     @Builder
     public CardImages(
-            int image_group_api_id,
-            String image_url,
-            String image_url_small,
-            String image_url_cropped
+            int imageGroupApiId,
+            String imageUrl,
+            String imageUrlSmall,
+            String imageUrlCropped
     ) {
-        this.image_group_api_id = image_group_api_id;
-        this.image_url = image_url;
-        this.image_url_small = image_url_small;
-        this.image_url_cropped = image_url_cropped;
+        this.imageGroupApiId = imageGroupApiId;
+        this.imageUrl = imageUrl;
+        this.imageUrlSmall = imageUrlSmall;
+        this.imageUrlCropped = imageUrlCropped;
     }
 
 }

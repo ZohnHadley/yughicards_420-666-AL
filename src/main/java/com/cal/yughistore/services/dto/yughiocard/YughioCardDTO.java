@@ -82,11 +82,11 @@ public class YughioCardDTO {
 
             cardSets.add(
                     CardSets.builder()
-                            .set_name(cardSetCollection.path("set_name").asText(""))
-                            .set_code(cardSetCollection.path("set_code").asText(""))
-                            .set_rarity(cardSetRarity)
-                            .set_rarity_code(cardSetCollection.path("set_rarity_code").asText(""))
-                            .set_price(cardSetCollection.path("set_price").asDouble(-1))
+                            .setName(cardSetCollection.path("set_name").asText(""))
+                            .setCode(cardSetCollection.path("set_code").asText(""))
+                            .setRarity(cardSetRarity)
+                            .setRarityCode(cardSetCollection.path("set_rarity_code").asText(""))
+                            .setPrice(cardSetCollection.path("set_price").asDouble(-1))
                             .build()
             );
         }
@@ -106,10 +106,10 @@ public class YughioCardDTO {
         }
         for (JsonNode imageCollection : imageCollectionList) {
             cardImages.add(CardImages.builder()
-                    .image_group_api_id(imageCollection.get("id").asInt())
-                    .image_url(imageCollection.get("image_url").asText(""))
-                    .image_url_small(imageCollection.get("image_url_small").asText(""))
-                    .image_url_cropped(imageCollection.get("image_url_cropped").asText(""))
+                    .imageGroupApiId(imageCollection.get("id").asInt())
+                    .imageUrl(imageCollection.get("image_url").asText(""))
+                    .imageUrlSmall(imageCollection.get("image_url_small").asText(""))
+                    .imageUrlCropped(imageCollection.get("image_url_cropped").asText(""))
                     .build());
         }
         return cardImages;
@@ -127,11 +127,11 @@ public class YughioCardDTO {
         }
         for (JsonNode imageCollection : priceCollectionList) {
             cardPrices.add(CardPrices.builder()
-                    .cardmarket_price(imageCollection.get("cardmarket_price").asDouble(-1))
-                    .tcgplayer_price(imageCollection.get("tcgplayer_price").asDouble(-1))
-                    .ebay_price(imageCollection.get("ebay_price").asDouble(-1))
-                    .amazon_price(imageCollection.get("amazon_price").asDouble(-1))
-                    .coolstuffinc_price(imageCollection.get("coolstuffinc_price").asDouble(-1))
+                    .cardmarketPrice(imageCollection.get("cardmarket_price").asDouble(-1))
+                    .tcgplayerPrice(imageCollection.get("tcgplayer_price").asDouble(-1))
+                    .ebayPrice(imageCollection.get("ebay_price").asDouble(-1))
+                    .amazonPrice(imageCollection.get("amazon_price").asDouble(-1))
+                    .coolstuffincPrice(imageCollection.get("coolstuffinc_price").asDouble(-1))
                     .build());
         }
         return cardPrices;

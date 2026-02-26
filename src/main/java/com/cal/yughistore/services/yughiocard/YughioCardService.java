@@ -4,6 +4,7 @@ import com.cal.yughistore.model.yughiocard.CardImages;
 import com.cal.yughistore.model.yughiocard.CardPrices;
 import com.cal.yughistore.model.yughiocard.CardSets;
 import com.cal.yughistore.model.yughiocard.YughioCard;
+import com.cal.yughistore.model.yughiocard.enums.EnumCardSetRarity;
 import com.cal.yughistore.model.yughiocard.enums.EnumCardType;
 import com.cal.yughistore.model.yughiocard.enums.EnumFrameType;
 import com.cal.yughistore.model.yughiocard.properties.CardProperties;
@@ -17,6 +18,7 @@ import com.cal.yughistore.services.dto.yughiocard.YughioCardDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -271,6 +273,60 @@ public class YughioCardService {
         }
 
         logger.info("YughioCardService : getByName {}", cardList.toString());
+        return cardList;
+    }
+
+    @Transactional(readOnly = true)
+    public List<YughioCardDTO> getPriceGreaterThan(Double price, int page, int num) {
+        if (price == null) {
+            throw new RuntimeException("price cannot be null");
+        }
+        Page<CardSets> cardSets = cardSetsRepository.getCardSetsBySetPriceIsGreaterThan(price, PageRequest.of(page, num));
+        List<YughioCardDTO> cardList = new ArrayList<>();
+        for (CardSets cardSet : cardSets) {
+            cardList.add(YughioCardDTO.of(cardSet.getYughioCard()));
+        }
+        return cardList;
+    }
+
+    @Transactional(readOnly = true)
+    public List<YughioCardDTO> getPriceLesserThan(Double price, int page, int num) {
+        if (price == null) {
+            throw new RuntimeException("price cannot be null");
+        }
+        Page<CardSets> cardSets = cardSetsRepository.getCardSetsBySetPriceIsLessThan(price, PageRequest.of(page, num));
+        List<YughioCardDTO> cardList = new ArrayList<>();
+        for (CardSets cardSet : cardSets) {
+            cardList.add(YughioCardDTO.of(cardSet.getYughioCard()));
+        }
+        return cardList;
+    }
+
+    @Transactional(readOnly = true)
+    public List<YughioCardDTO> getByPriceBetween(Double minPrice, Double maxPrice, int page, int num) {
+        if (minPrice == null || maxPrice == null) {
+            throw new RuntimeException("minPrice and maxPrice cannot be null");
+        }
+
+        Page<CardSets> cardSets = cardSetsRepository.getCardSetsBySetPriceIsBetween(minPrice, maxPrice, PageRequest.of(page, num));
+        List<YughioCardDTO> cardList = new ArrayList<>();
+        for (CardSets cardSet : cardSets) {
+            cardList.add(YughioCardDTO.of(cardSet.getYughioCard()));
+        }
+        return cardList;
+    }
+
+    @Transactional(readOnly = true)
+    public List<YughioCardDTO> getBySetRarity(String rarity, int page, int num) {
+        if (rarity == null) {
+            throw new RuntimeException("rarity cannot be null");
+        }
+        EnumCardSetRarity requestedRarity = SimpleEnumUtils.findEnumValue(EnumCardSetRarity.class, rarity.toUpperCase().replaceAll("\\s", "_").replaceAll("-", "_"));
+        Page<CardSets> cardSets = cardSetsRepository.getCardSetsBySetRarity(requestedRarity, PageRequest.of(page, num));
+        List<YughioCardDTO> cardList = new ArrayList<>();
+        for (CardSets cardSet : cardSets) {
+            cardList.add(YughioCardDTO.of(cardSet.getYughioCard()));
+        }
         return cardList;
     }
 

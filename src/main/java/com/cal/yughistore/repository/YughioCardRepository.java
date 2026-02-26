@@ -6,8 +6,9 @@ import com.cal.yughistore.model.yughiocard.enums.EnumFrameType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface YughioCardRepository extends JpaRepository<YughioCard, Long> {
+public interface YughioCardRepository extends JpaRepository<YughioCard, Long>, JpaSpecificationExecutor<YughioCard> {
 
     YughioCard getById(Long id);
     YughioCard getByName(String name);
@@ -17,6 +18,6 @@ public interface YughioCardRepository extends JpaRepository<YughioCard, Long> {
     Page<YughioCard> getAllByFrameType(EnumFrameType frameType, Pageable pageable);
     Page<YughioCard> getAllByType(EnumCardType type, Pageable pageable);
 
-
     boolean existsYughioCardByApiId(int apiId);
+
 }

@@ -19,11 +19,11 @@ public class CardSets {
     @JsonBackReference
     private Long id;
 
-    String set_name;
-    String set_code;
-    EnumCardSetRarity set_rarity;
-    String set_rarity_code;
-    Double set_price;
+    String setName;
+    String setCode;
+    EnumCardSetRarity setRarity;
+    String setRarityCode;
+    Double setPrice;
 
     @ManyToOne
     @JsonBackReference
@@ -31,16 +31,16 @@ public class CardSets {
 
     @Builder
     public CardSets(
-            String set_name,
-            String set_code,
-            EnumCardSetRarity set_rarity,
-            String set_rarity_code,
-            Double set_price
+            String setName,
+            String setCode,
+            EnumCardSetRarity setRarity,
+            String setRarityCode,
+            Double setPrice
     ){
-        this.set_name = set_name;
-        this.set_code = set_code;
-        this.set_rarity = set_rarity;
-        this.set_rarity_code = set_rarity_code;
-        this.set_price = set_price;
+        this.setName = setName;
+        this.setCode = setCode;
+        this.setRarity = setRarity;
+        this.setRarityCode = setRarityCode;
+        this.setPrice = setPrice;
     }
 }
