@@ -91,7 +91,7 @@ public class SecurityConfiguration {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // ⚡ IMPORTANT : port exact de votre frontend
-        configuration.setAllowedOrigins(List.of("http://localhost:5174"));
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
 
         // Autoriser tous les principaux methods
         configuration.setAllowedMethods(Arrays.asList(
