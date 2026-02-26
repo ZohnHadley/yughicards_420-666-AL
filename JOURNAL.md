@@ -358,7 +358,7 @@
     - Projet Ose (ProjetOse_public): ([GITHUB](https://github.com/ZohnHadley/ProjetOse_public))
         
 ---
-### 25 février: (4pm - 10pm)) BE - Implémentation de la page pour afficher les cartes + moteur de recherche dans la page shop :
+### 25 février: (4pm - 10pm)) FE - Implémentation de la page pour afficher les cartes + moteur de recherche dans la page shop :
    **FE service**: Implémentation du service frontend permettant de communiquer avec les endpoints du backend.
    
    **store**: Appeler le service
@@ -380,9 +380,17 @@
 
    **moteur de recherche**: Permet à l’utilisateur de trouver rapidement une carte spécifique sans parcourir toute la pagination.
 
-
-
-
+---
+### 26 février: (4:pm - 5:40pm)) FE - Implémentation du filtrage:
+   
+**Filtrage** : Bouttons et dropdown qui permettent de filtrer l'inventaire des cartes
+   -filtrage par:
+      - Tout
+      - Monstre
+      - Magie
+      - Piège
+      - En stock
+      - Trier par prix ascendant et descendant
 
 
 
