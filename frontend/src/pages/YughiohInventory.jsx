@@ -35,8 +35,6 @@ function buildRarityMap(cards) {
     return map;
 }
 
-const DEFAULT_STYLE = PALETTE[0];
-
 export default function YughiohInventory({language = "fr"}) {
     const t = translations[language].yughiohInventory;
     const {cards, loading, error, fetchAllCards, searchCards} = useYughioInventoryStore();
@@ -45,16 +43,34 @@ export default function YughiohInventory({language = "fr"}) {
     const [page, setPage] = useState(0);
     const [toast, setToast] = useState(null);
 
-    const [filter, setFilter] = useState("All");
+    // activeFilters: Set of "Monster" | "Spell" | "Trap"
+    // Empty set = show all
+    const [activeFilters, setActiveFilters] = useState(new Set());
     const [sortBy, setSortBy] = useState("default");
     const [stockOnly, setStockOnly] = useState(false);
 
     const TYPE_TABS = [
-        {key: "All",     label: t.filterAll    ?? "Tout"},
         {key: "Monster", label: t.filterMonster ?? "Monstre"},
         {key: "Spell",   label: t.filterSpell   ?? "Magie"},
-        {key: "Trap",    label: t.filterTrap    ?? "Piège"},
+        {key: "Trap",    label: t.filterTrap     ?? "Piège"},
     ];
+
+    // Toggle a filter key:
+    // - if it's the only active one → deselect (back to All)
+    // - if it's active with others → just remove it
+    // - if it's inactive → add it
+    const handleFilterToggle = (key) => {
+        setActiveFilters(prev => {
+            const next = new Set(prev);
+            if (next.has(key)) {
+                next.delete(key);
+            } else {
+                next.add(key);
+            }
+            return next;
+        });
+        setPage(0);
+    };
 
     useEffect(() => {
         if (search.trim().length > 1) searchCards(search.trim(), page, PAGE_SIZE);
@@ -69,9 +85,8 @@ export default function YughiohInventory({language = "fr"}) {
         else if (!val.trim()) fetchAllCards(0, PAGE_SIZE);
     };
 
-    const handleFilterChange = (val) => { setFilter(val); setPage(0); };
-    const handleSortChange   = (val) => { setSortBy(val);  setPage(0); };
-    const handleStockToggle  = ()    => { setStockOnly(s => !s); setPage(0); };
+    const handleSortChange  = (val) => { setSortBy(val); setPage(0); };
+    const handleStockToggle = ()    => { setStockOnly(s => !s); setPage(0); };
 
     const rarityMap = useMemo(() => buildRarityMap(cards), [cards]);
 
@@ -92,12 +107,16 @@ export default function YughiohInventory({language = "fr"}) {
     const filteredVariants = useMemo(() => {
         let list = allVariants;
 
-        if (filter === "Monster") {
-            list = list.filter(({card}) => card.type?.toUpperCase().includes("MONSTER"));
-        } else if (filter === "Spell") {
-            list = list.filter(({card}) => card.type?.toUpperCase().includes("SPELL"));
-        } else if (filter === "Trap") {
-            list = list.filter(({card}) => card.type?.toUpperCase().includes("TRAP"));
+        // Multi-select type filter — empty set means "All"
+        if (activeFilters.size > 0) {
+            list = list.filter(({card}) => {
+                const type = card.type?.toUpperCase() ?? "";
+                return (
+                    (activeFilters.has("Monster") && type.includes("MONSTER")) ||
+                    (activeFilters.has("Spell")   && type.includes("SPELL"))   ||
+                    (activeFilters.has("Trap")    && type.includes("TRAP"))
+                );
+            });
         }
 
         if (stockOnly) {
@@ -119,7 +138,7 @@ export default function YughiohInventory({language = "fr"}) {
         }
 
         return list;
-    }, [allVariants, filter, sortBy, stockOnly]);
+    }, [allVariants, activeFilters, sortBy, stockOnly]);
 
     const variants = useMemo(() => {
         const start = page * PAGE_SIZE;
@@ -136,6 +155,8 @@ export default function YughiohInventory({language = "fr"}) {
         setToast(`✦ ${qty}× ${label} ajoutée${qty > 1 ? "s" : ""}`);
         setTimeout(() => setToast(null), 2200);
     };
+
+    const isAllActive = activeFilters.size === 0;
 
     return (
         <div className="min-h-screen bg-[#080a0f] text-[#e8dcc8] font-serif">
@@ -165,22 +186,42 @@ export default function YughiohInventory({language = "fr"}) {
             {/* ── Filter Bar ── */}
             <div className="px-8 pt-4 pb-4 border-b border-[#c9973a]/10 flex flex-wrap items-center gap-3">
 
-                {/* Type tabs */}
+                {/* Type tabs — individual toggles + "Tout" resets all */}
                 <div className="flex rounded-xl overflow-hidden" style={{border: "1px solid rgba(201,151,58,0.25)"}}>
-                    {TYPE_TABS.map(({key, label}, idx) => (
-                        <button
-                            key={key}
-                            onClick={() => handleFilterChange(key)}
-                            className="px-5 py-2 text-xs font-bold tracking-widest uppercase transition-all duration-200"
-                            style={{
-                                background: filter === key ? "rgba(201,151,58,0.22)" : "rgba(255,255,255,0.02)",
-                                color: filter === key ? "#e8c06a" : "#9a8e7a",
-                                borderRight: idx < TYPE_TABS.length - 1 ? "1px solid rgba(201,151,58,0.15)" : "none",
-                            }}
-                        >
-                            {label}
-                        </button>
-                    ))}
+
+                    {/* Tout — always visible, resets filters */}
+                    <button
+                        onClick={() => { setActiveFilters(new Set()); setPage(0); }}
+                        className="px-5 py-2 text-xs font-bold tracking-widest uppercase transition-all duration-200"
+                        style={{
+                            background: isAllActive ? "rgba(201,151,58,0.22)" : "rgba(255,255,255,0.02)",
+                            color: isAllActive ? "#e8c06a" : "#9a8e7a",
+                            borderRight: "1px solid rgba(201,151,58,0.15)",
+                        }}
+                    >
+                        {t.filterAll ?? "Tout"}
+                    </button>
+
+                    {/* Monster / Spell / Trap — individually toggleable */}
+                    {TYPE_TABS.map(({key, label}, idx) => {
+                        const isActive = activeFilters.has(key);
+                        return (
+                            <button
+                                key={key}
+                                onClick={() => handleFilterToggle(key)}
+                                className="px-5 py-2 text-xs font-bold tracking-widest uppercase transition-all duration-200"
+                                style={{
+                                    background: isActive ? "rgba(201,151,58,0.22)" : "rgba(255,255,255,0.02)",
+                                    color: isActive ? "#e8c06a" : "#9a8e7a",
+                                    borderRight: idx < TYPE_TABS.length - 1 ? "1px solid rgba(201,151,58,0.15)" : "none",
+                                    // Subtle underline indicator when active
+                                    boxShadow: isActive ? "inset 0 -2px 0 #c9973a" : "none",
+                                }}
+                            >
+                                {label}
+                            </button>
+                        );
+                    })}
                 </div>
 
                 {/* Separator */}
