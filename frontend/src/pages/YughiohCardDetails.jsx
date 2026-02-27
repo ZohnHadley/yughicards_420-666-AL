@@ -323,9 +323,12 @@ export default function YughiohCardDetails({ language = "fr" }) {
                                     <span className="text-[10px] tracking-[0.25em] uppercase text-[#7a6f5e] w-32 shrink-0 font-sans">{t.attribute}</span>
                                     <div className="flex items-center gap-2">
                                         {cardAttribute && (
-                                            <span className="text-base leading-none">
-                                                {({ DARK:"🌑", LIGHT:"☀️", FIRE:"🔥", WATER:"💧", EARTH:"🌿", WIND:"🌪️", DIVINE:"✨" })[cardAttribute] ?? "◆"}
-                                            </span>
+                                            <img
+                                                src={`/images/Attributes/${cardAttribute}.png`}
+                                                alt={cardAttribute}
+                                                className="w-6 h-6 object-contain"
+                                                onError={e => e.target.style.display = "none"}
+                                            />
                                         )}
                                         <span className="text-sm font-bold text-[#e8dcc8]">
                                             {cardAttribute ?? "—"}
@@ -335,7 +338,8 @@ export default function YughiohCardDetails({ language = "fr" }) {
 
                                 {/* ── 2. LEVEL / RANK / LINK RATING ── toujours affiché */}
                                 <div className="flex items-center gap-4 px-5 py-3 border-b border-white/5">
-                                    <span className="text-[10px] tracking-[0.25em] uppercase text-[#7a6f5e] w-32 shrink-0 font-sans">
+                                    <span
+                                        className="text-[10px] tracking-[0.25em] uppercase text-[#7a6f5e] w-32 shrink-0 font-sans">
                                         {isLink ? t.linkVal : isXyz ? t.rank : isPendulum ? t.scale : t.level}
                                     </span>
                                     <div className="flex items-center gap-2">
@@ -398,7 +402,34 @@ export default function YughiohCardDetails({ language = "fr" }) {
                         {!isMonster && (
                             <div className="rounded-2xl p-5"
                                  style={{ background: "rgba(13,17,23,0.7)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                                <InfoRow label={t.race}      value={cardRace} />
+                                {/* Spell/Trap subtype icon */}
+                                <div className="flex items-center gap-3 py-2 border-b border-white/5 mb-1">
+                                    <span className="text-[10px] tracking-[0.25em] uppercase text-[#7a6f5e] w-32 shrink-0 font-sans">{t.race}</span>
+                                    <div className="flex items-center gap-2">
+                                        {(() => {
+                                            // Map race/subtype to filename
+                                            const spellTrapMap = {
+                                                "Normal":      typeUpper.includes("SPELL") ? "SPELL" : "TRAP",
+                                                "Continuous":  "Continuous",
+                                                "Counter":     "Counter",
+                                                "Equip":       "Equip",
+                                                "Field":       "Field",
+                                                "Quick-Play":  "Quick-Play",
+                                                "Ritual":      "Ritual",
+                                            };
+                                            const iconFile = spellTrapMap[cardRace] ?? (typeUpper.includes("SPELL") ? "SPELL" : "TRAP");
+                                            return (
+                                                <img
+                                                    src={`/images/Attributes/${iconFile}.png`}
+                                                    alt={cardRace}
+                                                    className="w-6 h-6 object-contain"
+                                                    onError={e => e.target.style.display = "none"}
+                                                />
+                                            );
+                                        })()}
+                                        <span className="text-sm font-semibold text-[#e8dcc8]">{cardRace ?? "—"}</span>
+                                    </div>
+                                </div>
                                 <InfoRow label={t.archetype} value={fullCard?.archetype} />
                             </div>
                         )}
