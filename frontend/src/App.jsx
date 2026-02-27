@@ -10,6 +10,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer.jsx";
 import Contact from "./pages/Contact.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
+import YughiohCardDetails from "./pages/YughiohCardDetails.jsx";
 
 function App() {
     const [language, setLanguage] = useState("fr");
@@ -31,8 +32,12 @@ function App() {
                         <Route path="/inventaire" element={<YughiohInventory language={language}/>} />
                         <Route path="/about" element={<About language={language}/>} />
                         <Route path="/contact" element={<Contact language={language}/>} />
+
+                        {/* Page details des cartes */}
+                        <Route path="/cardDetails" element={<YughiohCardDetails language={language}/>} />
                     </Routes>
                 </main>
+
 
                 <Footer language={language} />
             </div>
