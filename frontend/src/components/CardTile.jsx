@@ -1,5 +1,6 @@
 // CardTile.jsx
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const DEFAULT_STYLE = {
     c: "#9ca3af",
@@ -10,27 +11,34 @@ const DEFAULT_STYLE = {
 export default function CardTile({ card, set, img, rarityMap, onAdd, delay, t }) {
     const rStyle = (set?.set_rarity && rarityMap.get(set.set_rarity)) ?? DEFAULT_STYLE;
     const [qty, setQty] = useState(1);
+    const navigate = useNavigate();
 
     const rawPrice = set?.set_price && parseFloat(set.set_price) > 0
         ? parseFloat(set.set_price)
         : parseFloat(card.card_prices?.[0]?.cardmarket_price || 0);
-    const cad = rawPrice > 0 ? (rawPrice * 1.36).toFixed(2) : null; // USD_TO_CAD
+    const cad = rawPrice > 0 ? (rawPrice * 1.36).toFixed(2) : null;
 
     const oos = !card.stock || card.stock <= 0;
     const maxQty = Math.min(3, card.stock ?? 3);
     const imgUrl = img?.image_url_small ?? img?.image_url;
 
     const handleAdd = (e) => {
+        e.stopPropagation();
         onAdd({ card, set, qty }, e);
         setQty(1);
     };
 
+    const handleClick = () => {
+        navigate("/cardDetails", { state: { card, set, img } });
+    };
+
     return (
         <div
-            className="flex flex-col bg-[#0d1117] rounded-xl overflow-hidden group transition-all duration-300 hover:-translate-y-1.5"
+            className="flex flex-col bg-[#0d1117] rounded-xl overflow-hidden group transition-all duration-300 hover:-translate-y-1.5 cursor-pointer"
             style={{ border: `1px solid ${rStyle.e}`, animation: `fadeUp .3s ease ${delay}ms both` }}
             onMouseEnter={e => e.currentTarget.style.boxShadow = `0 8px 28px rgba(0,0,0,.6), 0 0 14px ${rStyle.e}`}
             onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}
+            onClick={handleClick}
         >
             {/* Image */}
             <div className="relative overflow-hidden aspect-[0.71] bg-gradient-to-br from-[#0c1420] to-[#130e00]">
@@ -99,11 +107,11 @@ export default function CardTile({ card, set, img, rarityMap, onAdd, delay, t })
                     </div>
 
                     {!oos && (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
                             <div className="flex items-center rounded-lg overflow-hidden border"
                                  style={{ borderColor: rStyle.e }}>
                                 <button
-                                    onClick={() => setQty(q => Math.max(1, q - 1))}
+                                    onClick={e => { e.stopPropagation(); setQty(q => Math.max(1, q - 1)); }}
                                     disabled={qty <= 1}
                                     className="w-7 h-7 text-base flex items-center justify-center transition-all duration-150 hover:opacity-80 disabled:opacity-25 disabled:cursor-not-allowed"
                                     style={{ color: rStyle.c, background: rStyle.b }}
@@ -114,7 +122,7 @@ export default function CardTile({ card, set, img, rarityMap, onAdd, delay, t })
                                     {qty}
                                 </span>
                                 <button
-                                    onClick={() => setQty(q => Math.min(maxQty, q + 1))}
+                                    onClick={e => { e.stopPropagation(); setQty(q => Math.min(maxQty, q + 1)); }}
                                     disabled={qty >= maxQty}
                                     className="w-7 h-7 text-base flex items-center justify-center transition-all duration-150 hover:opacity-80 disabled:opacity-25 disabled:cursor-not-allowed"
                                     style={{ color: rStyle.c, background: rStyle.b }}

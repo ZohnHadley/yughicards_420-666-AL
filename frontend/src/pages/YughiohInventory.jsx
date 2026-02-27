@@ -2,24 +2,10 @@ import React, {useEffect, useState, useMemo} from "react";
 import {useYughioInventoryStore} from "../store/YughiohInventoryStore.js";
 import {translations} from "../locales/index.js";
 import CardTile from "../components/CardTile.jsx";
+import {RARITY_PALETTE} from "../theme/rarityPalette.js";
 
 const PAGE_SIZE = 20;
 const USD_TO_CAD = 1.36;
-
-const PALETTE = [
-    {c: "#9ca3af", b: "rgba(156,163,175,0.08)", e: "rgba(156,163,175,0.25)"},
-    {c: "#60a5fa", b: "rgba(96,165,250,0.08)", e: "rgba(96,165,250,0.28)"},
-    {c: "#a78bfa", b: "rgba(167,139,250,0.08)", e: "rgba(167,139,250,0.3)"},
-    {c: "#fbbf24", b: "rgba(251,191,36,0.08)", e: "rgba(251,191,36,0.35)"},
-    {c: "#f472b6", b: "rgba(244,114,182,0.1)", e: "rgba(244,114,182,0.4)"},
-    {c: "#e879f9", b: "rgba(232,121,249,0.1)", e: "rgba(232,121,249,0.45)"},
-    {c: "#34d399", b: "rgba(52,211,153,0.08)", e: "rgba(52,211,153,0.3)"},
-    {c: "#fb923c", b: "rgba(251,146,60,0.08)", e: "rgba(251,146,60,0.3)"},
-    {c: "#e2e8f0", b: "rgba(226,232,240,0.06)", e: "rgba(226,232,240,0.3)"},
-    {c: "#bfdbfe", b: "rgba(191,219,254,0.08)", e: "rgba(191,219,254,0.35)"},
-    {c: "#fde68a", b: "rgba(253,230,138,0.08)", e: "rgba(253,230,138,0.35)"},
-    {c: "#c9973a", b: "rgba(201,151,58,0.1)", e: "rgba(201,151,58,0.4)"},
-];
 
 function buildRarityMap(cards) {
     const map = new Map();
@@ -27,7 +13,7 @@ function buildRarityMap(cards) {
     for (const card of cards) {
         for (const s of (card.card_sets ?? [])) {
             if (s.set_rarity && !map.has(s.set_rarity)) {
-                map.set(s.set_rarity, PALETTE[i % PALETTE.length]);
+                map.set(s.set_rarity, RARITY_PALETTE[i % RARITY_PALETTE.length]);
                 i++;
             }
         }
