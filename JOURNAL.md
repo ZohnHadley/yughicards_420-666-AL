@@ -381,7 +381,7 @@
    **moteur de recherche**: Permet à l’utilisateur de trouver rapidement une carte spécifique sans parcourir toute la pagination.
 
 ---
-### 26 février: (4:pm - 5:40pm)) FE - Implémentation du filtrage:
+### 26 février: (4pm - 5:40pm)) FE - Implémentation du filtrage:
    
 **Filtrage** : Bouttons et dropdown qui permettent de filtrer l'inventaire des cartes
    -filtrage par:
@@ -391,6 +391,23 @@
       - Piège
       - En stock
       - Trier par prix ascendant et descendant
+
+---
+### 27 février: (3:20pm - 5:30pm)) FE - Implémentation des détails complets d'une carte lorsqu'on le clique:
+   **Affichages des informations(onClick)**: Lorsqu'on clique sur une carte dans l'inventaire, on affiche les détails complets:
+         Monster, spell and trap:
+            -Photo
+            -Nom de la carte
+            -Rareté
+            -Son effet
+            -prix
+            -les éditions
+         Monster specifiquement:
+            -Attribut
+            -Type
+            -Niveau
+            -Ses stats(atk et def) 
+
 
 
 
