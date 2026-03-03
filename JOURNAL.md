@@ -415,6 +415,7 @@
 - **Remue-méninges** de ce qu'on aurait besoin pour le pannier d'achat:
   - Type d'utilisateur (client).
   - Type d'item dans le panier (carte).
+  - Qui à access et comment il est accessible.
   - **fonctionnalités**:
     - Ajouter un item au panier.
     - Supprimer un item du panier.
