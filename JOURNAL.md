@@ -408,6 +408,18 @@
             -Niveau
             -Ses stats(atk et def) 
 
+---
+### 2 Mars: (4pm - 10pm)) BE - Implémentation du pannier d'achat du client :
+   **Recherche**:
+
+- **Remue-méninges** de ce qu'on aurait besoin pour le pannier d'achat:
+  - Type d'utilisateur (client).
+  - Type d'item dans le panier (carte).
+  - **fonctionnalités**:
+    - Ajouter un item au panier.
+    - Supprimer un item du panier.
+    
+- **Lue l'article de** [Denis Mutunga](https://medium.com/@denis.mutunga/back-end-architecture-for-the-cart-system-7c222bb99ef3) pour avoir une idée de comment implémenter le pannier d'achat.
 
 
 
