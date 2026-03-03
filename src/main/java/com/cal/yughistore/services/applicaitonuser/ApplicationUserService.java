@@ -72,7 +72,7 @@ public class ApplicationUserService {
                 );
         return switch (user.getRole()) {
             case ADMIN -> getAdminDTO(user.getId());
-            case CLIENT -> getStudentDTO(user.getId());
+            case CLIENT -> getClientDTO(user.getId());
         };
     }
 
@@ -85,31 +85,14 @@ public class ApplicationUserService {
                 : new ApplicationUserDTO();
     }
 
-    private ApplicationUserDTO getStudentDTO(Long id) {
-        final Optional<ClientUser> studentOptional = clientUserRepository.findById(
+    private ApplicationUserDTO getClientDTO(Long id) {
+        final Optional<ClientUser> clientOptional = clientUserRepository.findById(
                 id
         );
-        return studentOptional.isPresent()
-                ? ApplicationUserDTO.of(studentOptional.get())
+        return clientOptional.isPresent()
+                ? ApplicationUserDTO.of(clientOptional.get())
                 : new ApplicationUserDTO();
     }
-//
-//    private GestionnaireDTO getGestionnaireDTO(Long id) {
-//        final Optional<Gestionnaire> gestionnaireOptional =
-//                gestionnaireRepository.findById(id);
-//        return gestionnaireOptional.isPresent()
-//                ? GestionnaireDTO.fromEntity(gestionnaireOptional.get())
-//                : GestionnaireDTO.empty();
-//    }
-//
-//    private TeacherDTO getTeacherDTO(Long id) {
-//        final Optional<Teacher> teacherOptional = teacherRepository.findById(
-//                id
-//        );
-//        return teacherOptional.isPresent()
-//                ? TeacherDTO.fromEntity(teacherOptional.get())
-//                : TeacherDTO.empty();
-//    }
 
     public UserSettingsDTO getMySettings(Long userId) {
         UserSettings settings = userSettingsRepository.findByUserId(userId);

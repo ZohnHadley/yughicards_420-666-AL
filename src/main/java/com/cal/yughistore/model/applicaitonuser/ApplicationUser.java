@@ -33,7 +33,7 @@ public class ApplicationUser {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JsonManagedReference
-    private ShoppingCart shoppingCart;
+    private ShoppingCart shoppingCart = new ShoppingCart();
 
     private boolean active = true;
     private LocalDateTime createdAt;

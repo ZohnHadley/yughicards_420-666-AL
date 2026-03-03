@@ -22,6 +22,7 @@ public class ClientUser extends ApplicationUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @Builder
     public ClientUser(
             Long id,

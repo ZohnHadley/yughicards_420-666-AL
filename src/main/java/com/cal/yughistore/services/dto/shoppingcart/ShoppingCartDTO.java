@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class ShoppingCartDTO {
     private Long id;
     private Long applicationUserID;
@@ -21,6 +22,10 @@ public class ShoppingCartDTO {
 
 
     public static ShoppingCartDTO of(ShoppingCart shoppingCart) {
+        if (shoppingCart == null) {
+            return null;
+        }
+
         return ShoppingCartDTO.builder()
                 .id(shoppingCart.getId())
                 .applicationUserID(shoppingCart.getApplicationUser().getId())

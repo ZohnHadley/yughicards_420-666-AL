@@ -75,17 +75,6 @@ public class ApplicationUserDTO {
         return new ApplicationUserDTO(user);
     }
 
-//    public ApplicationUser toApplicationUser() {
-//        return ApplicationUser.builder()
-//                .id(this.getId())
-//                .profilePictureUrl(this.getProfilePictureUrl())
-//                .userName(this.getUserName())
-//                .firstName(this.getFirstName())
-//                .lastName(this.getLastName())
-//                .shoppingCart(this.shoppingCart)
-//                .build();
-//    }
-
     public AdminUser toAdminUser(){
         return AdminUser.builder()
                 .id(this.getId())
