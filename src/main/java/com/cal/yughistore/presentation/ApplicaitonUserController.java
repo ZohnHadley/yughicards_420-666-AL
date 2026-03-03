@@ -42,7 +42,7 @@ public class ApplicaitonUserController {
 		System.out.println("Données reçues : " + ApplicationUserDTO);
 
 		// Sauvegarde de l'étudiant
-		ApplicationUserDTO savedClientUser = clientUserService.userSignup(
+		ApplicationUserDTO savedClientUser = clientUserService.save(
 				ApplicationUserDTO
 		);
 

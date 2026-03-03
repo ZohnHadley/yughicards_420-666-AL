@@ -20,40 +20,49 @@ public class ClientUserService {
     );
 
     private final ClientUserRepository clientUserRepository;
-    private final ShoppingCartService shoppingCartService;
+    private final ShoppingCartRepository shoppingCartRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public ClientUserService(ClientUserRepository clientUserRepository, ShoppingCartService shoppingCartService) {
+    public ClientUserService(ClientUserRepository clientUserRepository, ShoppingCartRepository shoppingCartRepository) {
         this.clientUserRepository = clientUserRepository;
-        this.shoppingCartService = shoppingCartService;
+        this.shoppingCartRepository = shoppingCartRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
     @Transactional
-    public ApplicationUserDTO userSignup(ApplicationUserDTO applicationUserDTO) {
-        try {
-            if (
-                    clientUserRepository.existsByCredentialsEmail((applicationUserDTO.getEmail())
-                    )) {
-                throw new RuntimeException("Email already in use");
-            }
-            System.out.println("service");
-            applicationUserDTO.setPassword(passwordEncoder.encode(applicationUserDTO.getPassword()));
-
-
-
-            ClientUser savedClientUser = clientUserRepository.save(applicationUserDTO.toClientUser());
-
-//            savedClientUser.getShoppingCart().setApplicationUser(applicationUserDTO.toClientUser());
-            shoppingCartService.save(ShoppingCartDTO.of(applicationUserDTO.toClientUser().getShoppingCart()));
-
-            logger.info("Client created = {}", savedClientUser.getEmail());
-
-            return ApplicationUserDTO.of(savedClientUser);
-        } catch (Exception e) {
-            logger.error("Client signup failed for "+applicationUserDTO.getEmail()+" : {}", e.getMessage());
+    public ApplicationUserDTO save(ApplicationUserDTO applicationUserDTO) {
+        if (applicationUserDTO == null) {
+            throw new IllegalArgumentException("applicationUserDTO must not be null");
         }
-        return null;
-    }
+        if (applicationUserDTO.getPassword() == null || applicationUserDTO.getPassword().isBlank()) {
+            throw new IllegalArgumentException("password must not be blank");
+        }
+        if (applicationUserDTO.getEmail() == null || applicationUserDTO.getEmail().isBlank()) {
+            throw new IllegalArgumentException("email must not be blank");
+        }
+        if (clientUserRepository.existsByCredentialsEmail(applicationUserDTO.getEmail())) {
+            throw new IllegalStateException("email is already in use");
+        }
 
+        applicationUserDTO.setPassword(passwordEncoder.encode(applicationUserDTO.getPassword()));
+
+        ClientUser clientUserToSave = applicationUserDTO.toClientUser();
+
+        // IMPORTANT: do NOT create/set ShoppingCart before saving the user
+        clientUserToSave.setShoppingCart(null);
+
+        ClientUser savedClientUser = clientUserRepository.save(clientUserToSave);
+
+        ShoppingCart cart = new ShoppingCart();
+        cart.setApplicationUser(savedClientUser);     // must be set (NOT NULL FK)
+        savedClientUser.setShoppingCart(cart);        // keep both sides consistent in memory
+
+        shoppingCartRepository.save(cart);
+
+        logger.info("Client created = {}", savedClientUser.getEmail());
+
+        ApplicationUserDTO result = ApplicationUserDTO.of(savedClientUser);
+        result.setPassword(null);
+        return result;
+    }
 }

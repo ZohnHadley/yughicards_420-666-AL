@@ -49,7 +49,7 @@ public class ApplicationUserDTO {
     private Role role;
 
     @Builder
-    public ApplicationUserDTO(Long id, String profilePictureUrl, String userName, String firstName, String lastName, ShoppingCart shoppingCart, String email, String password) {
+    public ApplicationUserDTO(Long id, String profilePictureUrl, String userName, String firstName, String lastName, ShoppingCart shoppingCart, String email, String password, Role role) {
         this.id = id;
         this.profilePictureUrl = profilePictureUrl;
         this.userName = userName;
@@ -58,6 +58,7 @@ public class ApplicationUserDTO {
         this.shoppingCart = shoppingCart;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     public ApplicationUserDTO(ApplicationUser user) {
@@ -93,7 +94,7 @@ public class ApplicationUserDTO {
                 .username(this.getUserName())
                 .email(this.getEmail())
                 .password(this.getPassword())
-                .shoppingCart(this.shoppingCart)
+                .shoppingCart(this.getShoppingCart())
                 .build();
     }
 

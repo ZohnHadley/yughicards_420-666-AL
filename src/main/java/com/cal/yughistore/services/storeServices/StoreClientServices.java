@@ -27,51 +27,60 @@ public class StoreClientServices {
 
     /// get user shopping cart
 
-    public ShoppingCartDTO getShoppingCart(Long userId) {
-        try {
-            logger.info("Getting shopping cart for user {}", userId);
-            return shoppingCartService.getShoppingCartByUserId(userId);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
-        return null;
+    public ShoppingCartDTO getShoppingCartByUserID(Long userId) {
+        logger.info("Getting shopping cart for user {}", userId);
+        return shoppingCartService.getShoppingCartByUserId(userId);
     }
 
-    public ShoppingCartDTO getShoppingCart(String userEmail) {
-        try {
-            logger.info("Getting shopping cart for user {}", userEmail);
-            return shoppingCartService.getShoppingCartByUserEmail(userEmail);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
-        return null;
+    public ShoppingCartDTO getShoppingCartByUserEmail(String userEmail) {
+        logger.info("Getting shopping cart for user {}", userEmail);
+        return shoppingCartService.getShoppingCartByUserEmail(userEmail);
     }
 
     /// add to user shopping cart
     @Transactional
-    public ShoppingCartDTO addToShoppingCart(Long userId, Long cardId) {
-        try {
-            ShoppingCartDTO cart = shoppingCartService.getShoppingCartByUserId(userId);
-            YughioCardDTO carde = yughioCardService.getById(cardId);
-            cart.getCards().add(carde);
-            return shoppingCartService.save(cart);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
+    public void addToShoppingCart(Long userId, Long cardId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("userId can't be null");
         }
-        return null;
+        if (cardId == null) {
+            throw new IllegalArgumentException("cardId can't be null");
+        }
+
+        ShoppingCartDTO cart = getShoppingCartByUserID(userId);
+        if (cart == null) {
+            throw new IllegalStateException("Shopping cart not found for userId=" + userId);
+        }
+
+        YughioCardDTO card = yughioCardService.getById(cardId);
+
+        // Ensure the list is mutable (Stream#toList() can produce an unmodifiable list).
+        if (cart.getCards() == null) {
+            cart.setCards(new java.util.ArrayList<>());
+        } else if (!(cart.getCards() instanceof java.util.ArrayList<?>)) {
+            cart.setCards(new java.util.ArrayList<>(cart.getCards()));
+        }
+
+        // Prevent duplicates (optional but usually desired)
+        boolean alreadyInCart = cart.getCards().stream()
+                .anyMatch(c -> c != null && c.getId() != null && c.getId().equals(cardId));
+
+        if (!alreadyInCart) {
+            cart.getCards().add(card);
+        }
+
+        shoppingCartService.save(cart);
     }
 
-    /// remove from user shopping cart
     @Transactional
-    public ShoppingCartDTO removeFromShoppingCart(Long userId, Long cardId) {
-        try {
-            ShoppingCartDTO cart = shoppingCartService.getShoppingCartByUserId(userId);
-            YughioCardDTO carde = yughioCardService.getById(cardId);
-            cart.getCards().remove(carde);
-            return shoppingCartService.save(cart);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
+    public void removeFromShoppingCart(Long userId, Long cardId) {
+        ShoppingCartDTO cart = getShoppingCartByUserID(userId);
+        if (cart == null || cart.getCards() == null) {
+            return;
         }
-        return null;
+
+        cart.getCards().removeIf(c -> c != null && c.getId() != null && c.getId().equals(cardId));
+
+        shoppingCartService.save(cart);
     }
 }

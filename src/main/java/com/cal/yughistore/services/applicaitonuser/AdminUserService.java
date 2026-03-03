@@ -1,11 +1,16 @@
 package com.cal.yughistore.services.applicaitonuser;
 
+import com.cal.yughistore.model.ShoppingCart;
 import com.cal.yughistore.model.applicaitonuser.AdminUser;
+import com.cal.yughistore.model.applicaitonuser.ClientUser;
+import com.cal.yughistore.repository.ShoppingCartRepository;
+import com.cal.yughistore.repository.user.AdminUserRepository;
 import com.cal.yughistore.services.dto.applicationuser.ApplicationUserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AdminUserService {
@@ -13,30 +18,50 @@ public class AdminUserService {
             AdminUserService.class
     );
 
-    private final com.cal.yughistore.repository.user.AdminUserRepository adminUserRepository;
+    private final AdminUserRepository adminUserRepository;
+    private final ShoppingCartRepository shoppingCartRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public AdminUserService(com.cal.yughistore.repository.user.AdminUserRepository adminUserRepository) {
+    public AdminUserService(AdminUserRepository adminUserRepository, ShoppingCartRepository shoppingCartRepository) {
         this.adminUserRepository = adminUserRepository;
+        this.shoppingCartRepository = shoppingCartRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    public ApplicationUserDTO userSignup(ApplicationUserDTO applicationUserDTO) {
-        try {
-            if (
-                    adminUserRepository.existsByCredentialsEmail((applicationUserDTO.getEmail())
-                    )) {
-                throw new RuntimeException("Email already in use");
-            }
-            System.out.println("service");
-            applicationUserDTO.setPassword(passwordEncoder.encode(applicationUserDTO.getPassword()));
-            AdminUser savedClientUser = adminUserRepository.save(applicationUserDTO.toAdminUser());
-            logger.info("Admin created = {}", savedClientUser.getEmail());
-
-            return ApplicationUserDTO.of(savedClientUser);
-        } catch (Exception e) {
-            logger.error("Admin signup failed "+applicationUserDTO.getEmail()+" : {}",e.getMessage());
+    @Transactional
+    public ApplicationUserDTO save(ApplicationUserDTO applicationUserDTO) {
+        if (applicationUserDTO == null) {
+            throw new IllegalArgumentException("applicationUserDTO must not be null");
         }
-        return null;
+        if (applicationUserDTO.getPassword() == null || applicationUserDTO.getPassword().isBlank()) {
+            throw new IllegalArgumentException("password must not be blank");
+        }
+        if (applicationUserDTO.getEmail() == null || applicationUserDTO.getEmail().isBlank()) {
+            throw new IllegalArgumentException("email must not be blank");
+        }
+        if (adminUserRepository.existsByCredentialsEmail(applicationUserDTO.getEmail())) {
+            throw new IllegalStateException("email is already in use");
+        }
+
+        applicationUserDTO.setPassword(passwordEncoder.encode(applicationUserDTO.getPassword()));
+
+        AdminUser adminUserToSave = applicationUserDTO.toAdminUser();
+
+        // IMPORTANT: do NOT create/set ShoppingCart before saving the user
+        adminUserToSave.setShoppingCart(null);
+
+        AdminUser savedClientUser = adminUserRepository.save(adminUserToSave);
+
+        ShoppingCart cart = new ShoppingCart();
+        cart.setApplicationUser(savedClientUser);     // must be set (NOT NULL FK)
+        savedClientUser.setShoppingCart(cart);        // keep both sides consistent in memory
+
+        shoppingCartRepository.save(cart);
+
+        logger.info("Client created = {}", savedClientUser.getEmail());
+
+        ApplicationUserDTO result = ApplicationUserDTO.of(savedClientUser);
+        result.setPassword(null);
+        return result;
     }
 }

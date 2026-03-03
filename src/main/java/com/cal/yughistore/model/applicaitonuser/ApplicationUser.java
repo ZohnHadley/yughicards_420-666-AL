@@ -31,25 +31,25 @@ public class ApplicationUser {
     @Embedded
     private Credentials credentials;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "applicationUser", fetch = FetchType.LAZY)
     @JsonManagedReference
-    private ShoppingCart shoppingCart = new ShoppingCart();
+    private ShoppingCart shoppingCart;
 
     private boolean active = true;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime lastLoginAt;
 
-    public String getEmail(){
-        return credentials.getEmail();
+    public String getEmail() {
+        return credentials != null ? credentials.getEmail() : null;
     }
 
-    public String getPassword(){
-        return credentials.getPassword();
+    public String getPassword() {
+        return credentials != null ? credentials.getPassword() : null;
     }
 
-    public Role getRole(){
-        return credentials.getRole();
+    public Role getRole() {
+        return credentials != null ? credentials.getRole() : null;
     }
 
     @PrePersist
@@ -64,8 +64,7 @@ public class ApplicationUser {
         this.updatedAt = LocalDateTime.now();
     }
 
-
-    public Collection<? extends GrantedAuthority> getAuthorities(){
-        return credentials.getAuthorities();
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return credentials != null ? credentials.getAuthorities() : java.util.List.of();
     }
 }

@@ -47,7 +47,7 @@ public class ClientUser extends ApplicationUser {
                 Credentials.builder()
                         .email(email)
                         .password(password)
-                        .role(Role.ADMIN)
+                        .role(Role.CLIENT)
                         .build(),
                 shoppingCart,
                 active,
