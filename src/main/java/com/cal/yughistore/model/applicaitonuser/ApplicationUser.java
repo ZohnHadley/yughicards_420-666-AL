@@ -31,9 +31,9 @@ public class ApplicationUser {
     @Embedded
     private Credentials credentials;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "applicationUser", fetch = FetchType.LAZY)
     @JsonManagedReference
-    private ShoppingCart shoppingCart = new ShoppingCart();
+    private ShoppingCart shoppingCart;
 
     private boolean active = true;
     private LocalDateTime createdAt;

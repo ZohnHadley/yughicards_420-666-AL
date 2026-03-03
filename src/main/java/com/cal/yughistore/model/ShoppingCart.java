@@ -10,6 +10,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Entity
 @NoArgsConstructor
 @Getter
@@ -21,11 +22,13 @@ public class ShoppingCart {
     @JsonBackReference
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "shoppingCart")
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "application_user_id", nullable = false, unique = true)
     @JsonBackReference
     private ApplicationUser applicationUser;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "shoppingCart")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "shopping_cart_id") // FK in yughio_card, controlled by ShoppingCart
     @JsonBackReference
     private List<YughioCard> cardList = new ArrayList<>();
 
@@ -39,6 +42,4 @@ public class ShoppingCart {
         this.applicationUser = applicationUser;
         this.cardList = cardList;
     }
-
-
 }

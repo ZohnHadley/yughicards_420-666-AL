@@ -2,6 +2,7 @@ package com.cal.yughistore.services.dto.shoppingcart;
 
 
 import com.cal.yughistore.model.ShoppingCart;
+import com.cal.yughistore.model.applicaitonuser.ApplicationUser;
 import com.cal.yughistore.services.dto.applicationuser.ApplicationUserDTO;
 import com.cal.yughistore.services.dto.yughiocard.YughioCardDTO;
 import lombok.*;
@@ -17,7 +18,7 @@ import java.util.List;
 @ToString
 public class ShoppingCartDTO {
     private Long id;
-    private Long applicationUserID;
+    private ApplicationUserDTO applicationUser;
     private List<YughioCardDTO> cards;
 
 
@@ -28,15 +29,30 @@ public class ShoppingCartDTO {
 
         return ShoppingCartDTO.builder()
                 .id(shoppingCart.getId())
-                .applicationUserID(shoppingCart.getApplicationUser().getId())
+                .applicationUser(ApplicationUserDTO.of(shoppingCart.getApplicationUser()))
                 .cards(shoppingCart.getCardList().stream().map(YughioCardDTO::of).toList())
                 .build();
     }
 
     public ShoppingCart toShoppingCart() {
-        return ShoppingCart.builder()
+        ApplicationUser userRef = null;
+        if (this.applicationUser != null && this.applicationUser.getId() != null) {
+            userRef = new ApplicationUser();
+            userRef.setId(this.applicationUser.getId());
+        }
+
+        ShoppingCart cart = ShoppingCart.builder()
                 .id(this.getId())
-                .cardList(this.cards.stream().map(YughioCardDTO::toYughioCard).toList())
+                .applicationUser(userRef)
+                .cardList(this.cards == null
+                        ? java.util.List.of()
+                        : this.cards.stream().map(YughioCardDTO::toYughioCard).toList())
                 .build();
+
+        if (userRef != null) {
+            userRef.setShoppingCart(cart);
+        }
+
+        return cart;
     }
 }

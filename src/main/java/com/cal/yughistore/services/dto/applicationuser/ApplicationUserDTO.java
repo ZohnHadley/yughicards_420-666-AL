@@ -93,7 +93,7 @@ public class ApplicationUserDTO {
                 .username(this.getUserName())
                 .email(this.getEmail())
                 .password(this.getPassword())
-                .shoppingCart(this.shoppingCart)
+                .shoppingCart(this.getShoppingCart())
                 .build();
     }
 

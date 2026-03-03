@@ -1,6 +1,5 @@
 package com.cal.yughistore;
 
-import com.cal.yughistore.model.applicaitonuser.ClientUser;
 import com.cal.yughistore.services.applicaitonuser.ApplicationUserService;
 import com.cal.yughistore.services.dto.applicationuser.ApplicationUserDTO;
 import com.cal.yughistore.services.applicaitonuser.AdminUserService;
@@ -8,8 +7,6 @@ import com.cal.yughistore.services.applicaitonuser.ClientUserService;
 import com.cal.yughistore.services.dto.applicationuser.LoginDTO;
 import com.cal.yughistore.services.storeServices.StoreClientServices;
 import com.cal.yughistore.services.utils.AuthService;
-import com.cal.yughistore.services.yughiocard.YughioCardService;
-import com.cal.yughistore.services.api.ApiService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -43,28 +40,29 @@ public class YughistoreApplication {
     @Bean
     CommandLineRunner commandLineRunner(ApplicationContext context) {
         return args -> {
-            adminUserService.userSignup(
+            adminUserService.save(
                     ApplicationUserDTO.builder()
                             .email("admin@gmail.com")
                             .password("!Password123")
                             .build()
             );
-            ApplicationUserDTO applicationUserDTO = clientUserService.userSignup(
+            ApplicationUserDTO applicationUserDTO = clientUserService.save(
                     ApplicationUserDTO.builder()
                             .email("zink@gmail.com")
                             .password("!Password123")
                             .build()
             );
+            System.out.println(applicationUserDTO.getId());
+            System.out.println(storeClientServices.getShoppingCart(applicationUserDTO.getId()));
+//            LoginDTO loginDTO = LoginDTO.builder()
+//                    .email("zink@gmail.com")
+//                    .password("!Password123")
+//                    .build();
 
-            LoginDTO loginDTO = LoginDTO.builder()
-                    .email("zink@gmail.com")
-                    .password("!Password123")
-                    .build();
+//            String auth = authService.userSigning(loginDTO);
+//            applicationUserDTO = applicationUserService.getMe(auth);
 
-            String auth = authService.userSigning(loginDTO);
-            applicationUserDTO = applicationUserService.getMe(auth);
-
-            System.out.println(storeClientServices.getShoppingCart(applicationUserDTO.getEmail() ));
+//            System.out.println(storeClientServices.getShoppingCart(applicationUserDTO.getId() ));
             ;
 
         };

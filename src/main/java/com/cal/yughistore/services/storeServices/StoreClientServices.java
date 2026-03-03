@@ -52,8 +52,22 @@ public class StoreClientServices {
     public ShoppingCartDTO addToShoppingCart(Long userId, Long cardId) {
         try {
             ShoppingCartDTO cart = shoppingCartService.getShoppingCartByUserId(userId);
-            YughioCardDTO carde = yughioCardService.getById(cardId);
-            cart.getCards().add(carde);
+            YughioCardDTO card = yughioCardService.getById(cardId);
+
+            if (cart == null || card == null) {
+                return null;
+            }
+            if (cart.getCards() == null) {
+                cart.setCards(new java.util.ArrayList<>());
+            }
+
+            boolean alreadyInCart = cart.getCards().stream()
+                    .anyMatch(c -> c != null && c.getId() != null && c.getId().equals(cardId));
+
+            if (!alreadyInCart) {
+                cart.getCards().add(card);
+            }
+
             return shoppingCartService.save(cart);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -61,13 +75,16 @@ public class StoreClientServices {
         return null;
     }
 
-    /// remove from user shopping cart
     @Transactional
     public ShoppingCartDTO removeFromShoppingCart(Long userId, Long cardId) {
         try {
             ShoppingCartDTO cart = shoppingCartService.getShoppingCartByUserId(userId);
-            YughioCardDTO carde = yughioCardService.getById(cardId);
-            cart.getCards().remove(carde);
+            if (cart == null || cart.getCards() == null) {
+                return null;
+            }
+
+            cart.getCards().removeIf(c -> c != null && c.getId() != null && c.getId().equals(cardId));
+
             return shoppingCartService.save(cart);
         } catch (Exception e) {
             logger.error(e.getMessage());

@@ -71,9 +71,6 @@ public class YughioCard {
     @JsonManagedReference
     private List<CardSet> card_sets = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonManagedReference
-    private ShoppingCart shoppingCart = null;
 
     @Builder
     public YughioCard(
