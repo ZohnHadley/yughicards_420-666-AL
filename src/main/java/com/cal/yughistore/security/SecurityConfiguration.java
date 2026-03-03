@@ -37,8 +37,10 @@ public class SecurityConfiguration {
 
     private static final String YUGHIO_CARD_DATA_PATH = "/api/v1/**";
     private static final String YUGHIO_CARD_SINGLE_PATH = "/api/v1/get-card/**";
+
     private static final String USER_PATH = "/api/v1/user/**";
     private static final String USER_PASSWORD_RESET_PATH = "/api/v1/user/password-reset/**";
+    private static final String USER_SHOPPING_CART_PATH = "/api/v1/cart/**";
     private static final String ADMIN_PATH = "/api/v1/admin/**";
     private static final String CLIENT_PATH = "/api/v1/client/**";
 
@@ -56,27 +58,27 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        // Swagger/OpenAPI - Public
-                        .requestMatchers(
-                                SWAGGER_UI_PATH,
-                                SWAGGER_UI_HTML_PATH,
-                                API_DOCS_PATH,
-                                SWAGGER_RESOURCES_PATH,
-                                SWAGGER_CONFIG_PATH,
-                                WEBJARS_PATH
-                        ).permitAll()
+                                // Swagger/OpenAPI - Public
+                                .requestMatchers(
+                                        SWAGGER_UI_PATH,
+                                        SWAGGER_UI_HTML_PATH,
+                                        API_DOCS_PATH,
+                                        SWAGGER_RESOURCES_PATH,
+                                        SWAGGER_CONFIG_PATH,
+                                        WEBJARS_PATH
+                                ).permitAll()
 
-                        // User endpoints
-                        .requestMatchers(USER_PATH).permitAll()
-                        .requestMatchers(HttpMethod.POST, USER_PASSWORD_RESET_PATH).hasAnyAuthority(Role.CLIENT.name())
-
-                        // Yu-Gi-Oh cards endpoints
+                                // User endpoints
+                                .requestMatchers(USER_PATH).permitAll()
+                                .requestMatchers(HttpMethod.POST, USER_PASSWORD_RESET_PATH).hasAnyAuthority(Role.CLIENT.name())
+                                .requestMatchers(HttpMethod.GET, USER_SHOPPING_CART_PATH).permitAll()
+                                // Yu-Gi-Oh cards endpoints
 //                        .requestMatchers(YUGHIO_CARD_DATA_PATH).permitAll()
-                        .requestMatchers(HttpMethod.GET, YUGHIO_CARD_DATA_PATH).permitAll()
-                        .requestMatchers(YUGHIO_CARD_SINGLE_PATH).permitAll()
+                                .requestMatchers(HttpMethod.GET, YUGHIO_CARD_DATA_PATH).permitAll()
+                                .requestMatchers(YUGHIO_CARD_SINGLE_PATH).permitAll()
 
-                        // Tout le reste nécessite auth
-                        .anyRequest().authenticated()
+                                // Tout le reste nécessite auth
+                                .anyRequest().authenticated()
                 )
                 .headers(headers -> headers.frameOptions(f -> f.disable())) // for h2-console
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
