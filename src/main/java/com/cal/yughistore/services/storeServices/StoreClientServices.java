@@ -74,13 +74,28 @@ public class StoreClientServices {
 
     @Transactional
     public void removeFromShoppingCart(Long userId, Long cardId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("userId can't be null");
+        }
+        if (cardId == null) {
+            throw new IllegalArgumentException("cardId can't be null");
+        }
+
         ShoppingCartDTO cart = getShoppingCartByUserID(userId);
         if (cart == null || cart.getCards() == null) {
             return;
         }
 
-        cart.getCards().removeIf(c -> c != null && c.getId() != null && c.getId().equals(cardId));
+        // Ensure the list is mutable before attempting removal (DTOs may expose unmodifiable lists).
+        if (!(cart.getCards() instanceof java.util.ArrayList<?>)) {
+            cart.setCards(new java.util.ArrayList<>(cart.getCards()));
+        }
 
-        shoppingCartService.save(cart);
+        boolean removed = cart.getCards()
+                .removeIf(c -> c != null && c.getId() != null && c.getId().equals(cardId));
+
+        if (removed) {
+            shoppingCartService.save(cart);
+        }
     }
 }
