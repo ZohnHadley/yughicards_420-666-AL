@@ -1,6 +1,7 @@
 package com.cal.yughistore.model.yughiocard;
 
 
+import com.cal.yughistore.model.ShoppingCart;
 import com.cal.yughistore.model.yughiocard.enums.EnumCardType;
 import com.cal.yughistore.model.yughiocard.enums.EnumFrameType;
 import com.cal.yughistore.model.yughiocard.enums.EnumPropertiesConfigType;
@@ -70,7 +71,9 @@ public class YughioCard {
     @JsonManagedReference
     private List<CardSet> card_sets = new ArrayList<>();
 
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private ShoppingCart shoppingCart = null;
 
     @Builder
     public YughioCard(

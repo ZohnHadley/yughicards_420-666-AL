@@ -1,7 +1,9 @@
 package com.cal.yughistore.model.applicaitonuser;
 
+import com.cal.yughistore.model.ShoppingCart;
 import com.cal.yughistore.model.applicaitonuser.auth.Credentials;
 import com.cal.yughistore.model.applicaitonuser.auth.Role;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,8 +13,8 @@ import java.util.Collection;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -28,6 +30,10 @@ public class ApplicationUser {
 
     @Embedded
     private Credentials credentials;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private ShoppingCart shoppingCart;
 
     private boolean active = true;
     private LocalDateTime createdAt;

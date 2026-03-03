@@ -1,20 +1,19 @@
 package com.cal.yughistore.model.applicaitonuser;
 
 
+import com.cal.yughistore.model.ShoppingCart;
 import com.cal.yughistore.model.applicaitonuser.auth.Credentials;
 import com.cal.yughistore.model.applicaitonuser.auth.Role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -22,6 +21,7 @@ public class AdminUser extends ApplicationUser  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
 
     @Builder
     public AdminUser(
@@ -45,6 +45,7 @@ public class AdminUser extends ApplicationUser  {
                         .password(password)
                         .role(Role.ADMIN)
                         .build(),
+                new ShoppingCart(),
                 active,
                 createdAt,
                 updatedAt,

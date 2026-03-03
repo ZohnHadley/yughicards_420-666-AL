@@ -1,8 +1,8 @@
 package com.cal.yughistore;
 
-import com.cal.yughistore.services.dto.applicationuser.AdminUserDTO;
-import com.cal.yughistore.services.user.AdminUserService;
-import com.cal.yughistore.services.user.ClientUserService;
+import com.cal.yughistore.services.dto.applicationuser.ApplicationUserDTO;
+import com.cal.yughistore.services.applicaitonuser.AdminUserService;
+import com.cal.yughistore.services.applicaitonuser.ClientUserService;
 import com.cal.yughistore.services.yughiocard.YughioCardService;
 import com.cal.yughistore.services.api.ApiService;
 import org.springframework.boot.CommandLineRunner;
@@ -38,8 +38,14 @@ public class YughistoreApplication {
 		return args -> {
 			try {
 				adminUserService.userSignup(
-						AdminUserDTO.builder()
+						ApplicationUserDTO.builder()
 								.email("admin@gmail.com")
+								.password("!Password123")
+								.build()
+				);
+				clientUserService.userSignup(
+						ApplicationUserDTO.builder()
+								.email("zink@gmail.com")
 								.password("!Password123")
 								.build()
 				);

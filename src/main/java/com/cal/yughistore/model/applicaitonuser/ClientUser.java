@@ -1,11 +1,11 @@
 package com.cal.yughistore.model.applicaitonuser;
 
+import com.cal.yughistore.model.ShoppingCart;
 import com.cal.yughistore.model.applicaitonuser.auth.Credentials;
 import com.cal.yughistore.model.applicaitonuser.auth.Role;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.cal.yughistore.model.yughiocard.properties.CardProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,11 +26,12 @@ public class ClientUser extends ApplicationUser {
     public ClientUser(
             Long id,
             String profilePictureUrl,
-            String userName,
+            String username,
             String firstName,
             String lastName,
             String email,
             String password,
+            ShoppingCart shoppingCart,
             boolean active,
             LocalDateTime createdAt,
             LocalDateTime updatedAt,
@@ -39,14 +40,15 @@ public class ClientUser extends ApplicationUser {
         super(
                 id,
                 profilePictureUrl,
-                userName,
+                username,
                 firstName,
                 lastName,
                 Credentials.builder()
                         .email(email)
                         .password(password)
-                        .role(Role.CLIENT)
+                        .role(Role.ADMIN)
                         .build(),
+                shoppingCart,
                 active,
                 createdAt,
                 updatedAt,
@@ -55,5 +57,4 @@ public class ClientUser extends ApplicationUser {
 
 
     }
-
 }

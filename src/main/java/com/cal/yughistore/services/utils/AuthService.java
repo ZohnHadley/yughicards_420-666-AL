@@ -8,7 +8,7 @@ import com.cal.yughistore.repository.user.ApplicationUserRepository;
 import com.cal.yughistore.security.JwtTokenProvider;
 import com.cal.yughistore.security.exceptions.InvalidJwtTokenException;
 import com.cal.yughistore.security.exceptions.UserNotFoundException;
-import com.cal.yughistore.services.user.ApplicationUserService;
+import com.cal.yughistore.services.applicaitonuser.ApplicationUserService;
 import com.cal.yughistore.services.dto.applicationuser.ApplicationUserDTO;
 import com.cal.yughistore.services.dto.applicationuser.LoginDTO;
 import com.cal.yughistore.services.dto.applicationuser.PasswordRequestDTO;

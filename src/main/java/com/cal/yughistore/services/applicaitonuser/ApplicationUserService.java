@@ -1,4 +1,4 @@
-package com.cal.yughistore.services.user;
+package com.cal.yughistore.services.applicaitonuser;
 
 import com.cal.yughistore.model.applicaitonuser.AdminUser;
 import com.cal.yughistore.model.applicaitonuser.ApplicationUser;
@@ -76,22 +76,22 @@ public class ApplicationUserService {
         };
     }
 
-    private AdminUserDTO getAdminDTO(Long id) {
+    private ApplicationUserDTO getAdminDTO(Long id) {
         final Optional<AdminUser> adminUserOptional = adminUserRepository.findById(
                 id
         );
         return adminUserOptional.isPresent()
-                ? AdminUserDTO.of(adminUserOptional.get())
-                : new AdminUserDTO();
+                ? ApplicationUserDTO.of(adminUserOptional.get())
+                : new ApplicationUserDTO();
     }
 
-    private ClientUserDTO getStudentDTO(Long id) {
+    private ApplicationUserDTO getStudentDTO(Long id) {
         final Optional<ClientUser> studentOptional = clientUserRepository.findById(
                 id
         );
         return studentOptional.isPresent()
-                ? ClientUserDTO.of(studentOptional.get())
-                : new ClientUserDTO();
+                ? ApplicationUserDTO.of(studentOptional.get())
+                : new ApplicationUserDTO();
     }
 //
 //    private GestionnaireDTO getGestionnaireDTO(Long id) {

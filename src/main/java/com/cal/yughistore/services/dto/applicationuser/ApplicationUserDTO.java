@@ -1,6 +1,9 @@
 package com.cal.yughistore.services.dto.applicationuser;
 
+import com.cal.yughistore.model.ShoppingCart;
+import com.cal.yughistore.model.applicaitonuser.AdminUser;
 import com.cal.yughistore.model.applicaitonuser.ApplicationUser;
+import com.cal.yughistore.model.applicaitonuser.ClientUser;
 import com.cal.yughistore.model.applicaitonuser.auth.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -30,8 +33,11 @@ public class ApplicationUserDTO {
     @Size(min = 2)
     private String lastName;
 
+
     @NotBlank(message = "Email is mandatory")
     @Email private String email;
+
+    private ShoppingCart shoppingCart = new ShoppingCart();
 
     @NotBlank(message = "Password is mandatory")
     @Pattern(
@@ -42,12 +48,14 @@ public class ApplicationUserDTO {
     private String password;
     private Role role;
 
-    public ApplicationUserDTO(Long id, String profilePictureUrl, String userName, String firstName, String lastName, String email, String password) {
+    @Builder
+    public ApplicationUserDTO(Long id, String profilePictureUrl, String userName, String firstName, String lastName, ShoppingCart shoppingCart, String email, String password) {
         this.id = id;
         this.profilePictureUrl = profilePictureUrl;
         this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.shoppingCart = shoppingCart;
         this.email = email;
         this.password = password;
     }
@@ -66,4 +74,39 @@ public class ApplicationUserDTO {
     public static ApplicationUserDTO of(ApplicationUser user) {
         return new ApplicationUserDTO(user);
     }
+
+//    public ApplicationUser toApplicationUser() {
+//        return ApplicationUser.builder()
+//                .id(this.getId())
+//                .profilePictureUrl(this.getProfilePictureUrl())
+//                .userName(this.getUserName())
+//                .firstName(this.getFirstName())
+//                .lastName(this.getLastName())
+//                .shoppingCart(this.shoppingCart)
+//                .build();
+//    }
+
+    public AdminUser toAdminUser(){
+        return AdminUser.builder()
+                .id(this.getId())
+                .profilePictureUrl(this.getProfilePictureUrl())
+                .email(this.getEmail())
+                .password(this.getPassword())
+                .build();
+    }
+
+    public ClientUser toClientUser(){
+        return ClientUser.builder()
+                .id(this.getId())
+                .profilePictureUrl(this.getProfilePictureUrl())
+                .firstName(this.getFirstName())
+                .lastName(this.getLastName())
+                .username(this.getUserName())
+                .email(this.getEmail())
+                .password(this.getPassword())
+                .shoppingCart(this.shoppingCart)
+                .build();
+    }
+
+
 }
