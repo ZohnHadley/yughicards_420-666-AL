@@ -15,6 +15,8 @@ import {YughiohInventoryFr} from "./francais/YughioInventoryFr.js";
 import {YughiohInventoryEn} from "./english/YughiohInventoryEn.js";
 import {YughiohCardDetailsFr} from "./francais/YughiohCardDetailsFr.js";
 import {YughiohCardDetailsEn} from "./english/YughiohCardDetailsEn.js";
+import {ShoppingCartFr} from "./francais/ShoppingCartFr.js";
+import {ShoppingCartEn} from "./english/ShoppingCartEn.js";
 
 export const translations = {
     fr: {
@@ -25,7 +27,8 @@ export const translations = {
         home: HomeFr,
         vendezNous: VendezNousFr,
         yughiohInventory: YughiohInventoryFr,
-        yughiohCardDetails: YughiohCardDetailsFr
+        yughiohCardDetails: YughiohCardDetailsFr,
+        shoppingCart: ShoppingCartFr
     },
     en: {
         navbar: NavbarEn,
@@ -35,7 +38,8 @@ export const translations = {
         home: HomeEn,
         vendezNous: VendezNousEn,
         yughiohInventory: YughiohInventoryEn,
-        yughiohCardDetails: YughiohCardDetailsEn
+        yughiohCardDetails: YughiohCardDetailsEn,
+        shoppingCart: ShoppingCartEn
     }
 }
 export const languages = [

@@ -11,7 +11,8 @@ import Footer from "./components/Footer.jsx";
 import Contact from "./pages/Contact.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import YughiohCardDetails from "./pages/YughiohCardDetails.jsx";
-import {ShoppingCart} from "lucide-react";
+import ShoppingCart from "./pages/ShoppingCart.jsx";
+
 
 function App() {
     const [language, setLanguage] = useState("fr");

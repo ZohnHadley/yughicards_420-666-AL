@@ -11,7 +11,6 @@ export default function Navbar({ language, setLanguage }) {
 
     const currentLang = languages.find(lang => lang.code === language);
 
-    // ✅ Ferme le dropdown si on clique ailleurs
     useEffect(() => {
         function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
