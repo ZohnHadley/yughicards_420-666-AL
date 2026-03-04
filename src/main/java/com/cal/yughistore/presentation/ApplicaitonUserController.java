@@ -2,7 +2,7 @@ package com.cal.yughistore.presentation;
 
 import com.cal.yughistore.model.EmailMessage;
 import com.cal.yughistore.services.dto.applicationuser.*;
-import com.cal.yughistore.services.user.ClientUserService;
+import com.cal.yughistore.services.applicaitonuser.ClientUserService;
 import com.cal.yughistore.services.utils.EmailService;
 import com.cal.yughistore.utils.JwtTokenUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.cal.yughistore.security.exceptions.InvalidJwtTokenException;
 import com.cal.yughistore.security.exceptions.UserNotFoundException;
-import com.cal.yughistore.services.user.ApplicationUserService;
+import com.cal.yughistore.services.applicaitonuser.ApplicationUserService;
 import com.cal.yughistore.services.utils.AuthService;
 import com.cal.yughistore.services.dto.utils.*;
 
@@ -35,15 +35,15 @@ public class ApplicaitonUserController {
 
 	//TODO : ONLY FOR CLIENTS (ADMIN ACCOUNTS WILL BE HARD CODED)
 	@PostMapping("/signup")
-	public ResponseEntity<ClientUserDTO> inscription(
-			@Valid @RequestBody ClientUserDTO clientUserDTO
+	public ResponseEntity<ApplicationUserDTO> inscription(
+			@Valid @RequestBody ApplicationUserDTO ApplicationUserDTO
 	) {
 		System.out.println("=== Requête reçue dans le controller ===");
-		System.out.println("Données reçues : " + clientUserDTO);
+		System.out.println("Données reçues : " + ApplicationUserDTO);
 
 		// Sauvegarde de l'étudiant
-		ClientUserDTO savedClientUser = clientUserService.userSignup(
-				clientUserDTO
+		ApplicationUserDTO savedClientUser = clientUserService.save(
+				ApplicationUserDTO
 		);
 
 		System.out.println("=== Après sauvegarde ===");
