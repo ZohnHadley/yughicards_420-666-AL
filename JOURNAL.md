@@ -72,7 +72,7 @@
                 - llama3.2: (1b params) 1.3GB
                 - llama3.2: (3b params) 2GB
 
-- **On choisit llma3.1** : Parce qu'il nous semble de répondre aux besoins de notre projet et qu'il est assez puissant pour notre projet.
+- **On choisit llma3.1 : 8b** : Parce qu'il nous semble de répondre aux besoins de notre projet et qu'il est assez puissant pour notre projet.
 
 - **Utiliser** Sprint initializr pour générer notre projet avec certains des dépendances vues dans le vidéo et avec autre dépendances (pour éviter boiler-plate et modifier pour notre stack) (ex: lombok)
 
@@ -462,6 +462,19 @@
             -Niveau
             -Ses stats(atk et def) 
 
+---
+### 2 Mars: (4pm - 10pm)) BE - Implémentation du pannier d'achat du client :
+   **Recherche**:
+
+- **Remue-méninges** de ce qu'on aurait besoin pour le pannier d'achat:
+  - Type d'utilisateur (client).
+  - Type d'item dans le panier (carte).
+  - Qui à access et comment il est accessible.
+  - **fonctionnalités**:
+    - Ajouter un item au panier.
+    - Supprimer un item du panier.
+    
+- **Lue l'article de** [Denis Mutunga](https://medium.com/@denis.mutunga/back-end-architecture-for-the-cart-system-7c222bb99ef3) pour avoir une idée de comment implémenter le pannier d'achat.
 
 
 

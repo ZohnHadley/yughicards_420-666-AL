@@ -121,10 +121,11 @@ public class YughioCardService {
 
     @Transactional(readOnly = true)
     public YughioCardDTO getById(Long id) {
-        if (id == null || id == -1) throw new RuntimeException("card id cannot be blank");
+        if (id == null) throw new IllegalArgumentException("card id can't be null");
         YughioCard card = cardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Card not found with id: " + id));
         return YughioCardDTO.of(card);
+
     }
 
     @Transactional(readOnly = true)

@@ -1,4 +1,4 @@
-package com.cal.yughistore.services.user;
+package com.cal.yughistore.services.applicaitonuser;
 
 import com.cal.yughistore.model.applicaitonuser.AdminUser;
 import com.cal.yughistore.model.applicaitonuser.ApplicationUser;
@@ -72,44 +72,27 @@ public class ApplicationUserService {
                 );
         return switch (user.getRole()) {
             case ADMIN -> getAdminDTO(user.getId());
-            case CLIENT -> getStudentDTO(user.getId());
+            case CLIENT -> getClientDTO(user.getId());
         };
     }
 
-    private AdminUserDTO getAdminDTO(Long id) {
+    private ApplicationUserDTO getAdminDTO(Long id) {
         final Optional<AdminUser> adminUserOptional = adminUserRepository.findById(
                 id
         );
         return adminUserOptional.isPresent()
-                ? AdminUserDTO.of(adminUserOptional.get())
-                : new AdminUserDTO();
+                ? ApplicationUserDTO.of(adminUserOptional.get())
+                : new ApplicationUserDTO();
     }
 
-    private ClientUserDTO getStudentDTO(Long id) {
-        final Optional<ClientUser> studentOptional = clientUserRepository.findById(
+    private ApplicationUserDTO getClientDTO(Long id) {
+        final Optional<ClientUser> clientOptional = clientUserRepository.findById(
                 id
         );
-        return studentOptional.isPresent()
-                ? ClientUserDTO.of(studentOptional.get())
-                : new ClientUserDTO();
+        return clientOptional.isPresent()
+                ? ApplicationUserDTO.of(clientOptional.get())
+                : new ApplicationUserDTO();
     }
-//
-//    private GestionnaireDTO getGestionnaireDTO(Long id) {
-//        final Optional<Gestionnaire> gestionnaireOptional =
-//                gestionnaireRepository.findById(id);
-//        return gestionnaireOptional.isPresent()
-//                ? GestionnaireDTO.fromEntity(gestionnaireOptional.get())
-//                : GestionnaireDTO.empty();
-//    }
-//
-//    private TeacherDTO getTeacherDTO(Long id) {
-//        final Optional<Teacher> teacherOptional = teacherRepository.findById(
-//                id
-//        );
-//        return teacherOptional.isPresent()
-//                ? TeacherDTO.fromEntity(teacherOptional.get())
-//                : TeacherDTO.empty();
-//    }
 
     public UserSettingsDTO getMySettings(Long userId) {
         UserSettings settings = userSettingsRepository.findByUserId(userId);
