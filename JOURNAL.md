@@ -19,11 +19,64 @@
 
 ### 2 février: Générer/Crée un projet vide avec les dépendances nécessaire pour le backend 
 
-- **Regarder** une partie du vidéo sure Sprint AI “Bootiful Spring AI by Mark Pollack, Christian Tzolov, Josh Long, James Ward” pour avoir une idée d’où commencer. 
+- **Regarder** une partie du vidéo sure Sprint AI **“Bootiful Spring AI by Mark Pollack, Christian Tzolov, Josh Long, James Ward”** pour avoir une idée d’où commencer. 
 
-- **Utiliser** Sprint initializr pour générer notre projet avec certains des dépendances vues dans le vidéo plus autre dépendances (pour éviter boiler-plate et modifier pour notre stack) 
+- **Remue-méninges** pour choisir les outiles et le model d'IA à utiliser pour le chatbox :
+  - **Les critères pour notre IA** :
+    - On cherche un outile d'IA qui nous permet de rouler des llm sur nos machines locales. 
+    - Un model qui peut résonner et aider nos clients à trouver et les suggérer les bons produits selon leurs besoins. 
+    - Le model doit aussi être cappable de répondre aux questions des clients qui sont bassé sur nos produits.
+  - On a **choisi Ollama** : parce que c'est un outil d'IA open source et gratuit qui nous permet d'exécuter des llm sur nos machines locales.
+    - **Compare** quelques models de LLM les plus récents qui sont disponibles sur [le site d'Ollama](https://ollama.com/library?sort=popular) : 
+        - **llama3.1**: 
+        > cette model est optimizer pour avoir des compétences en culture générale, en pilotage, en mathématiques, en utilisation d'outils et en traduction multilingue.
+        
+        > [O] ne nécessitent pas trops d'espace pour un model suffisant.
+        
+        > [O] est assez puissant pour notre projet.  
+    
+              - versions:
+              - llama3.1: latest 4.9GB
+              - llama3.1: (8b params) 4.9GB
+              - llama3.1: (70b params) 43GB
+              - llama3.1  (405b params) 243GB
+        
+        - **deepseek-r1**:
+        > chaque version de cette model est un model distilé d'un plus grand model
+          ce qui risque d'avoir une diminution de la précision, baisse des capacités de raisonnement et augmentation des taux d'hallucinations.
+        
+        > [X] nécessitent trop d'espace pour un model suffisant. 
+        
+        > [X] Et risque diminution de la précision, baisse des capacités de raisonnement et augmentation des taux d'hallucinations. 
+    
+              versions:
+              (distilled version)
+              - deepseek-r1: latest 5.2GB
+              - deepseek-r1: (1.5b params) 1.1GB
+              - deepseek-r1: (7b params) 4.7GB
+              - deepseek-r1: (8b params) 5.2GB
+              - deepseek-r1: (14b params) 9.0GB
+              - deepseek-r1: (32b params) 20GB
+              - deepseek-r1: (70b params) 43GB
+              (non distilled version)
+              - deepseek-r1: (671b params) 404GB
+        - **llama3.2**:
+        > Cette model est optimisé pour les cas d'utilisation de dialogue multilingue, y compris les tâches de récupération et de résumé automatisées.
+        
+        > [O] nécessitent peu d'éspace. 
+        
+        > [X] n'est pas assez puissant pour notre projet.
+      
+                versions:
+                - llama3.2: latest 2GB
+                - llama3.2: (1b params) 1.3GB
+                - llama3.2: (3b params) 2GB
 
-    **Les dépendances installées sont**: 
+- **On choisit llma3.1** : Parce qu'il nous semble de répondre aux besoins de notre projet et qu'il est assez puissant pour notre projet.
+
+- **Utiliser** Sprint initializr pour générer notre projet avec certains des dépendances vues dans le vidéo et avec autre dépendances (pour éviter boiler-plate et modifier pour notre stack) (ex: lombok)
+
+    **Les dépendances installées sont **: 
 
         spring-boot-starter-data-jpa 
         jakarta.persistence-api 
@@ -41,6 +94,7 @@
         spring-boot-starter-webmvc-test 
         spring-boot-docker-compose 
 
+- ****
 - **Installation** de l’outile Ollama pour installer le model d’IA appeler llama3.1:8b, pour assurer que ça roule sur nos machines et qu’on peut l’utiliser dans notre plus tard. 
 
 - **Installation** postgres avec l’utilisateur nommé yugi pour assurer que postgres funcitone sur nos machines. 
