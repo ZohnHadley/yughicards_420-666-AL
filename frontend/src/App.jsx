@@ -11,6 +11,7 @@ import Footer from "./components/Footer.jsx";
 import Contact from "./pages/Contact.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import YughiohCardDetails from "./pages/YughiohCardDetails.jsx";
+import {ShoppingCart} from "lucide-react";
 
 function App() {
     const [language, setLanguage] = useState("fr");
@@ -35,6 +36,10 @@ function App() {
 
                         {/* Page details des cartes */}
                         <Route path="/cardDetails" element={<YughiohCardDetails language={language}/>} />
+
+                        {/* Page du shoppingCart*/}
+                        <Route path="/shoppingCard" element={<ShoppingCart language={language}/>} />
+
                     </Routes>
                 </main>
 
