@@ -493,6 +493,24 @@ Fonctions calculées pour le total et le nombre de cartes.
 
 Boutons interactifs pour retirer des cartes et passer la commande.
   **internalisation**: Utilisation du fichier de traductions afin d’adapter automatiquement le contenu de la page selon la langue sélectionnée (français / anglais).
+
+---
+### 4 et 6 Mars: FE - Implémentation du formulaire pour login, register et logout:
+**LoginPage**: 
+    - Forumulaire: Champs qui demandent les informations pour se connecter à son compte(username, password) et un boutton pour permettre la connection à son compte
+    
+**Logout**:
+    - Boutton: Une fois qu'un utilisateur s'est connecté, il peut cliquer sur son username dans la barre de navigation et se déconnecter.
+    
+**RegisterPage**:
+    - Forumulaire:  Champs qui demandent les informations pour se créer un compte:
+        -Nom d'utilisateur
+        -Adresse courriel 
+        -Mot de passe
+        -confirmer Mot de passe
+        -Boutton pour creer son compte
+
+**internalisation**: Utilisation du fichier de traductions afin d’adapter automatiquement le contenu de la page selon la langue sélectionnée (français / anglais).
   
 
 
