@@ -45,12 +45,12 @@ public class SecurityConfiguration {
     private static final String USER_SHOPPING_CART_PATH      = "/api/v1/cart/**";
 
     // Swagger/OpenAPI
-    private static final String SWAGGER_UI_PATH       = "/swagger-ui/**";
-    private static final String SWAGGER_UI_HTML_PATH  = "/swagger-ui.html";
-    private static final String API_DOCS_PATH         = "/v3/api-docs/**";
+    private static final String SWAGGER_UI_PATH        = "/swagger-ui/**";
+    private static final String SWAGGER_UI_HTML_PATH   = "/swagger-ui.html";
+    private static final String API_DOCS_PATH          = "/v3/api-docs/**";
     private static final String SWAGGER_RESOURCES_PATH = "/swagger-resources/**";
-    private static final String SWAGGER_CONFIG_PATH   = "/swagger-ui/index.html";
-    private static final String WEBJARS_PATH          = "/webjars/**";
+    private static final String SWAGGER_CONFIG_PATH    = "/swagger-ui/index.html";
+    private static final String WEBJARS_PATH           = "/webjars/**";
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -59,7 +59,10 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
 
-                        // ── Swagger — public ─────────────────────────────────────
+                        // ── Preflight CORS — toujours public ─────────────────
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // ── Swagger — public ──────────────────────────────────
                         .requestMatchers(
                                 SWAGGER_UI_PATH,
                                 SWAGGER_UI_HTML_PATH,
@@ -69,17 +72,17 @@ public class SecurityConfiguration {
                                 WEBJARS_PATH
                         ).permitAll()
 
-                        // ── Auth endpoints — public (MUST be before anyRequest) ──
+                        // ── Auth endpoints — public ───────────────────────────
                         .requestMatchers(HttpMethod.POST, USER_SIGNUP_PATH).permitAll()
                         .requestMatchers(HttpMethod.POST, USER_SIGNIN_PATH).permitAll()
                         .requestMatchers(HttpMethod.POST, USER_PASSWORD_RESET_PATH).permitAll()
 
-                        // ── Cards — GET public ────────────────────────────────────
+                        // ── Cards — GET public ────────────────────────────────
                         .requestMatchers(HttpMethod.GET, YUGHIO_CARD_DATA_PATH).permitAll()
                         .requestMatchers(HttpMethod.GET, YUGHIO_CARD_SINGLE_PATH).permitAll()
                         .requestMatchers(HttpMethod.GET, USER_SHOPPING_CART_PATH).permitAll()
 
-                        // ── Tout le reste → authentifié ───────────────────────────
+                        // ── Tout le reste → authentifié ───────────────────────
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers.frameOptions(f -> f.disable()))

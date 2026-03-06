@@ -2,8 +2,9 @@ import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useAuthStore} from "../store/useAuthStore.js";
 import {translations} from "../locales/index.js";
+import {Eye, EyeOff} from "lucide-react";
 
-function InputField({label, type = "text", value, onChange, placeholder, error, autoComplete, hint}) {
+function InputField({label, type = "text", value, onChange, placeholder, error, autoComplete, hint, rightIcon}) {
     const [focused, setFocused] = useState(false);
     return (
         <div style={{display: "flex", flexDirection: "column", gap: 5}}>
@@ -13,22 +14,31 @@ function InputField({label, type = "text", value, onChange, placeholder, error, 
             }}>
                 {label}
             </label>
-            <input
-                type={type} value={value} onChange={onChange}
-                placeholder={placeholder} autoComplete={autoComplete}
-                onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
-                style={{
-                    background: "rgba(13,17,23,0.8)",
-                    border: `1px solid ${error ? "rgba(239,68,68,0.5)" : focused ? "rgba(201,151,58,0.6)" : "rgba(201,151,58,0.2)"}`,
-                    borderRadius: 8, padding: "0.72rem 1rem", color: "#e8dcc8",
-                    fontSize: "0.88rem", fontFamily: "Georgia, serif", outline: "none",
-                    transition: "border-color 0.2s, box-shadow 0.2s",
-                    boxShadow: focused ? "0 0 0 3px rgba(201,151,58,0.08)" : "none",
-                    width: "100%", boxSizing: "border-box",
-                }}
-            />
-            {hint && !error &&
-                <p style={{color: "#4a3f2a", fontSize: "0.68rem", margin: 0, fontStyle: "italic"}}>{hint}</p>}
+            <div style={{position: "relative"}}>
+                <input
+                    type={type} value={value} onChange={onChange}
+                    placeholder={placeholder} autoComplete={autoComplete}
+                    onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
+                    style={{
+                        background: "rgba(13,17,23,0.8)",
+                        border: `1px solid ${error ? "rgba(239,68,68,0.5)" : focused ? "rgba(201,151,58,0.6)" : "rgba(201,151,58,0.2)"}`,
+                        borderRadius: 8, padding: rightIcon ? "0.72rem 2.5rem 0.72rem 1rem" : "0.72rem 1rem",
+                        color: "#e8dcc8", fontSize: "0.88rem", fontFamily: "Georgia, serif", outline: "none",
+                        transition: "border-color 0.2s, box-shadow 0.2s",
+                        boxShadow: focused ? "0 0 0 3px rgba(201,151,58,0.08)" : "none",
+                        width: "100%", boxSizing: "border-box",
+                    }}
+                />
+                {rightIcon && (
+                    <div style={{
+                        position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
+                        display: "flex", alignItems: "center",
+                    }}>
+                        {rightIcon}
+                    </div>
+                )}
+            </div>
+            {hint && !error && <p style={{color: "#4a3f2a", fontSize: "0.68rem", margin: 0, fontStyle: "italic"}}>{hint}</p>}
             {error && <p style={{color: "#f87171", fontSize: "0.7rem", margin: 0}}>{error}</p>}
         </div>
     );
@@ -40,9 +50,10 @@ export default function Register({language = "fr"}) {
     const {register, loading, error, clearError} = useAuthStore();
 
     const [form, setForm] = useState({
-        email: "", password: "", confirmPassword: "",
-        userName: "", firstName: "", lastName: "",
+        email: "", password: "", confirmPassword: "", userName: "",
     });
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
     const [fieldErrors, setFieldErrors] = useState({});
     const [success, setSuccess] = useState(false);
 
@@ -61,8 +72,6 @@ export default function Register({language = "fr"}) {
 
         if (form.confirmPassword !== form.password) errs.confirmPassword = t.errorPasswordMatch;
         if (!form.userName.trim() || form.userName.trim().length < 4) errs.userName = t.errorUsernameLength;
-        if (!form.firstName.trim()) errs.firstName = t.errorRequired;
-        if (!form.lastName.trim()) errs.lastName = t.errorRequired;
         return errs;
     };
 
@@ -79,14 +88,17 @@ export default function Register({language = "fr"}) {
                 email: form.email,
                 password: form.password,
                 userName: form.userName,
-                firstName: form.firstName,
-                lastName: form.lastName,
             });
             setSuccess(true);
             setTimeout(() => navigate("/login"), 2200);
         } catch {
-            // erreur déjà dans le store
         }
+    };
+
+    const eyeStyle = {
+        position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
+        background: "none", border: "none", color: "#7a6f5e", cursor: "pointer",
+        fontSize: "0.9rem", padding: 0,
     };
 
     return (
@@ -97,7 +109,7 @@ export default function Register({language = "fr"}) {
         }}>
             <div style={{
                 position: "absolute", inset: 0,
-                background: "radial-gradient(ellipse at 70% 20%, rgba(201,151,58,0.05) 0%, transparent 55%), radial-gradient(ellipse at 20% 80%, rgba(80,40,10,0.08) 0%, transparent 50%)",
+                background: "radial-gradient(ellipse at 70% 20%, rgba(201,151,58,0.05) 0%, transparent 55%)",
                 pointerEvents: "none",
             }}/>
             <div style={{
@@ -110,53 +122,33 @@ export default function Register({language = "fr"}) {
             }}/>
 
             <div style={{
-                position: "relative", width: "100%", maxWidth: 480,
+                position: "relative", width: "100%", maxWidth: 440,
                 background: "rgba(13,17,23,0.92)", border: "1px solid rgba(201,151,58,0.2)",
                 borderRadius: 16, padding: "2.5rem",
                 boxShadow: "0 32px 80px rgba(0,0,0,0.6), 0 0 60px rgba(201,151,58,0.04)",
                 animation: "cardReveal 0.5s ease both",
             }}>
 
-                {/* Back Button */}
-                <button
-                    onClick={() => navigate(-1)}
-                    style={{
-                        position: "absolute",
-                        top: 16,
-                        left: 16,
-                        background: "none",
-                        border: "none",
-                        color: "#c9973a",
-                        fontFamily: "Georgia, serif",
-                        fontWeight: 600,
-                        fontSize: "0.85rem",
-                        cursor: "pointer",
-                        textDecoration: "underline",
-                        textUnderlineOffset: 2,
-                        padding: 0,
-                    }}
-                >
+                <button onClick={() => navigate(-1)} style={{
+                    position: "absolute", top: 16, left: 16,
+                    background: "none", border: "none", color: "#c9973a",
+                    fontFamily: "Georgia, serif", fontWeight: 600, fontSize: "0.85rem",
+                    cursor: "pointer", textDecoration: "underline", textUnderlineOffset: 2, padding: 0,
+                }}>
                     {t.backButton}
                 </button>
 
-                {/* Success state */}
                 {success ? (
                     <div style={{textAlign: "center", padding: "3rem 0"}}>
                         <div style={{fontSize: "2.5rem", marginBottom: "1rem", color: "#c9973a"}}>✦</div>
                         <h2 style={{
                             background: "linear-gradient(135deg, #e8c06a, #c9973a)",
-                            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-                            margin: "0 0 8px",
-                        }}>
-                            {t.successTitle}
-                        </h2>
-                        <p style={{color: "#7a6f5e", fontStyle: "italic", fontSize: "0.85rem"}}>
-                            {t.successSubtitle}
-                        </p>
+                            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", margin: "0 0 8px",
+                        }}>{t.successTitle}</h2>
+                        <p style={{color: "#7a6f5e", fontStyle: "italic", fontSize: "0.85rem"}}>{t.successSubtitle}</p>
                     </div>
                 ) : (
                     <>
-                        {/* Header */}
                         <div style={{textAlign: "center", marginBottom: "1.8rem"}}>
                             <p style={{
                                 fontSize: "0.65rem",
@@ -171,9 +163,7 @@ export default function Register({language = "fr"}) {
                                 fontSize: "1.7rem", fontWeight: 700, margin: 0,
                                 background: "linear-gradient(135deg, #e8c06a, #c9973a)",
                                 WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-                            }}>
-                                {t.title}
-                            </h1>
+                            }}>{t.title}</h1>
                             <p style={{
                                 color: "#7a6f5e",
                                 fontSize: "0.8rem",
@@ -189,46 +179,56 @@ export default function Register({language = "fr"}) {
                         }}/>
 
                         <div style={{display: "flex", flexDirection: "column", gap: "1.1rem"}}>
-                            <InputField label={t.usernameLabel} value={form.userName} onChange={setField("userName")}
-                                        placeholder={t.usernamePlaceholder} error={fieldErrors.userName}
-                                        autoComplete="username" hint={t.usernameHint}/>
 
-                            <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.8rem"}}>
-                                <InputField label={t.firstNameLabel} value={form.firstName}
-                                            onChange={setField("firstName")}
-                                            placeholder={t.firstNamePlaceholder} error={fieldErrors.firstName}
-                                            autoComplete="given-name"/>
-                                <InputField label={t.lastNameLabel} value={form.lastName}
-                                            onChange={setField("lastName")}
-                                            placeholder={t.lastNamePlaceholder} error={fieldErrors.lastName}
-                                            autoComplete="family-name"/>
-                            </div>
+                            {/* Username */}
+                            <InputField
+                                label={t.usernameLabel} value={form.userName}
+                                onChange={setField("userName")} placeholder={t.usernamePlaceholder}
+                                error={fieldErrors.userName} autoComplete="username" hint={t.usernameHint}
+                            />
 
-                            <InputField label={t.emailLabel} type="email" value={form.email}
-                                        onChange={setField("email")}
-                                        placeholder={t.emailPlaceholder} error={fieldErrors.email}
-                                        autoComplete="email"/>
+                            {/* Email */}
+                            <InputField
+                                label={t.emailLabel} type="email" value={form.email}
+                                onChange={setField("email")} placeholder={t.emailPlaceholder}
+                                error={fieldErrors.email} autoComplete="email"
+                            />
 
-                            <InputField label={t.passwordLabel} type="password" value={form.password}
-                                        onChange={setField("password")}
-                                        placeholder={t.passwordPlaceholder} error={fieldErrors.password}
-                                        autoComplete="new-password" hint={t.passwordHint}/>
+                            {/* Password */}
+                            <InputField
+                                label={t.passwordLabel} type={showPassword ? "text" : "password"}
+                                value={form.password} onChange={setField("password")}
+                                placeholder={t.passwordPlaceholder} error={fieldErrors.password}
+                                autoComplete="new-password" hint={t.passwordHint}
+                                rightIcon={
+                                    <button style={{background:"none",border:"none",color:"#7a6f5e",cursor:"pointer",padding:0,display:"flex"}}
+                                            onClick={() => setShowPassword(p => !p)} tabIndex={-1}>
+                                        {showPassword ? <EyeOff size={16}/> : <Eye size={16}/>}
+                                    </button>
+                                }
+                            />
 
-                            <InputField label={t.confirmPasswordLabel} type="password" value={form.confirmPassword}
-                                        onChange={setField("confirmPassword")}
-                                        placeholder={t.confirmPasswordPlaceholder}
-                                        error={fieldErrors.confirmPassword} autoComplete="new-password"/>
+                            {/* Confirm Password */}
+                            <InputField
+                                label={t.confirmPasswordLabel} type={showConfirm ? "text" : "password"}
+                                value={form.confirmPassword} onChange={setField("confirmPassword")}
+                                placeholder={t.confirmPasswordPlaceholder} error={fieldErrors.confirmPassword}
+                                autoComplete="new-password"
+                                rightIcon={
+                                    <button style={{background:"none",border:"none",color:"#7a6f5e",cursor:"pointer",padding:0,display:"flex"}}
+                                            onClick={() => setShowConfirm(p => !p)} tabIndex={-1}>
+                                        {showConfirm ? <EyeOff size={16}/> : <Eye size={16}/>}
+                                    </button>
+                                }
+                            />
                         </div>
 
-                        {/* Store error */}
                         {error && (
                             <div style={{
                                 marginTop: "1rem", padding: "0.7rem 1rem",
                                 background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)",
                                 borderRadius: 8, color: "#f87171", fontSize: "0.78rem", textAlign: "center",
-                            }}>
-                                {error}
-                            </div>
+                            }}>{error}</div>
                         )}
 
                         <button
@@ -278,9 +278,7 @@ export default function Register({language = "fr"}) {
                                 background: "none", border: "none", color: "#c9973a", cursor: "pointer",
                                 fontFamily: "Georgia, serif", fontSize: "0.82rem",
                                 textDecoration: "underline", textUnderlineOffset: 3, padding: 0,
-                            }}>
-                                {t.loginLink}
-                            </button>
+                            }}>{t.loginLink}</button>
                         </p>
                     </>
                 )}

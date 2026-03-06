@@ -1,4 +1,5 @@
 package com.cal.yughistore.services.dto.applicationuser;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.cal.yughistore.model.ShoppingCart;
 import com.cal.yughistore.model.applicaitonuser.AdminUser;
@@ -25,11 +26,11 @@ public class ApplicationUserDTO {
     @Size(min = 4)
     private String userName;
 
-    @NotBlank(message = "First name is mandatory")
+
     @Size(min = 4)
     private String firstName;
 
-    @NotBlank(message = "Last name is mandatory")
+
     @Size(min = 2)
     private String lastName;
 
@@ -37,6 +38,7 @@ public class ApplicationUserDTO {
     @NotBlank(message = "Email is mandatory")
     @Email private String email;
 
+    @JsonIgnore
     private ShoppingCart shoppingCart = new ShoppingCart();
 
     @NotBlank(message = "Password is mandatory")

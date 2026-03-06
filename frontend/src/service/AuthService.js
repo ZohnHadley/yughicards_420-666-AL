@@ -10,11 +10,11 @@ export const AuthService = {
             body: JSON.stringify({ email, password }),
         });
 
-        const data = await res.json();
+        const text = await res.text();
+        const data = text ? JSON.parse(text) : {};
 
         if (!res.ok) {
-            // Le backend retourne { accessToken: "message d'erreur" } même pour les erreurs
-            throw new Error(data.accessToken ?? `Erreur ${res.status}`);
+            throw new Error(data.accessToken ?? data.message ?? `Erreur ${res.status}`);
         }
 
         return data.accessToken;
@@ -28,7 +28,8 @@ export const AuthService = {
             body: JSON.stringify({ email, password, userName, firstName, lastName }),
         });
 
-        const data = await res.json();
+        const text = await res.text();
+        const data = text ? JSON.parse(text) : {};
 
         if (!res.ok) {
             throw new Error(data.message ?? `Erreur ${res.status}`);
@@ -46,8 +47,11 @@ export const AuthService = {
             headers: { "Authorization": `Bearer ${token}` },
         });
 
-        if (!res.ok) throw new Error(`Erreur ${res.status}`);
-        return await res.json();
+        const text = await res.text();
+        const data = text ? JSON.parse(text) : {};
+
+        if (!res.ok) throw new Error(data.message ?? `Erreur ${res.status}`);
+        return data;
     },
 
     // ── Token storage ─────────────────────────────────────────────────────
