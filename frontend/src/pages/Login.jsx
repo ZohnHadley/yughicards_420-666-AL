@@ -74,7 +74,7 @@ export default function Login({ language = "fr" }) {
         clearError();
         try {
             await login(email, password);
-            navigate("/inventory");
+            navigate("/");
         } catch {
             // erreur déjà dans le store
         }
@@ -178,7 +178,7 @@ export default function Login({ language = "fr" }) {
                             }} />
                             {t.loadingText}
                         </>
-                    ) : `⚔ ${t.submitButton}`}
+                    ) : `${t.submitButton}`}
                 </button>
 
                 <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(201,151,58,0.15), transparent)", margin: "1.5rem 0" }} />

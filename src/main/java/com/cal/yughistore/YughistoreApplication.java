@@ -1,5 +1,7 @@
 package com.cal.yughistore;
 
+import com.cal.yughistore.repository.user.AdminUserRepository;
+import com.cal.yughistore.repository.user.ClientUserRepository;
 import com.cal.yughistore.services.applicaitonuser.ApplicationUserService;
 import com.cal.yughistore.services.dto.applicationuser.ApplicationUserDTO;
 import com.cal.yughistore.services.applicaitonuser.AdminUserService;
@@ -24,6 +26,8 @@ public class YughistoreApplication {
     private final ClientUserService clientUserService;
     private final StoreClientServices storeClientServices;
 
+
+
     public YughistoreApplication(AuthService authService, ApplicationUserService applicationUserService, AdminUserService adminUserService, ClientUserService clientUserService, StoreClientServices storeClientServices) {
         this.authService = authService;
         this.applicationUserService = applicationUserService;
@@ -37,44 +41,48 @@ public class YughistoreApplication {
     }
 
     @Bean
-    CommandLineRunner commandLineRunner(ApplicationContext context) {
+    CommandLineRunner commandLineRunner(
+            AdminUserRepository adminUserRepository,
+            AdminUserService adminUserService,
+            ClientUserRepository clientUserRepository,
+            ClientUserService clientUserService,
+            StoreClientServices storeClientServices
+    ) {
         return args -> {
-            adminUserService.save(
-                    ApplicationUserDTO.builder()
-                            .email("admin@gmail.com")
-                            .password("!Password123")
-                            .build()
-            );
-            ApplicationUserDTO applicationUserDTO = clientUserService.save(
-                    ApplicationUserDTO.builder()
-                            .email("zink@gmail.com")
-                            .password("!Password123")
-                            .build()
-            );
+            // Créer l'admin si inexistant
+            if (!adminUserRepository.existsByCredentialsEmail("admin@gmail.com")) {
+                adminUserService.save(
+                        ApplicationUserDTO.builder()
+                                .email("admin@gmail.com")
+                                .password("!Password123")
+                                .userName("Administrator")
+                                .firstName("Admin")
+                                .lastName("Admin")
+                                .build()
+                );
+            }
 
-//            LoginDTO loginDTO = LoginDTO.builder()
-//                    .email("zink@gmail.com")
-//                    .password("!Password123")
-//                    .build();
-//
-//            String auth = authService.userSigning(loginDTO);
-//            applicationUserDTO = applicationUserService.getMe(auth);
+            // Créer le client de test si inexistant
+            if (!clientUserRepository.existsByCredentialsEmail("zink@gmail.com")) {
+                ApplicationUserDTO clientDTO = clientUserService.save(
+                        ApplicationUserDTO.builder()
+                                .email("zink@gmail.com")
+                                .password("!Password123")
+                                .userName("Zink")
+                                .firstName("Zink")
+                                .lastName("User")
+                                .build()
+                );
 
-//            System.out.println(storeClientServices.getShoppingCart(applicationUserDTO.getId()));
+                // Populate cart
+                storeClientServices.addToShoppingCart(clientDTO.getId(), 1L);
+                storeClientServices.addToShoppingCart(clientDTO.getId(), 2L);
+                storeClientServices.addToShoppingCart(clientDTO.getId(), 3L);
+                System.out.println(storeClientServices.getShoppingCartByUserID(clientDTO.getId()).getCards());
 
-            /// populate cart
-
-            storeClientServices.addToShoppingCart(applicationUserDTO.getId(), 1L);
-            storeClientServices.addToShoppingCart(applicationUserDTO.getId(), 2L);
-            storeClientServices.addToShoppingCart(applicationUserDTO.getId(), 3L);
-
-            System.out.println(storeClientServices.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
-
-            ///  remove 1 card from cart
-            storeClientServices.removeFromShoppingCart(applicationUserDTO.getId(), 1L);
-
-            System.out.println(storeClientServices.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
-
+                storeClientServices.removeFromShoppingCart(clientDTO.getId(), 1L);
+                System.out.println(storeClientServices.getShoppingCartByUserID(clientDTO.getId()).getCards());
+            }
         };
     }
 }
