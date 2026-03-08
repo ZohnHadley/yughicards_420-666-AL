@@ -3,6 +3,7 @@ package com.cal.yughistore;
 import com.cal.yughistore.service.applicaitonuser.ApplicationUserService;
 import com.cal.yughistore.service.applicaitonuser.AdminUserService;
 import com.cal.yughistore.service.applicaitonuser.ClientUserService;
+import com.cal.yughistore.service.dto.applicationuser.ApplicationUserDTO;
 import com.cal.yughistore.service.storeServices.StoreAdminService;
 import com.cal.yughistore.service.storeServices.StoreClientService;
 import com.cal.yughistore.service.utils.AuthService;
@@ -47,31 +48,30 @@ public class YughistoreApplication {
         return args -> {
             ConsoleLoadingBar consoleLoadingBar = new ConsoleLoadingBar();
 
-//            adminUserService.save(
-//                    ApplicationUserDTO.builder()
-//                            .email("admin@gmail.com")
-//                            .password("!Password123")
-//                            .build()
-//            );
-//            ApplicationUserDTO applicationUserDTO = clientUserService.save(
-//                    ApplicationUserDTO.builder()
-//                            .email("zink@gmail.com")
-//                            .password("!Password123")
-//                            .build()
-//            );
-//
-//            /// populate cart
-//
-//            storeClientServices.addToShoppingCart(applicationUserDTO.getId(), 1L);
-//            storeClientServices.addToShoppingCart(applicationUserDTO.getId(), 2L);
-//            storeClientServices.addToShoppingCart(applicationUserDTO.getId(), 3L);
-//
-//            System.out.println(storeClientServices.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
-//
-//            ///  remove 1 card from cart
-//            storeClientServices.removeFromShoppingCart(applicationUserDTO.getId(), 1L);
-//
-//            System.out.println(storeClientServices.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
+            adminUserService.save(
+                    ApplicationUserDTO.builder()
+                            .email("admin@gmail.com")
+                            .password("!Password123")
+                            .build()
+            );
+            ApplicationUserDTO applicationUserDTO = clientUserService.save(
+                    ApplicationUserDTO.builder()
+                            .email("zink@gmail.com")
+                            .password("!Password123")
+                            .build()
+            );
+            /// populate cart
+
+            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 1L);
+            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 2L);
+            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 3L);
+
+            System.out.println(storeClientService.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
+
+            ///  remove 1 card from cart
+            storeClientService.removeFromShoppingCart(applicationUserDTO.getId(), 1L);
+
+            System.out.println(storeClientService.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
 
             List<Long> cardIds = new ArrayList<>();
             System.out.println("stocking up to 1000 cards");
