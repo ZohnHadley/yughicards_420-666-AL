@@ -38,8 +38,8 @@ public class YughioCardDTO {
     private EnumPropertiesConfigType cardConfig;
     private CardProperties cardProperties;
 
-    private List<CardImages> card_images;
-    private List<CardPrices> card_prices;
+    private List<CardImagesDTO> card_images;
+    private List<CardPricesDTO> card_prices;
     private List<CardSetDTO> card_sets;
 
     private Integer stock = 0;
@@ -60,12 +60,12 @@ public class YughioCardDTO {
         return new CardProperties();
     }
 
-    private static List<CardImages> cardImageGroupsFromNode(JsonNode node) {
-        List<CardImages> cardImages = new ArrayList<>();
+    private static List<CardImagesDTO> cardImageGroupsFromNode(JsonNode node) {
+        List<CardImagesDTO> cardImages = new ArrayList<>();
         JsonNode list = node.get("card_images");
         if (list == null || !list.isArray()) return cardImages;
         for (JsonNode img : list) {
-            cardImages.add(CardImages.builder()
+            cardImages.add(CardImagesDTO.builder()
                     .image_group_api_id(img.get("id").asInt())
                     .image_url(img.get("image_url").asText(""))
                     .image_url_small(img.get("image_url_small").asText(""))
@@ -75,18 +75,20 @@ public class YughioCardDTO {
         return cardImages;
     }
 
-    private static List<CardPrices> cardPricesFromNode(JsonNode node) {
-        List<CardPrices> prices = new ArrayList<>();
+    private static List<CardPricesDTO> cardPricesFromNode(JsonNode node) {
+        List<CardPricesDTO> prices = new ArrayList<>();
         JsonNode list = node.get("card_prices");
         if (list == null || !list.isArray()) return prices;
         for (JsonNode p : list) {
-            prices.add(CardPrices.builder()
-                    .cardmarket_price(p.get("cardmarket_price").asText(""))
-                    .tcgplayer_price(p.get("tcgplayer_price").asText(""))
-                    .ebay_price(p.get("ebay_price").asText(""))
-                    .amazon_price(p.get("amazon_price").asText(""))
-                    .coolstuffinc_price(p.get("coolstuffinc_price").asText(""))
-                    .build());
+            prices.add(
+                    CardPricesDTO.builder()
+                            .cardmarket_price(p.get("cardmarket_price").asText(""))
+                            .tcgplayer_price(p.get("tcgplayer_price").asText(""))
+                            .ebay_price(p.get("ebay_price").asText(""))
+                            .amazon_price(p.get("amazon_price").asText(""))
+                            .coolstuffinc_price(p.get("coolstuffinc_price").asText(""))
+                            .build()
+            );
         }
         return prices;
     }
@@ -163,7 +165,26 @@ public class YughioCardDTO {
     // ⚠ C'était ici le bug : card_sets n'était jamais retourné au frontend
 
     public static YughioCardDTO of(YughioCard card) {
-        List<CardSetDTO> sets = (card.getCard_sets() == null) ? new ArrayList<>() :
+        List<CardImagesDTO> imagesDTOS = card.getCard_images() == null ? new ArrayList<>() : card.getCard_images().stream()
+                .map(img -> CardImagesDTO.builder()
+                        .image_group_api_id(img.getImage_group_api_id())
+                        .image_url(img.getImage_url())
+                        .image_url_small(img.getImage_url_small())
+                        .image_url_cropped(img.getImage_url_cropped())
+                        .build())
+                .toList();
+
+        List<CardPricesDTO> pricesDTOS = card.getCard_prices() == null ? new ArrayList<>() : card.getCard_prices().stream()
+                .map(p -> CardPricesDTO.builder()
+                        .cardmarket_price(p.getCardmarket_price())
+                        .tcgplayer_price(p.getTcgplayer_price())
+                        .ebay_price(p.getEbay_price())
+                        .amazon_price(p.getAmazon_price())
+                        .coolstuffinc_price(p.getCoolstuffinc_price())
+                        .build())
+                .toList();
+
+        List<CardSetDTO> setsDTOS = (card.getCard_sets() == null) ? new ArrayList<>() :
                 card.getCard_sets().stream()
                         .map(s -> new CardSetDTO(
                                 s.getSet_name(),
@@ -188,9 +209,9 @@ public class YughioCardDTO {
                 .ygoprodeck_url(card.getYgoprodeck_url())
                 .cardConfig(card.getCardConfig())
                 .cardProperties(card.getCardProperties())
-                .card_images(card.getCard_images())
-                .card_prices(card.getCard_prices())
-                .card_sets(sets)   // ← le fix : maintenant retourné au frontend
+                .card_images(imagesDTOS)
+                .card_prices(pricesDTOS)
+                .card_sets(setsDTOS)   // ← le fix : maintenant retourné au frontend
                 .build();
     }
 
@@ -210,8 +231,16 @@ public class YughioCardDTO {
                 .ygoprodeck_url(this.ygoprodeck_url)
                 .cardConfig(this.cardConfig)
                 .cardProperties(this.cardProperties)
-                .card_images(this.card_images != null ? this.card_images : new ArrayList<>())
-                .card_prices(this.card_prices != null ? this.card_prices : new ArrayList<>())
+                .card_images(
+                        this.card_images.stream()
+                                .map(CardImagesDTO::toCardImages)
+                                .toList()
+                )
+                .card_prices(
+                        this.card_prices.stream()
+                                .map(CardPricesDTO::toCardPrices)
+                                .toList()
+                )
                 // card_sets est sauvegardé séparément dans YughioCardService.saveCardSets()
                 .build();
     }

@@ -32,11 +32,6 @@ public class ConsoleLoadingBar {
                 .append(current).append("/").append(total).append(")");
 
         System.out.print(bar);
-        try {
-            Thread.sleep(0,1);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 
     public void finish() {
