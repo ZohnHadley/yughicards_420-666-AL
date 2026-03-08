@@ -61,7 +61,7 @@ public class ShoppingCartService {
             }
 
             ShoppingCart savedShoppingCart = shoppingCartRepository.save(cart);
-            logger.info("Saved shopping cart id={}", savedShoppingCart.getId());
+            logger.debug("Saved shopping cart id={}", savedShoppingCart.getId());
             return ShoppingCartDTO.of(savedShoppingCart);
         } catch (Exception e) {
             logger.error("Error saving shopping cart: {}", e.getMessage());

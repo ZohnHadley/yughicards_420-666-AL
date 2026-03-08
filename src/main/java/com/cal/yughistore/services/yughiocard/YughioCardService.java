@@ -1,5 +1,6 @@
 package com.cal.yughistore.services.yughiocard;
 
+import com.cal.yughistore.ConsoleLoadingBar;
 import com.cal.yughistore.model.yughiocard.CardImages;
 import com.cal.yughistore.model.yughiocard.CardPrices;
 import com.cal.yughistore.model.yughiocard.CardSet;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class YughioCardService {
+    private final ConsoleLoadingBar consoleLoadingBar = new ConsoleLoadingBar();
     private static final Logger logger = LoggerFactory.getLogger(YughioCardService.class);
 
     private final YughioCardRepository cardRepository;
@@ -75,20 +77,40 @@ public class YughioCardService {
         saveCardSets(savedCard, dtoCard.getCard_sets());
 
         YughioCardDTO response = YughioCardDTO.of(savedCard);
-        logger.info("Saved card: {}", response);
+        logger.debug("Saved card: {}", response);
         return response;
     }
 
     @Transactional
     public List<YughioCardDTO> saveAll(List<YughioCardDTO> dtoCards) {
-        if (dtoCards == null || dtoCards.isEmpty())
-            throw new IllegalArgumentException("cards list can't be empty");
 
-        List<YughioCardDTO> response = new ArrayList<>();
-        for (YughioCardDTO dto : dtoCards) {
-            response.add(save(dto));
+        if (dtoCards == null || dtoCards.isEmpty()) {
+            throw new IllegalArgumentException("cards list can't be empty");
         }
+
+        int batchSize = 500;
+
+        logger.info("Saving {} cards", dtoCards.size());
+
+        List<YughioCardDTO> response = new ArrayList<>(dtoCards.size());
+
+        for (int index = 0; index < dtoCards.size(); index++) {
+
+            YughioCardDTO dto = dtoCards.get(index);
+
+            response.add(save(dto));
+
+            consoleLoadingBar.printProgress(index + 1, dtoCards.size());
+
+            if (index % batchSize == 0) {
+                cardRepository.flush(); // push batch to DB
+            }
+        }
+
+        consoleLoadingBar.finish();
+
         logger.info("Saved {} cards", response.size());
+
         return response;
     }
 
