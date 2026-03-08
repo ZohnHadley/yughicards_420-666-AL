@@ -1,7 +1,7 @@
 package com.cal.yughistore.event;
 
 import com.cal.yughistore.model.EmailMessage;
-import com.cal.yughistore.services.utils.EmailService;
+import com.cal.yughistore.service.utils.EmailService;
 import com.cal.yughistore.utils.EmailTemplate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

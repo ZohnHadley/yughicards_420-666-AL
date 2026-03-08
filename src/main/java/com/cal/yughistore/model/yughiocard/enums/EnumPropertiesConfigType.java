@@ -15,4 +15,8 @@ public enum EnumPropertiesConfigType {
         this.name = name;
     }
 
+    EnumPropertiesConfigType(){
+        this.name = this.name();
+    }
+
 }

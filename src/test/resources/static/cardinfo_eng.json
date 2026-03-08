@@ -1,0 +1,34 @@
+{
+  "data": [
+    {
+      "id": 456,
+      "name": "Dark Magician",
+      "type": "Normal Monster",
+      "frameType": "normal",
+      "desc": "The ultimate wizard.",
+      "atk": 2500,
+      "def": 2100,
+      "level": 7,
+      "race": "Spellcaster",
+      "attribute": "DARK",
+      "ygoprodeck_url": "https://example.com/card/456",
+      "card_images": [
+        {
+          "id": 456,
+          "image_url": "https://example.com/dm.jpg",
+          "image_url_small": "https://example.com/dm-small.jpg",
+          "image_url_cropped": "https://example.com/dm-cropped.jpg"
+        }
+      ],
+      "card_prices": [
+        {
+          "cardmarket_price": "1.00",
+          "tcgplayer_price": "2.00",
+          "ebay_price": "3.00",
+          "amazon_price": "4.00",
+          "coolstuffinc_price": "5.00"
+        }
+      ]
+    }
+  ]
+}
