@@ -1,11 +1,11 @@
 package com.cal.yughistore;
 
-import com.cal.yughistore.services.applicaitonuser.ApplicationUserService;
-import com.cal.yughistore.services.applicaitonuser.AdminUserService;
-import com.cal.yughistore.services.applicaitonuser.ClientUserService;
-import com.cal.yughistore.services.storeServices.StoreAdminService;
-import com.cal.yughistore.services.storeServices.StoreClientService;
-import com.cal.yughistore.services.utils.AuthService;
+import com.cal.yughistore.service.applicaitonuser.ApplicationUserService;
+import com.cal.yughistore.service.applicaitonuser.AdminUserService;
+import com.cal.yughistore.service.applicaitonuser.ClientUserService;
+import com.cal.yughistore.service.storeServices.StoreAdminService;
+import com.cal.yughistore.service.storeServices.StoreClientService;
+import com.cal.yughistore.service.utils.AuthService;
 import com.cal.yughistore.utils.ConsoleLoadingBar;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -73,14 +73,14 @@ public class YughistoreApplication {
 //
 //            System.out.println(storeClientServices.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
 
-            List<Long> cardIds = new ArrayList<>();
-            System.out.println("stocking up to 1000 cards");
-            for (int i = 1; i <= 1000; i++) {
-                cardIds.add((long) i);
-                storeAdminService.incrementCardStock(((long) i), 100);
-                consoleLoadingBar.printProgress(i, 1000);
-            }
-            consoleLoadingBar.finish();
+//            List<Long> cardIds = new ArrayList<>();
+//            System.out.println("stocking up to 1000 cards");
+//            for (int i = 1; i <= 1000; i++) {
+//                cardIds.add((long) i);
+//                storeAdminService.incrementCardStock(((long) i), 100);
+//                consoleLoadingBar.printProgress(i, 1000);
+//            }
+//            consoleLoadingBar.finish();
         };
     }
 }

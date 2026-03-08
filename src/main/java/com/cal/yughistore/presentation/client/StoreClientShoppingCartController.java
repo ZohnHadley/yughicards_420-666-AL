@@ -1,8 +1,8 @@
 package com.cal.yughistore.presentation.client;
 
-import com.cal.yughistore.services.applicaitonuser.ApplicationUserService;
-import com.cal.yughistore.services.dto.yughiocard.YughioCardDTO;
-import com.cal.yughistore.services.storeServices.StoreClientService;
+import com.cal.yughistore.service.applicaitonuser.ApplicationUserService;
+import com.cal.yughistore.service.dto.yughiocard.YughioCardDTO;
+import com.cal.yughistore.service.storeServices.StoreClientService;
 import com.cal.yughistore.utils.JwtTokenUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

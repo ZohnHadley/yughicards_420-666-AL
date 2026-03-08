@@ -37,8 +37,10 @@ public class YughioCard {
     @Column(length = 1000)
     private String ygoprodeck_url;
 
+    @Column(nullable = false)
     private Integer quantity = 0;
 
+    @Column(nullable = true, length = 50)
     private String rarity = "";
 
     @Column(length = 200)
@@ -104,7 +106,7 @@ public class YughioCard {
         this.card_images = (card_images != null) ? card_images : new ArrayList<>();
         this.card_prices = (card_prices != null) ? card_prices : new ArrayList<>();
         this.card_sets = (card_sets != null) ? card_sets : new ArrayList<>();
-        this.quantity = quantity != null ? quantity : 0;
+        this.quantity = quantity;
         this.rarity = rarity;
         this.setName = setName;
         this.setCode = setCode;

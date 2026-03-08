@@ -151,7 +151,7 @@ export default function YughiohCardDetails({ language = "fr" }) {
     const cardLinkval   = cp.linkval   ?? null;
     const cardScale     = cp.scale     ?? null;
     // Les enums Jackson sérialisent soit le string directement soit { name: "DARK" }
-    const cardRace      = cp.race?.name      ?? cp.race      ?? null;
+    const cardRace      = cp.race?.name ?? cp.race ?? null;
     const cardAttribute = cp.attribute?.name ?? cp.attribute ?? null;
 
     // Texte d'effet : champ 'description' dans YughioCard (mappé depuis 'desc' YGOPRODeck)

@@ -1,7 +1,7 @@
 package com.cal.yughistore.presentation.admin;
 
-import com.cal.yughistore.services.dto.yughiocard.YughioCardDTO;
-import com.cal.yughistore.services.storeServices.StoreAdminService;
+import com.cal.yughistore.service.dto.yughiocard.YughioCardDTO;
+import com.cal.yughistore.service.storeServices.StoreAdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +24,7 @@ public class StoreCardStockController {
         return ResponseEntity.ok(storeAdminService.setCardStock(cardId, quantity));
     }
 
-    @PatchMapping("/cards/cardId={cardId}/quantity={quantity}/increment")
+    @PostMapping("/cards/cardId={cardId}/quantity={quantity}/increment")
     public ResponseEntity<YughioCardDTO> incrementCardStock(
             @PathVariable Long cardId,
             @PathVariable int quantity
@@ -34,7 +34,7 @@ public class StoreCardStockController {
         return ResponseEntity.ok(storeAdminService.incrementCardStock(cardId, quantity));
     }
 
-    @PatchMapping("/cards/cardId={cardId}/quantity={quantity}/decrement")
+    @PostMapping("/cards/cardId={cardId}/quantity={quantity}/decrement")
     public ResponseEntity<YughioCardDTO> decrementCardStock(
             @PathVariable Long cardId,
             @PathVariable int quantity
