@@ -62,31 +62,54 @@ public class YughioCardService {
     public YughioCardDTO save(YughioCardDTO dtoCard) {
         if (dtoCard == null) throw new IllegalArgumentException("card can't be null");
 
-        YughioCard savedCard = cardRepository.save(dtoCard.toYughioCard());
+        YughioCard entity = dtoCard.toYughioCard();
 
-        saveCardProperties(savedCard);
-
-        if (dtoCard.getCard_images() != null) {
-            for (CardImagesDTO ci : dtoCard.getCard_images()) {
-                CardImages images = ci.toCardImages();
-                images.setYughioCard(savedCard);
-                cardImagesRepository.save(images);
-            }
+        if (entity.getCardProperties() != null) {
+            entity.getCardProperties().setYughioCard(entity);
         }
 
-        if (dtoCard.getCard_prices() != null) {
-            for (CardPricesDTO cp : dtoCard.getCard_prices()) {
-                CardPrices prices = cp.toCardPrices();
-                prices.setYughioCard(savedCard);
-                cardPriceRepository.save(prices);
-            }
-        }
+        YughioCard savedCard = cardRepository.save(entity);
 
-        saveCardSets(savedCard, dtoCard.getCard_sets());
+        if (dtoCard.getId() == null) {
+            if (dtoCard.getCard_images() != null) {
+                for (CardImagesDTO ci : dtoCard.getCard_images()) {
+                    CardImages images = ci.toCardImages();
+                    images.setYughioCard(savedCard);
+                    cardImagesRepository.save(images);
+                }
+            }
+
+            if (dtoCard.getCard_prices() != null) {
+                for (CardPricesDTO cp : dtoCard.getCard_prices()) {
+                    CardPrices prices = cp.toCardPrices();
+                    prices.setYughioCard(savedCard);
+                    cardPriceRepository.save(prices);
+                }
+            }
+
+            saveCardSets(savedCard, dtoCard.getCard_sets());
+        }
 
         YughioCardDTO response = YughioCardDTO.of(savedCard);
         logger.debug("Saved card: {}", response);
         return response;
+    }
+
+    @Transactional
+    public YughioCardDTO updateQuantity(Long cardId, int quantity) {
+        if (cardId == null) {
+            return null;
+        }
+        if (quantity < 0) {
+            throw new IllegalArgumentException("quantity must be greater than or equal to 0");
+        }
+
+        YughioCard card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new RuntimeException("Card not found"));
+
+        card.setQuantity(quantity);
+
+        return YughioCardDTO.of(card);
     }
 
     @Transactional

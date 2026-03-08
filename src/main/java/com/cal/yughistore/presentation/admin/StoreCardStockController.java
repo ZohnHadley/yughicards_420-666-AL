@@ -24,7 +24,7 @@ public class StoreCardStockController {
         return ResponseEntity.ok(storeAdminService.setCardStock(cardId, quantity));
     }
 
-    @PostMapping("/cards/cardId={cardId}/quantity={quantity}/increment")
+    @PutMapping("/cards/cardId={cardId}/quantity={quantity}/increment")
     public ResponseEntity<YughioCardDTO> incrementCardStock(
             @PathVariable Long cardId,
             @PathVariable int quantity
@@ -34,7 +34,7 @@ public class StoreCardStockController {
         return ResponseEntity.ok(storeAdminService.incrementCardStock(cardId, quantity));
     }
 
-    @PostMapping("/cards/cardId={cardId}/quantity={quantity}/decrement")
+    @PutMapping("/cards/cardId={cardId}/quantity={quantity}/decrement")
     public ResponseEntity<YughioCardDTO> decrementCardStock(
             @PathVariable Long cardId,
             @PathVariable int quantity

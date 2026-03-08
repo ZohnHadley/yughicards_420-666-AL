@@ -73,14 +73,14 @@ public class YughistoreApplication {
 //
 //            System.out.println(storeClientServices.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
 
-//            List<Long> cardIds = new ArrayList<>();
-//            System.out.println("stocking up to 1000 cards");
-//            for (int i = 1; i <= 1000; i++) {
-//                cardIds.add((long) i);
-//                storeAdminService.incrementCardStock(((long) i), 100);
-//                consoleLoadingBar.printProgress(i, 1000);
-//            }
-//            consoleLoadingBar.finish();
+            List<Long> cardIds = new ArrayList<>();
+            System.out.println("stocking up to 1000 cards");
+            for (int i = 1; i <= 1000; i++) {
+                cardIds.add((long) i);
+                storeAdminService.incrementCardStock(((long) i), 30);
+                consoleLoadingBar.printProgress(i, 1000);
+            }
+            consoleLoadingBar.finish();
         };
     }
 }

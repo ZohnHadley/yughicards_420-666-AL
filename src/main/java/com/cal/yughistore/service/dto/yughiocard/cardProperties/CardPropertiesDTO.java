@@ -19,9 +19,9 @@ import lombok.*;
 @ToString(exclude = "yughioCard")
 public class CardPropertiesDTO {
 
-
-    //TODO : PROPERTIES DTOs ARN'T BEING USED ANYWHERE (BUT WHEN REQUIRES MORE DETAIL SEARCH ENDPOINT THEY WILL COME IN HANDY (I THINK?))
     private Long id;
+    private Long yughioCardId;
+
     private static CardProperties getCardProperties(EnumCardType cardType) {
         if (cardType.name().toUpperCase().contains(EnumPropertiesConfigType.MONSTER.getName())) {
             return new PropertiesMonsterCard();
@@ -48,24 +48,40 @@ public class CardPropertiesDTO {
     }
 
     public static CardPropertiesDTO of(CardProperties properties) {
+        CardPropertiesDTO dto;
+
         if (properties.getClass().equals(PropertiesMonsterCard.class)) {
-            return PropertiesMonsterCardDTO.of((PropertiesMonsterCard) properties);
+            dto = PropertiesMonsterCardDTO.of((PropertiesMonsterCard) properties);
         } else if (properties.getClass().equals(PropertiesSpellCard.class)) {
-            return PropertiesSpellCardDTO.of((PropertiesSpellCard) properties);
+            dto = PropertiesSpellCardDTO.of((PropertiesSpellCard) properties);
         } else if (properties.getClass().equals(PropertiesTrapCard.class)) {
-            return PropertiesTrapCardDTO.of((PropertiesTrapCard) properties);
+            dto = PropertiesTrapCardDTO.of((PropertiesTrapCard) properties);
+        } else {
+            dto = new CardPropertiesDTO();
         }
-        return new CardPropertiesDTO();
+
+        dto.setId(properties.getId());
+        if (properties.getYughioCard() != null) {
+            dto.setYughioCardId(properties.getYughioCard().getId());
+        }
+
+        return dto;
     }
 
     public CardProperties toCardProperties() {
+        CardProperties properties;
+
         if (this.getClass().equals(PropertiesMonsterCardDTO.class)) {
-            return ((PropertiesMonsterCardDTO) this).toPropertiesMonsterCard();
+            properties = ((PropertiesMonsterCardDTO) this).toPropertiesMonsterCard();
         } else if (this.getClass().equals(PropertiesSpellCardDTO.class)) {
-            return ((PropertiesSpellCardDTO) this).toPropertiesSpellCard();
+            properties = ((PropertiesSpellCardDTO) this).toPropertiesSpellCard();
         } else if (this.getClass().equals(PropertiesTrapCardDTO.class)) {
-            return ((PropertiesTrapCardDTO) this).toPropertiesTrapCard();
+            properties = ((PropertiesTrapCardDTO) this).toPropertiesTrapCard();
+        } else {
+            properties = new CardProperties();
         }
-        return new CardProperties();
+
+        properties.setId(this.getId());
+        return properties;
     }
 }
