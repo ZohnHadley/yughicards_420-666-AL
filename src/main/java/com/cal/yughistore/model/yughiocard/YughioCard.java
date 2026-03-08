@@ -52,11 +52,13 @@ public class YughioCard {
             mappedBy = "yughioCard",
             cascade = jakarta.persistence.CascadeType.ALL
     )
+    @JsonManagedReference
     private List<CardImages> card_images;
     @OneToMany(
             mappedBy = "yughioCard",
             cascade = jakarta.persistence.CascadeType.ALL
     )
+    @JsonManagedReference
     private List<CardPrices> card_prices;
 
     /// Properties (depends on card type (trap, spell, monster, etc) ) ///

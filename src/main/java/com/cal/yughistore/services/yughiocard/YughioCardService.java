@@ -13,6 +13,8 @@ import com.cal.yughistore.repository.CardPricesRepository;
 import com.cal.yughistore.repository.CardSetRepository;
 import com.cal.yughistore.repository.propertie.CardPropertiesRepository;
 import com.cal.yughistore.repository.YughioCardRepository;
+import com.cal.yughistore.services.dto.yughiocard.CardImagesDTO;
+import com.cal.yughistore.services.dto.yughiocard.CardPricesDTO;
 import com.cal.yughistore.services.dto.yughiocard.CardSetDTO;
 import com.cal.yughistore.services.dto.yughiocard.YughioCardDTO;
 import com.cal.yughistore.utils.SimpleEnumUtils;
@@ -66,16 +68,18 @@ public class YughioCardService {
         saveCardProperties(savedCard);
 
         if (dtoCard.getCard_images() != null) {
-            for (CardImages ci : dtoCard.getCard_images()) {
-                ci.setYughioCard(savedCard);
-                cardImagesRepository.save(ci);
+            for (CardImagesDTO ci : dtoCard.getCard_images()) {
+                CardImages images = ci.toCardImages();
+                images.setYughioCard(savedCard);
+                cardImagesRepository.save(images);
             }
         }
 
         if (dtoCard.getCard_prices() != null) {
-            for (CardPrices cp : dtoCard.getCard_prices()) {
-                cp.setYughioCard(savedCard);
-                cardPriceRepository.save(cp);
+            for (CardPricesDTO cp : dtoCard.getCard_prices()) {
+                CardPrices prices = cp.toCardPrices();
+                prices.setYughioCard(savedCard);
+                cardPriceRepository.save(prices);
             }
         }
 
@@ -108,7 +112,6 @@ public class YughioCardService {
             consoleLoadingBar.printProgress(index + 1, dtoCards.size());
 
             if ((index + 1) % batchSize == 0) {
-                cardRepository.flush(); // push batch to DB
                 entityManager.flush();
                 entityManager.clear();
             }
@@ -150,11 +153,15 @@ public class YughioCardService {
 
     @Transactional(readOnly = true)
     public YughioCardDTO getById(Long id) {
-        if (id == null) throw new IllegalArgumentException("card id can't be null");
-        YughioCard card = cardRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Card not found with id: " + id));
-        return YughioCardDTO.of(card);
 
+        YughioCard card = cardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Card not found"));
+
+        card.getCard_images().size();
+        card.getCard_prices().size();
+        card.getCard_sets().size();
+
+        return YughioCardDTO.of(card);
     }
 
     @Transactional(readOnly = true)
