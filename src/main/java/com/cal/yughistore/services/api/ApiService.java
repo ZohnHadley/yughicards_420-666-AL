@@ -1,5 +1,6 @@
 package com.cal.yughistore.services.api;
 
+import com.cal.yughistore.ConsoleLoadingBar;
 import com.cal.yughistore.repository.YughioCardRepository;
 import com.cal.yughistore.services.dto.yughiocard.YughioCardDTO;
 import com.cal.yughistore.services.yughiocard.YughioCardService;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Service
 public class ApiService {
+    private final ConsoleLoadingBar consoleLoadingBar = new ConsoleLoadingBar();
     private static final Logger logger = LoggerFactory.getLogger(ApiService.class);
     private final YughioCardRepository cardRepository;
     private final YughioCardService yughioCardService;
@@ -49,8 +51,8 @@ public class ApiService {
     @PostConstruct
     public void init() {
         if (cardRepository.count() == 0) {
-            loadApiCardData();
-//            loadApiCardDataFromStaticFile();
+//            loadApiCardData();
+            loadApiCardDataFromStaticFile();
         } else {
             logger.info("Cards already exist. Skipping API load.");
         }
@@ -59,16 +61,19 @@ public class ApiService {
     private void loadApiCardData() {
         List<YughioCardDTO> dtoList = new ArrayList<>();
         try {
-            logger.info("ApiService : trying to load all cards data from api");
+            logger.info("ApiService : Downloading all card data data from api");
 
             String result = apiGet("/cardinfo.php");
             JsonNode dataList = objectMapper.readTree(result).get("data");
             if (dataList != null && dataList.isArray() && !dataList.isEmpty()) {
 
-                for (JsonNode node : dataList) {
+                for (int index =0; index < dataList.size(); index++) {
+                    JsonNode node = dataList.get(index);
                     YughioCardDTO cardDto = YughioCardDTO.of(node);
                     dtoList.add(cardDto);
+                    consoleLoadingBar.printProgress(index + 1, dataList.size());
                 }
+                consoleLoadingBar.finish();
 
                 yughioCardService.saveAll(dtoList);
             }
@@ -85,7 +90,7 @@ public class ApiService {
         List<YughioCardDTO> dtoList = new ArrayList<>();
 
         try {
-            logger.info("ApiService : loading from static file");
+            logger.info("ApiService : Loading card data from json file");
 
             InputStream is = getClass()
                     .getClassLoader()
@@ -98,10 +103,13 @@ public class ApiService {
             JsonNode root = objectMapper.readTree(is);
             JsonNode dataList = root.get("data");
 
-            for (JsonNode node : dataList) {
+            for (int index =0; index < dataList.size(); index++) {
+                JsonNode node = dataList.get(index);
                 YughioCardDTO cardDto = YughioCardDTO.of(node);
                 dtoList.add(cardDto);
+                consoleLoadingBar.printProgress(index + 1, dataList.size());
             }
+            consoleLoadingBar.finish();
 
             yughioCardService.saveAll(dtoList);
 
