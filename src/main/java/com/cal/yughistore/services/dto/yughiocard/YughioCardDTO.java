@@ -42,7 +42,7 @@ public class YughioCardDTO {
     private List<CardPricesDTO> card_prices;
     private List<CardSetDTO> card_sets;
 
-    private Integer stock = 0;
+    private int stock = -1;
     private String rarity = "";
     private String setName = "";
     private String setCode = "";

@@ -39,7 +39,7 @@ public class YughioCard {
     private String ygoprodeck_url;
 
     @Column(nullable = true)
-    private Integer stock = 0;
+    private Integer stock = 10;
 
     private String rarity = "";
 

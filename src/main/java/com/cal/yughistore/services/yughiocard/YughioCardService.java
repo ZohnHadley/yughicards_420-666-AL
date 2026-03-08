@@ -1,6 +1,6 @@
 package com.cal.yughistore.services.yughiocard;
 
-import com.cal.yughistore.ConsoleLoadingBar;
+import com.cal.yughistore.utils.ConsoleLoadingBar;
 import com.cal.yughistore.model.yughiocard.CardImages;
 import com.cal.yughistore.model.yughiocard.CardPrices;
 import com.cal.yughistore.model.yughiocard.CardSet;
@@ -43,7 +43,6 @@ public class YughioCardService {
     private final CardPricesRepository cardPriceRepository;
     private final CardSetRepository cardSetRepository;
 
-    private final int pagination_default_number_of_elements_per_page = 10;
 
     public YughioCardService(YughioCardRepository cardRepository,
                              CardPropertiesRepository cardPropertiesRepository,
@@ -59,9 +58,20 @@ public class YughioCardService {
 
     // ── Save ────────────────────────────────────────────────────────────────
 
+    private boolean cardExists(YughioCardDTO dtoCard) {
+        if (dtoCard == null) return false;
+        if (dtoCard.getId() == null) return false;
+        return cardRepository.existsById(dtoCard.getId());
+    }
+
     @Transactional
     public YughioCardDTO save(YughioCardDTO dtoCard) {
         if (dtoCard == null) throw new IllegalArgumentException("card can't be null");
+
+        if (cardExists(dtoCard)) {
+            cardRepository.save(dtoCard.toYughioCard());
+            return dtoCard;
+        }
 
         YughioCard savedCard = cardRepository.save(dtoCard.toYughioCard());
 
@@ -104,7 +114,6 @@ public class YughioCardService {
         List<YughioCardDTO> response = new ArrayList<>(dtoCards.size());
 
         for (int index = 0; index < dtoCards.size(); index++) {
-
             YughioCardDTO dto = dtoCards.get(index);
 
             response.add(save(dto));
@@ -152,9 +161,9 @@ public class YughioCardService {
     // ── Get ─────────────────────────────────────────────────────────────────
 
     @Transactional(readOnly = true)
-    public YughioCardDTO getById(Long id) {
+    public YughioCardDTO getById(Long cardId) {
 
-        YughioCard card = cardRepository.findById(id)
+        YughioCard card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new RuntimeException("Card not found"));
 
         card.getCard_images().size();
@@ -216,5 +225,15 @@ public class YughioCardService {
     public List<YughioCardDTO> getAllVersionsOfCard(String cardName) {
         List<YughioCard> cards = cardRepository.findAllByNameIgnoreCaseOrderByRarityAsc(cardName);
         return cards.stream().map(YughioCardDTO::of).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public Boolean deleteById(Long id) {
+        try {
+            cardRepository.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

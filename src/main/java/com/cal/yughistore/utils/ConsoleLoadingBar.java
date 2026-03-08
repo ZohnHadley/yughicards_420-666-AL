@@ -1,4 +1,4 @@
-package com.cal.yughistore;
+package com.cal.yughistore.utils;
 
 import lombok.Getter;
 import lombok.Setter;

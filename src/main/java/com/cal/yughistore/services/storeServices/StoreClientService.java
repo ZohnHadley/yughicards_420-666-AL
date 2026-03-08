@@ -11,16 +11,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class StoreClientServices {
+public class StoreClientService {
     private static final Logger logger = LoggerFactory.getLogger(
-            StoreClientServices.class
+            StoreClientService.class
     );
-    private final ClientUserService clientUserService;
     private final ShoppingCartService shoppingCartService;
     private final YughioCardService yughioCardService;
 
-    public StoreClientServices(ClientUserService clientUserService, ShoppingCartService shoppingCartService, YughioCardService yughioCardService) {
-        this.clientUserService = clientUserService;
+    public StoreClientService(ShoppingCartService shoppingCartService, YughioCardService yughioCardService) {
         this.shoppingCartService = shoppingCartService;
         this.yughioCardService = yughioCardService;
     }
@@ -97,5 +95,11 @@ public class StoreClientServices {
         if (removed) {
             shoppingCartService.save(cart);
         }
+    }
+
+    public void clearShoppingCart(Long id) {
+        ShoppingCartDTO cart = getShoppingCartByUserID(id);
+        cart.setCards(new java.util.ArrayList<>());
+        shoppingCartService.save(cart);
     }
 }

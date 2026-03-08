@@ -1,6 +1,6 @@
 package com.cal.yughistore.services.api;
 
-import com.cal.yughistore.ConsoleLoadingBar;
+import com.cal.yughistore.utils.ConsoleLoadingBar;
 import com.cal.yughistore.repository.YughioCardRepository;
 import com.cal.yughistore.services.dto.yughiocard.YughioCardDTO;
 import com.cal.yughistore.services.yughiocard.YughioCardService;
