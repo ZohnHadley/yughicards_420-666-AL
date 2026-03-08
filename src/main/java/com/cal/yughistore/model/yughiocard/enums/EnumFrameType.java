@@ -1,13 +1,13 @@
 package com.cal.yughistore.model.yughiocard.enums;
 
 public enum EnumFrameType {
-    NULL,
+    NULL( "NULL"),
     NORMAL,
     EFFECT,
     RITUAL,
     FUSION,
     SYNCHRO,
-    XYZ,
+    XYZ(),
     LINK,
     NORMAL_PENDULUM,
     EFFECT_PENDULUM,
@@ -18,5 +18,15 @@ public enum EnumFrameType {
     SPELL,
     TRAP,
     TOKEN,
-    SKILL
+    SKILL;
+
+    private final String name;
+
+    EnumFrameType(String name){
+        this.name = name;
+    }
+
+    EnumFrameType(){
+        this.name = this.name();
+    }
 }

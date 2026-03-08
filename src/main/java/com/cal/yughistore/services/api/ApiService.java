@@ -51,8 +51,8 @@ public class ApiService {
     @PostConstruct
     public void init() {
         if (cardRepository.count() == 0) {
-//            loadApiCardData();
-            loadApiCardDataFromStaticFile();
+            loadApiCardData();
+//            loadApiCardDataFromStaticFile();
         } else {
             logger.info("Cards already exist. Skipping API load.");
         }

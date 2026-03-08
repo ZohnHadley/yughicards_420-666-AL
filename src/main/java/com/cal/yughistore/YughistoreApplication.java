@@ -39,41 +39,41 @@ public class YughistoreApplication {
     @Bean
     CommandLineRunner commandLineRunner(ApplicationContext context) {
         return args -> {
-            adminUserService.save(
-                    ApplicationUserDTO.builder()
-                            .email("admin@gmail.com")
-                            .password("!Password123")
-                            .build()
-            );
-            ApplicationUserDTO applicationUserDTO = clientUserService.save(
-                    ApplicationUserDTO.builder()
-                            .email("zink@gmail.com")
-                            .password("!Password123")
-                            .build()
-            );
-
-//            LoginDTO loginDTO = LoginDTO.builder()
-//                    .email("zink@gmail.com")
-//                    .password("!Password123")
-//                    .build();
+//            adminUserService.save(
+//                    ApplicationUserDTO.builder()
+//                            .email("admin@gmail.com")
+//                            .password("!Password123")
+//                            .build()
+//            );
+//            ApplicationUserDTO applicationUserDTO = clientUserService.save(
+//                    ApplicationUserDTO.builder()
+//                            .email("zink@gmail.com")
+//                            .password("!Password123")
+//                            .build()
+//            );
 //
-//            String auth = authService.userSigning(loginDTO);
-//            applicationUserDTO = applicationUserService.getMe(auth);
-
-//            System.out.println(storeClientServices.getShoppingCart(applicationUserDTO.getId()));
-
-            /// populate cart
-
-            storeClientServices.addToShoppingCart(applicationUserDTO.getId(), 1L);
-            storeClientServices.addToShoppingCart(applicationUserDTO.getId(), 2L);
-            storeClientServices.addToShoppingCart(applicationUserDTO.getId(), 3L);
-
-            System.out.println(storeClientServices.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
-
-            ///  remove 1 card from cart
-            storeClientServices.removeFromShoppingCart(applicationUserDTO.getId(), 1L);
-
-            System.out.println(storeClientServices.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
+////            LoginDTO loginDTO = LoginDTO.builder()
+////                    .email("zink@gmail.com")
+////                    .password("!Password123")
+////                    .build();
+////
+////            String auth = authService.userSigning(loginDTO);
+////            applicationUserDTO = applicationUserService.getMe(auth);
+//
+////            System.out.println(storeClientServices.getShoppingCart(applicationUserDTO.getId()));
+//
+//            /// populate cart
+//
+//            storeClientServices.addToShoppingCart(applicationUserDTO.getId(), 1L);
+//            storeClientServices.addToShoppingCart(applicationUserDTO.getId(), 2L);
+//            storeClientServices.addToShoppingCart(applicationUserDTO.getId(), 3L);
+//
+//            System.out.println(storeClientServices.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
+//
+//            ///  remove 1 card from cart
+//            storeClientServices.removeFromShoppingCart(applicationUserDTO.getId(), 1L);
+//
+//            System.out.println(storeClientServices.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
 
         };
     }
