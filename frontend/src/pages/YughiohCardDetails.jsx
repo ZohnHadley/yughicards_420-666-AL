@@ -133,8 +133,8 @@ export default function YughiohCardDetails({ language = "fr" }) {
         : parseFloat(fullCard?.card_prices?.[0]?.cardmarket_price || 0);
     const cad = rawPrice > 0 ? (rawPrice * USD_TO_CAD).toFixed(2) : null;
 
-    const oos = !fullCard?.stock || fullCard.stock <= 0;
-    const maxQty = Math.min(3, fullCard?.stock ?? 3);
+    const oos = !fullCard?.quantity || fullCard.quantity <= 0;
+    const maxQty = Math.min(3, fullCard?.quantity ?? 3);
 
     const typeUpper  = fullCard?.type?.toString().toUpperCase() ?? "";
     const isMonster  = typeUpper.includes("MONSTER");
@@ -228,7 +228,7 @@ export default function YughiohCardDetails({ language = "fr" }) {
                             }
                             <div className={`absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 rounded-lg leading-none
                                 ${oos ? "bg-red-950/90 text-red-400" : "bg-black/75 text-emerald-400"}`}>
-                                {oos ? t.outOfStock : `×${fullCard?.stock} ${t.inStock}`}
+                                {oos ? t.outOfStock : `×${fullCard?.quantity} ${t.inStock}`}
                             </div>
                         </div>
 

@@ -27,7 +27,7 @@ public class StoreAdminService {
             throw new IllegalArgumentException("quantity must be greater than 0");
         }
         logger.debug("Setting stock for card: {}", yughioCardDTO.getId());
-        yughioCardDTO.setStock(quantity);
+        yughioCardDTO.setQuantity(quantity);
         return yughioCardService.save(yughioCardDTO);
     }
 
@@ -41,7 +41,7 @@ public class StoreAdminService {
         }
         logger.debug("Setting stock for card: {}", cardId);
         YughioCardDTO card = yughioCardService.getById(cardId);
-        card.setStock(quantity);
+        card.setQuantity(quantity);
         return yughioCardService.save(card);
     }
 
@@ -56,7 +56,7 @@ public class StoreAdminService {
 
         logger.debug("Increasing stock for card: {}", cardId);
         YughioCardDTO card = yughioCardService.getById(cardId);
-        card.setStock(card.getStock() + quantity);
+        card.setQuantity(card.getQuantity() + quantity);
         return yughioCardService.save(card);
     }
 
@@ -70,7 +70,7 @@ public class StoreAdminService {
         }
         logger.debug("Decreasing stock for card: {}", cardId);
         YughioCardDTO card = yughioCardService.getById(cardId);
-        card.setStock(card.getStock() - quantity);
+        card.setQuantity(card.getQuantity() - quantity);
         return yughioCardService.save(card);
     }
 

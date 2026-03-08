@@ -72,7 +72,9 @@ public class SecurityConfiguration {
                                 .requestMatchers(USER_PATH).permitAll()
                                 .requestMatchers(HttpMethod.POST, USER_PASSWORD_RESET_PATH).hasAnyAuthority(Role.CLIENT.name())
                                 .requestMatchers(HttpMethod.GET, USER_SHOPPING_CART_PATH).permitAll()
-                                .requestMatchers(ADMIN_PATH).hasAnyAuthority(Role.ADMIN.name())
+
+                                .requestMatchers(ADMIN_PATH).permitAll()//.hasAnyAuthority(Role.ADMIN.name())
+
                                 // Yu-Gi-Oh cards endpoints
 //                        .requestMatchers(YUGHIO_CARD_DATA_PATH).permitAll()
                                 .requestMatchers(HttpMethod.GET, YUGHIO_CARD_DATA_PATH).permitAll()

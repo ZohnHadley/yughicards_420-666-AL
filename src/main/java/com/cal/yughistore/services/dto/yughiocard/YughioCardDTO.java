@@ -1,7 +1,5 @@
 package com.cal.yughistore.services.dto.yughiocard;
 
-import com.cal.yughistore.model.yughiocard.CardImages;
-import com.cal.yughistore.model.yughiocard.CardPrices;
 import com.cal.yughistore.model.yughiocard.YughioCard;
 import com.cal.yughistore.model.yughiocard.enums.*;
 import com.cal.yughistore.model.yughiocard.properties.PropertiesMonsterCard;
@@ -42,7 +40,8 @@ public class YughioCardDTO {
     private List<CardPricesDTO> card_prices;
     private List<CardSetDTO> card_sets;
 
-    private int stock = -1;
+    private int quantity = -1;
+
     private String rarity = "";
     private String setName = "";
     private String setCode = "";
@@ -152,6 +151,7 @@ public class YughioCardDTO {
                 .type(cardType)
                 .frameType(frameType)
                 .description(node.get("desc").asText())
+                .quantity(0)
                 .ygoprodeck_url(node.get("ygoprodeck_url").asText())
                 .cardConfig(cardConfigType)
                 .cardProperties(cardProperties)
@@ -199,7 +199,7 @@ public class YughioCardDTO {
                 .id(card.getId())
                 .api_id(card.getApi_id())
                 .name(card.getName())
-                .stock(card.getStock())
+                .quantity(card.getQuantity())
                 .rarity(card.getRarity())
                 .setName(card.getSetName())
                 .setCode(card.getSetCode())
@@ -219,25 +219,25 @@ public class YughioCardDTO {
 
     public YughioCard toYughioCard() {
         return YughioCard.builder()
-                .api_id(this.api_id)
-                .name(this.name)
-                .stock(this.stock)
-                .rarity(this.rarity)
-                .setName(this.setName)
-                .setCode(this.setCode)
-                .type(this.type)
-                .frameType(this.frameType)
-                .description(this.description)
-                .ygoprodeck_url(this.ygoprodeck_url)
-                .cardConfig(this.cardConfig)
-                .cardProperties(this.cardProperties)
+                .api_id(this.getApi_id())
+                .name(this.getName())
+                .quantity(this.getQuantity())
+                .rarity(this.getRarity())
+                .setName(this.getSetName())
+                .setCode(this.getSetCode() == null ? "" : this.getSetCode())
+                .type(this.getType())
+                .frameType(this.getFrameType())
+                .description(this.getDescription())
+                .ygoprodeck_url(this.getYgoprodeck_url())
+                .cardConfig(this.getCardConfig())
+                .cardProperties(this.getCardProperties())
                 .card_images(
-                        this.card_images.stream()
+                        this.getCard_images().stream()
                                 .map(CardImagesDTO::toCardImages)
                                 .toList()
                 )
                 .card_prices(
-                        this.card_prices.stream()
+                        this.getCard_prices().stream()
                                 .map(CardPricesDTO::toCardPrices)
                                 .toList()
                 )

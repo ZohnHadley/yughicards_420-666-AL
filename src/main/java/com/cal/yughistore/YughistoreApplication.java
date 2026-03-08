@@ -75,7 +75,7 @@ public class YughistoreApplication {
 
             List<Long> cardIds = new ArrayList<>();
             System.out.println("stocking up to 1000 cards");
-            for (int i = 1; i < 1000; i++) {
+            for (int i = 1; i <= 1000; i++) {
                 cardIds.add((long) i);
                 storeAdminService.incrementCardStock(((long) i), 100);
                 consoleLoadingBar.printProgress(i, 1000);
