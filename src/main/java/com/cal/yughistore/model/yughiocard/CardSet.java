@@ -21,7 +21,7 @@ public class CardSet {
     private String set_rarity_code;
     private String set_price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "yughio_card_id")
     @JsonBackReference
     private YughioCard yughioCard;
