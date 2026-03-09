@@ -1,6 +1,6 @@
 package com.cal.yughistore.presentation;
 
-import com.cal.yughistore.presentation.client.StoreClientShoppingCartController;
+import com.cal.yughistore.presentation.storeController.StoreClientShoppingCartController;
 import com.cal.yughistore.service.applicaitonuser.ApplicationUserService;
 import com.cal.yughistore.service.dto.applicationuser.ApplicationUserDTO;
 import com.cal.yughistore.service.dto.shoppingcart.ShoppingCartDTO;

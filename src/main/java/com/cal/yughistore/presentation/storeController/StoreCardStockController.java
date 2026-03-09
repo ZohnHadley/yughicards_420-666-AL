@@ -1,4 +1,4 @@
-package com.cal.yughistore.presentation.admin;
+package com.cal.yughistore.presentation.storeController;
 
 import com.cal.yughistore.service.dto.yughiocard.YughioCardDTO;
 import com.cal.yughistore.service.storeServices.StoreAdminService;

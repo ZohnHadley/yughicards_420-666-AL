@@ -10,8 +10,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ApplicationConfig {
 
-    private Dotenv dotenv;
-
     @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper();

@@ -1,6 +1,6 @@
 package com.cal.yughistore.presentation;
 
-import com.cal.yughistore.presentation.admin.StoreCardStockController;
+import com.cal.yughistore.presentation.storeController.StoreCardStockController;
 import com.cal.yughistore.service.dto.yughiocard.YughioCardDTO;
 import com.cal.yughistore.service.storeServices.StoreAdminService;
 import org.junit.jupiter.api.Test;

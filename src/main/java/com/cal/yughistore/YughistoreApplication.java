@@ -46,8 +46,8 @@ public class YughistoreApplication {
     @Bean
     CommandLineRunner commandLineRunner(ApplicationContext context) {
         return args -> {
-            ConsoleLoadingBar consoleLoadingBar = new ConsoleLoadingBar();
-
+//            ConsoleLoadingBar consoleLoadingBar = new ConsoleLoadingBar();
+//
             adminUserService.save(
                     ApplicationUserDTO.builder()
                             .email("admin@gmail.com")
@@ -73,14 +73,14 @@ public class YughistoreApplication {
 
             System.out.println(storeClientService.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
 
-            List<Long> cardIds = new ArrayList<>();
-            System.out.println("stocking up to 1000 cards");
-            for (int i = 1; i <= 1000; i++) {
-                cardIds.add((long) i);
-                storeAdminService.incrementCardStock(((long) i), 30);
-                consoleLoadingBar.printProgress(i, 1000);
-            }
-            consoleLoadingBar.finish();
+//            List<Long> cardIds = new ArrayList<>();
+//            System.out.println("stocking up to 1000 cards");
+//            for (int i = 0; i <= 1000; i++) {
+//                cardIds.add((long) i);
+//                storeAdminService.incrementCardStock(((long) i), 30);
+//                consoleLoadingBar.printProgress(i, 1000);
+//            }
+//            consoleLoadingBar.finish();
         };
     }
 }

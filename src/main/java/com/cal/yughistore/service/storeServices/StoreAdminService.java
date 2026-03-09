@@ -1,5 +1,6 @@
 package com.cal.yughistore.service.storeServices;
 
+import com.cal.yughistore.model.yughiocard.YughioCard;
 import com.cal.yughistore.service.dto.yughiocard.YughioCardDTO;
 import com.cal.yughistore.service.yughiocard.YughioCardService;
 import jakarta.transaction.Transactional;
@@ -18,6 +19,23 @@ public class StoreAdminService {
         this.yughioCardService = yughioCardService;
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    public YughioCardDTO updateQuantity(Long cardId, int quantity) {
+        if (cardId == null) {
+            return null;
+        }
+        if (quantity < 0) {
+            throw new IllegalArgumentException("quantity must be greater than or equal to 0");
+        }
+
+        YughioCard card = yughioCardService.getById(cardId).toYughioCard();
+
+        card.setQuantity(quantity);
+
+        return YughioCardDTO.of(card);
+    }
+    
+    
     @Transactional()
     public YughioCardDTO setCardStock(YughioCardDTO yughioCardDTO, int quantity) {
         if (yughioCardDTO == null) {
@@ -27,7 +45,7 @@ public class StoreAdminService {
             throw new IllegalArgumentException("quantity must be greater than 0");
         }
         logger.debug("Setting stock for card: {}", yughioCardDTO.getId());
-        return yughioCardService.updateQuantity(yughioCardDTO.getId(), quantity);
+        return updateQuantity(yughioCardDTO.getId(), quantity);
     }
 
     @Transactional()
@@ -39,7 +57,7 @@ public class StoreAdminService {
             throw new IllegalArgumentException("quantity must be greater than 0");
         }
         logger.debug("Setting stock for card: {}", cardId);
-        return yughioCardService.updateQuantity(cardId, quantity);
+        return updateQuantity(cardId, quantity);
     }
 
     @Transactional()
@@ -54,7 +72,7 @@ public class StoreAdminService {
         logger.debug("Increasing stock for card: {}", cardId);
         YughioCardDTO card = yughioCardService.getById(cardId);
         int newQuantity = card.getQuantity() + quantity;
-        return yughioCardService.updateQuantity(cardId, newQuantity);
+        return updateQuantity(cardId, newQuantity);
     }
 
     @Transactional()
@@ -68,7 +86,7 @@ public class StoreAdminService {
         logger.debug("Decreasing stock for card: {}", cardId);
         YughioCardDTO card = yughioCardService.getById(cardId);
         int newQuantity = card.getQuantity() - quantity;
-        return yughioCardService.updateQuantity(cardId, newQuantity);
+        return updateQuantity(cardId, newQuantity);
     }
 
     //can change card debugrmation

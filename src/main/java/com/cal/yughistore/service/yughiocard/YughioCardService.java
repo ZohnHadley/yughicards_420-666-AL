@@ -71,6 +71,7 @@ public class YughioCardService {
         YughioCard savedCard = cardRepository.save(entity);
 
         if (dtoCard.getId() == null) {
+            
             if (dtoCard.getCard_images() != null) {
                 for (CardImagesDTO ci : dtoCard.getCard_images()) {
                     CardImages images = ci.toCardImages();
@@ -93,23 +94,6 @@ public class YughioCardService {
         YughioCardDTO response = YughioCardDTO.of(savedCard);
         logger.debug("Saved card: {}", response);
         return response;
-    }
-
-    @Transactional
-    public YughioCardDTO updateQuantity(Long cardId, int quantity) {
-        if (cardId == null) {
-            return null;
-        }
-        if (quantity < 0) {
-            throw new IllegalArgumentException("quantity must be greater than or equal to 0");
-        }
-
-        YughioCard card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new RuntimeException("Card not found"));
-
-        card.setQuantity(quantity);
-
-        return YughioCardDTO.of(card);
     }
 
     @Transactional
@@ -175,13 +159,12 @@ public class YughioCardService {
 
     @Transactional(readOnly = true)
     public YughioCardDTO getById(Long cardId) {
+        if (cardId == null) throw new IllegalArgumentException("card id can't be null");
 
-        YughioCard card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new RuntimeException("Card not found"));
+        Optional<YughioCard> optionalCard = cardRepository.findById(cardId);
+        if (optionalCard.isEmpty()) throw new RuntimeException("Card not found with id: " + cardId);
 
-        card.getCard_images().size();
-        card.getCard_prices().size();
-        card.getCard_sets().size();
+        YughioCard card = optionalCard.get();
 
         return YughioCardDTO.of(card);
     }

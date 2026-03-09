@@ -1,6 +1,7 @@
 package com.cal.yughistore.service;
 
 import com.cal.yughistore.service.dto.yughiocard.YughioCardDTO;
+import com.cal.yughistore.service.dto.yughiocard.cardProperties.CardPropertiesDTO;
 import com.cal.yughistore.service.storeServices.StoreAdminService;
 import com.cal.yughistore.service.yughiocard.YughioCardService;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,14 @@ class StoreAdminServiceTest {
     @InjectMocks
     private StoreAdminService storeAdminService;
 
+    private YughioCardDTO stockCard(Long id, int quantity) {
+        return YughioCardDTO.builder()
+                .id(id)
+                .quantity(quantity)
+                .cardProperties(new CardPropertiesDTO())
+                .build();
+    }
+
     @Test
     void setCardStock_withDto_shouldReturnNullWhenDtoIsNull() {
         YughioCardDTO result = storeAdminService.setCardStock((YughioCardDTO) null, 10);
@@ -31,10 +40,7 @@ class StoreAdminServiceTest {
 
     @Test
     void setCardStock_withDto_shouldThrowWhenQuantityIsZeroOrLess() {
-        YughioCardDTO card = YughioCardDTO.builder()
-                .id(1L)
-                .quantity(5)
-                .build();
+        YughioCardDTO card = stockCard(1L, 5);
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
@@ -46,20 +52,19 @@ class StoreAdminServiceTest {
     }
 
     @Test
-    void setCardStock_withDto_shouldUpdateStockAndSave() {
-        YughioCardDTO card = YughioCardDTO.builder()
-                .id(1L)
-                .quantity(5)
-                .build();
+    void setCardStock_withDto_shouldUpdateStock() {
+        YughioCardDTO loadedCard = stockCard(1L, 5);
 
-        when(yughioCardService.save(card)).thenReturn(card);
+        when(yughioCardService.getById(1L)).thenReturn(loadedCard);
 
-        YughioCardDTO result = storeAdminService.setCardStock(card, 20);
+        YughioCardDTO result = storeAdminService.setCardStock(stockCard(1L, 99), 20);
 
         assertNotNull(result);
-        assertEquals(20, card.getQuantity());
-        assertSame(card, result);
-        verify(yughioCardService).save(card);
+        assertEquals(20, result.getQuantity());
+        assertEquals(1L, result.getId());
+        assertNotSame(loadedCard, result);
+        verify(yughioCardService).getById(1L);
+        verifyNoMoreInteractions(yughioCardService);
     }
 
     @Test
@@ -82,22 +87,19 @@ class StoreAdminServiceTest {
     }
 
     @Test
-    void setCardStock_withId_shouldLoadUpdateAndSave() {
-        YughioCardDTO card = YughioCardDTO.builder()
-                .id(1L)
-                .quantity(3)
-                .build();
+    void setCardStock_withId_shouldLoadAndUpdateStock() {
+        YughioCardDTO loadedCard = stockCard(1L, 3);
 
-        when(yughioCardService.getById(1L)).thenReturn(card);
-        when(yughioCardService.save(card)).thenReturn(card);
+        when(yughioCardService.getById(1L)).thenReturn(loadedCard);
 
         YughioCardDTO result = storeAdminService.setCardStock(1L, 15);
 
         assertNotNull(result);
-        assertEquals(15, card.getQuantity());
-        assertSame(card, result);
+        assertEquals(15, result.getQuantity());
+        assertEquals(1L, result.getId());
+        assertNotSame(loadedCard, result);
         verify(yughioCardService).getById(1L);
-        verify(yughioCardService).save(card);
+        verifyNoMoreInteractions(yughioCardService);
     }
 
     @Test
@@ -120,22 +122,18 @@ class StoreAdminServiceTest {
     }
 
     @Test
-    void incrementCardStock_shouldIncreaseStockAndSave() {
-        YughioCardDTO card = YughioCardDTO.builder()
-                .id(1L)
-                .quantity(10)
-                .build();
+    void incrementCardStock_shouldIncreaseStock() {
+        YughioCardDTO loadedCard = stockCard(1L, 10);
 
-        when(yughioCardService.getById(1L)).thenReturn(card);
-        when(yughioCardService.save(card)).thenReturn(card);
+        when(yughioCardService.getById(1L)).thenReturn(loadedCard);
 
         YughioCardDTO result = storeAdminService.incrementCardStock(1L, 7);
 
         assertNotNull(result);
-        assertEquals(17, card.getQuantity());
-        assertSame(card, result);
-        verify(yughioCardService).getById(1L);
-        verify(yughioCardService).save(card);
+        assertEquals(17, result.getQuantity());
+        assertEquals(1L, result.getId());
+        verify(yughioCardService, times(2)).getById(1L);
+        verifyNoMoreInteractions(yughioCardService);
     }
 
     @Test
@@ -158,22 +156,18 @@ class StoreAdminServiceTest {
     }
 
     @Test
-    void decrementCardStock_shouldDecreaseStockAndSave() {
-        YughioCardDTO card = YughioCardDTO.builder()
-                .id(1L)
-                .quantity(10)
-                .build();
+    void decrementCardStock_shouldDecreaseStock() {
+        YughioCardDTO loadedCard = stockCard(1L, 10);
 
-        when(yughioCardService.getById(1L)).thenReturn(card);
-        when(yughioCardService.save(card)).thenReturn(card);
+        when(yughioCardService.getById(1L)).thenReturn(loadedCard);
 
         YughioCardDTO result = storeAdminService.decrementCardStock(1L, 4);
 
         assertNotNull(result);
-        assertEquals(6, card.getQuantity());
-        assertSame(card, result);
-        verify(yughioCardService).getById(1L);
-        verify(yughioCardService).save(card);
+        assertEquals(6, result.getQuantity());
+        assertEquals(1L, result.getId());
+        verify(yughioCardService, times(2)).getById(1L);
+        verifyNoMoreInteractions(yughioCardService);
     }
 
     @Test
@@ -186,10 +180,7 @@ class StoreAdminServiceTest {
 
     @Test
     void updateCardById_shouldLoadAndSaveCard() {
-        YughioCardDTO card = YughioCardDTO.builder()
-                .id(1L)
-                .quantity(10)
-                .build();
+        YughioCardDTO card = stockCard(1L, 10);
 
         when(yughioCardService.getById(1L)).thenReturn(card);
         when(yughioCardService.save(card)).thenReturn(card);
