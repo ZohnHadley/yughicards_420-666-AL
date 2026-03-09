@@ -106,7 +106,7 @@ export default function YughiohInventory({language = "fr"}) {
         }
 
         if (stockOnly) {
-            list = list.filter(({card}) => card.stock > 0);
+            list = list.filter(({card}) => card.quantity > 0);
         }
 
         if (sortBy === "priceLow") {

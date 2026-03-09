@@ -1,7 +1,6 @@
 package com.cal.yughistore.model.yughiocard;
 
 
-import com.cal.yughistore.model.ShoppingCart;
 import com.cal.yughistore.model.yughiocard.enums.EnumCardType;
 import com.cal.yughistore.model.yughiocard.enums.EnumFrameType;
 import com.cal.yughistore.model.yughiocard.enums.EnumPropertiesConfigType;
@@ -38,9 +37,10 @@ public class YughioCard {
     @Column(length = 1000)
     private String ygoprodeck_url;
 
-    @Column(nullable = true)
-    private Integer stock = 0;
+    @Column(nullable = false)
+    private Integer quantity = 0;
 
+    @Column(nullable = true, length = 50)
     private String rarity = "";
 
     @Column(length = 200)
@@ -52,11 +52,13 @@ public class YughioCard {
             mappedBy = "yughioCard",
             cascade = jakarta.persistence.CascadeType.ALL
     )
+    @JsonManagedReference
     private List<CardImages> card_images;
     @OneToMany(
             mappedBy = "yughioCard",
             cascade = jakarta.persistence.CascadeType.ALL
     )
+    @JsonManagedReference
     private List<CardPrices> card_prices;
 
     /// Properties (depends on card type (trap, spell, monster, etc) ) ///
@@ -78,7 +80,7 @@ public class YughioCard {
             int api_id,
             String name,
             EnumCardType type,
-            Integer stock,
+            Integer quantity,
             EnumFrameType frameType,
             String description,
             String ygoprodeck_url,
@@ -86,6 +88,7 @@ public class YughioCard {
             CardProperties cardProperties,
             List<CardImages> card_images,
             List<CardPrices> card_prices,
+            List<CardSet> card_sets,
             String rarity,
             String setName,
             String setCode
@@ -102,7 +105,8 @@ public class YughioCard {
         this.cardProperties = cardProperties;
         this.card_images = (card_images != null) ? card_images : new ArrayList<>();
         this.card_prices = (card_prices != null) ? card_prices : new ArrayList<>();
-        this.stock = stock;
+        this.card_sets = (card_sets != null) ? card_sets : new ArrayList<>();
+        this.quantity = quantity;
         this.rarity = rarity;
         this.setName = setName;
         this.setCode = setCode;

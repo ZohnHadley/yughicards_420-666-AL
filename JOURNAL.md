@@ -464,7 +464,6 @@
 
 ---
 ### 2 Mars: (4pm - 10pm)) BE - Implémentation du pannier d'achat du client :
-   **Recherche**:
 
 - **Remue-méninges** de ce qu'on aurait besoin pour le pannier d'achat:
   - Type d'utilisateur (client).
@@ -475,6 +474,44 @@
     - Supprimer un item du panier.
     
 - **Lue l'article de** [Denis Mutunga](https://medium.com/@denis.mutunga/back-end-architecture-for-the-cart-system-7c222bb99ef3) pour avoir une idée de comment implémenter le pannier d'achat.
+
+---
+### 4 Mars: (4:40pm - 5:15pm)) FE - Implémentation du pannier d'achat du client :
+  **ShoppingCart service FE** : 
+    - Création des fonctions pour communiquer avec le backend (getByUserId, getByEmail, addCard, removeCard).
+    - Gestion des erreurs et des cas où le panier est vide ou inexistant.
+    
+  **ShoppingCart store(Zustand)** : 
+    - Gestion du state global du panier (cart, loading, error).
+    - Fonctions pour récupérer le panier, ajouter ou retirer une carte (mise à jour optimiste).
+
+Fonctions calculées pour le total et le nombre de cartes.
+  **ShoppingCart main page** :
+   - Affichage dynamique de la liste des cartes dans le panier.
+   - Gestion des états : chargement, erreur réseau, panier vide.
+   - Sidebar de résumé de commande avec sous-total, livraison et total.
+
+Boutons interactifs pour retirer des cartes et passer la commande.
+  **internalisation**: Utilisation du fichier de traductions afin d’adapter automatiquement le contenu de la page selon la langue sélectionnée (français / anglais).
+
+---
+### 4 et 6 Mars: FE - Implémentation du formulaire pour login, register et logout:
+**LoginPage**: 
+    - Forumulaire: Champs qui demandent les informations pour se connecter à son compte(username, password) et un boutton pour permettre la connection à son compte
+    
+**Logout**:
+    - Boutton: Une fois qu'un utilisateur s'est connecté, il peut cliquer sur son username dans la barre de navigation et se déconnecter.
+    
+**RegisterPage**:
+    - Forumulaire:  Champs qui demandent les informations pour se créer un compte:
+        -Nom d'utilisateur
+        -Adresse courriel 
+        -Mot de passe
+        -confirmer Mot de passe
+        -Boutton pour creer son compte
+
+**internalisation**: Utilisation du fichier de traductions afin d’adapter automatiquement le contenu de la page selon la langue sélectionnée (français / anglais).
+  
 
 
 

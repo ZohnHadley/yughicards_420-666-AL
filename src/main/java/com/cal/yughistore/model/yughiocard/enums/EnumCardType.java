@@ -2,16 +2,16 @@ package com.cal.yughistore.model.yughiocard.enums;
 
 
 public enum EnumCardType {
-    NULL,
+    NULL("NULL"),
 //    Main Deck Types
     EFFECT_MONSTER,
     FLIP_EFFECT_MONSTER,
     FLIP_TUNER_EFFECT_MONSTER,
     GEMINI_MONSTER,
-    NORMAL_MONSTER,
-    NORMAL_TUNER_MONSTER,
+    NORMAL_MONSTER ,
+    NORMAL_TUNER_MONSTER ,
     PENDULUM_EFFECT_MONSTER,
-    PENDULUM_EFFECT_RITUAL_MONSTER,
+    PENDULUM_EFFECT_RITUAL_MONSTER ,
     PENDULUM_FLIP_EFFECT_MONSTER,
     PENDULUM_NORMAL_MONSTER,
     PENDULUM_TUNER_EFFECT_MONSTER,
@@ -36,5 +36,17 @@ public enum EnumCardType {
 
 //    Other Types
     SKILL_CARD,
-    TOKEN
+    TOKEN,
+    QUICK_PLAY_SPELL,
+    QUICK_PLAY_TRAP;
+
+
+    private final String name;
+
+    EnumCardType(String name){
+        this.name = name;
+    }
+    EnumCardType(){
+        this.name = this.name();
+    }
 }

@@ -1,15 +1,23 @@
 package com.cal.yughistore.model.yughiocard.enums;
 
 public enum EnumCardAttribute {
-    NULL,
-    DARK,
-    DIVINE,
-    EARTH,
-    FIRE,
-    LIGHT,
-    WATER,
-    WIND,
-    LAUGH;
+    NULL("NULL"),
+    DARK( "DARK"),
+    DIVINE( "DIVINE"),
+    EARTH( "EARTH"),
+    FIRE( "FIRE"),
+    LIGHT( "LIGHT"),
+    WATER( "WATER"),
+    WIND( "WIND"),
+    LAUGH( "LAUGH"),;
 
-    //TODO ADD IF NEEDED ETC ...
+    private final String name;
+
+    EnumCardAttribute(String name){
+        this.name = name;
+    }
+
+    EnumCardAttribute(){
+        this.name = this.name();
+    }
 }

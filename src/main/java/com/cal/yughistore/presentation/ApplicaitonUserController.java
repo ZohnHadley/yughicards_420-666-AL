@@ -1,9 +1,9 @@
 package com.cal.yughistore.presentation;
 
 import com.cal.yughistore.model.EmailMessage;
-import com.cal.yughistore.services.dto.applicationuser.*;
-import com.cal.yughistore.services.applicaitonuser.ClientUserService;
-import com.cal.yughistore.services.utils.EmailService;
+import com.cal.yughistore.service.dto.applicationuser.*;
+import com.cal.yughistore.service.applicaitonuser.ClientUserService;
+import com.cal.yughistore.service.utils.EmailService;
 import com.cal.yughistore.utils.JwtTokenUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import com.cal.yughistore.security.exceptions.InvalidJwtTokenException;
 import com.cal.yughistore.security.exceptions.UserNotFoundException;
-import com.cal.yughistore.services.applicaitonuser.ApplicationUserService;
-import com.cal.yughistore.services.utils.AuthService;
-import com.cal.yughistore.services.dto.utils.*;
+import com.cal.yughistore.service.applicaitonuser.ApplicationUserService;
+import com.cal.yughistore.service.utils.AuthService;
+import com.cal.yughistore.service.dto.utils.*;
 
 @RequiredArgsConstructor
 @RestController

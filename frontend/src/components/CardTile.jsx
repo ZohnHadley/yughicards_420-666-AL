@@ -18,8 +18,8 @@ export default function CardTile({ card, set, img, rarityMap, onAdd, delay, t })
         : parseFloat(card.card_prices?.[0]?.cardmarket_price || 0);
     const cad = rawPrice > 0 ? (rawPrice * 1.36).toFixed(2) : null;
 
-    const oos = !card.stock || card.stock <= 0;
-    const maxQty = Math.min(3, card.stock ?? 3);
+    const oos = !card.quantity || card.quantity <= 0;
+    const maxQty = Math.min(3, card.quantity ?? 3);
     const imgUrl = img?.image_url_small ?? img?.image_url;
 
     const handleAdd = (e) => {
@@ -51,7 +51,7 @@ export default function CardTile({ card, set, img, rarityMap, onAdd, delay, t })
                 <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[#0d1117] to-transparent" />
                 <div className={`absolute top-2 right-2 text-[10px] font-bold px-2 py-[3px] rounded-md leading-none
                     ${oos ? "bg-red-950/90 text-red-400" : "bg-black/70 text-emerald-400"}`}>
-                    {oos ? t.outOfStock : `×${card.stock}`}
+                    {oos ? t.outOfStock : `×${card.quantity}`}
                 </div>
             </div>
 
