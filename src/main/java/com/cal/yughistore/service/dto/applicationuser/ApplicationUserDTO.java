@@ -5,6 +5,7 @@ import com.cal.yughistore.model.applicaitonuser.AdminUser;
 import com.cal.yughistore.model.applicaitonuser.ApplicationUser;
 import com.cal.yughistore.model.applicaitonuser.ClientUser;
 import com.cal.yughistore.model.applicaitonuser.auth.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
