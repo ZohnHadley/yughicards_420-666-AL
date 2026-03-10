@@ -2,10 +2,6 @@ package com.cal.yughistore.service.dto.yughiocard;
 
 import com.cal.yughistore.model.yughiocard.YughioCard;
 import com.cal.yughistore.model.yughiocard.enums.*;
-import com.cal.yughistore.model.yughiocard.properties.PropertiesMonsterCard;
-import com.cal.yughistore.model.yughiocard.properties.PropertiesSpellCard;
-import com.cal.yughistore.model.yughiocard.properties.PropertiesTrapCard;
-import com.cal.yughistore.model.yughiocard.properties.CardProperties;
 import com.cal.yughistore.service.dto.yughiocard.cardProperties.CardPropertiesDTO;
 import com.cal.yughistore.service.dto.yughiocard.cardProperties.PropertiesMonsterCardDTO;
 import com.cal.yughistore.service.dto.yughiocard.cardProperties.PropertiesSpellCardDTO;
@@ -39,7 +35,6 @@ public class YughioCardDTO {
 
     private EnumPropertiesConfigType cardConfig;
     private CardPropertiesDTO cardProperties;
-
     private List<CardImagesDTO> card_images;
     private List<CardPricesDTO> card_prices;
     private List<CardSetDTO> card_sets;
@@ -262,7 +257,7 @@ public class YughioCardDTO {
                 .description(card.getDescription())
                 .ygoprodeck_url(card.getYgoprodeck_url())
                 .cardConfig(card.getCardConfig())
-                .cardProperties(CardPropertiesDTO.of(card.getCardProperties()))
+                .cardProperties(card.getCardProperties() == null ? null : CardPropertiesDTO.of(card.getCardProperties()))
                 .card_images(toCardImageDtos(card))
                 .card_prices(toCardPriceDtos(card))
                 .card_sets(toCardSetDtos(card))
@@ -285,7 +280,7 @@ public class YughioCardDTO {
                 .description(this.getDescription())
                 .ygoprodeck_url(this.getYgoprodeck_url())
                 .cardConfig(this.getCardConfig())
-                .cardProperties(this.getCardProperties().toCardProperties())
+                .cardProperties(this.getCardProperties() == null ? null : this.getCardProperties().toCardProperties())
                 .card_images(this.getCard_images() == null ? new ArrayList<>() : this.getCard_images().stream()
                         .map(CardImagesDTO::toCardImages)
                         .toList())

@@ -1,11 +1,12 @@
 package com.cal.yughistore;
 
-import com.cal.yughistore.service.applicaitonuser.ApplicationUserService;
-import com.cal.yughistore.service.applicaitonuser.AdminUserService;
-import com.cal.yughistore.service.applicaitonuser.ClientUserService;
-import com.cal.yughistore.service.dto.applicationuser.ApplicationUserDTO;
+import com.cal.yughistore.service.user.ApplicationUserService;
+import com.cal.yughistore.service.user.AdminUserService;
+import com.cal.yughistore.service.user.ClientUserService;
+import com.cal.yughistore.service.dto.user.ApplicationUserDTO;
 import com.cal.yughistore.service.storeServices.StoreAdminService;
 import com.cal.yughistore.service.storeServices.StoreClientService;
+import com.cal.yughistore.service.user.ShoppingCartService;
 import com.cal.yughistore.service.utils.AuthService;
 import com.cal.yughistore.utils.ConsoleLoadingBar;
 import org.springframework.boot.CommandLineRunner;
@@ -44,7 +45,7 @@ public class YughistoreApplication {
     }
 
     @Bean
-    CommandLineRunner commandLineRunner(ApplicationContext context) {
+    CommandLineRunner commandLineRunner(ApplicationContext context, ShoppingCartService shoppingCartService) {
         return args -> {
             ConsoleLoadingBar consoleLoadingBar = new ConsoleLoadingBar();
 
@@ -66,12 +67,12 @@ public class YughistoreApplication {
             storeClientService.addToShoppingCart(applicationUserDTO.getId(), 2L, 1);
             storeClientService.addToShoppingCart(applicationUserDTO.getId(), 3L, 1);
 
-            System.out.println(storeClientService.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
+            System.out.println(shoppingCartService.getShoppingCartByUserId(applicationUserDTO.getId()).getCards());
 
             ///  remove 1 card from cart
             storeClientService.removeFromShoppingCart(applicationUserDTO.getId(), 1L);
 
-            System.out.println(storeClientService.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
+            System.out.println(shoppingCartService.getShoppingCartByUserId(applicationUserDTO.getId()).getCards());
 
             List<Long> cardIds = new ArrayList<>();
             System.out.println("stocking up to 1000 cards");

@@ -1,8 +1,6 @@
 package com.cal.yughistore.service;
-import com.cal.yughistore.repository.YughioCardRepository;
-import com.cal.yughistore.service.api.ApiService;
+import com.cal.yughistore.repository.card.YughioCardRepository;
 import com.cal.yughistore.service.dto.yughiocard.YughioCardDTO;
-import com.cal.yughistore.service.yughiocard.YughioCardService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
