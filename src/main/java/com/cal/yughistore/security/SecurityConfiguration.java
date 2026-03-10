@@ -35,6 +35,7 @@ public class SecurityConfiguration {
     private final ApplicationUserRepository applicationUserRepository;
     private final JwtAuthenticationEntryPoint authenticationEntryPoint;
 
+    private static final String AI_PATH = "/api/v1/ai/**";
     private static final String YUGHIO_CARD_DATA_PATH = "/api/v1/**";
     private static final String YUGHIO_CARD_SINGLE_PATH = "/api/v1/get-card/**";
 
@@ -69,6 +70,7 @@ public class SecurityConfiguration {
                                 ).permitAll()
 
                                 // User endpoints
+                                .requestMatchers(AI_PATH).permitAll()
                                 .requestMatchers(USER_PATH).permitAll()
                                 .requestMatchers(HttpMethod.POST, USER_PASSWORD_RESET_PATH).hasAnyAuthority(Role.CLIENT.name())
                                 .requestMatchers(HttpMethod.GET, USER_SHOPPING_CART_PATH).permitAll()

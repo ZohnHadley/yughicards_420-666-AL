@@ -1,8 +1,11 @@
 services:
-  ollama:
-    image: ollama/ollama:latest
-    ports:
-      - "11434:11434"
+#  ollama:
+#    image: ollama/ollama:latest
+#    ports:
+#      - "11434:11434"
+#    command: >
+#      serve & sleep 5 && run llama3.1:8b
+
   postgres:
     image: pgvector/pgvector:pg17
     restart: always

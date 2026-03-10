@@ -49,30 +49,30 @@ public class YughistoreApplication {
         return args -> {
 //            ConsoleLoadingBar consoleLoadingBar = new ConsoleLoadingBar();
 //
-            adminUserService.save(
-                    ApplicationUserDTO.builder()
-                            .email("admin@gmail.com")
-                            .password("!Password123")
-                            .build()
-            );
-            ApplicationUserDTO applicationUserDTO = clientUserService.save(
-                    ApplicationUserDTO.builder()
-                            .email("zink@gmail.com")
-                            .password("!Password123")
-                            .build()
-            );
-            /// populate cart
-
-            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 1L);
-            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 2L);
-            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 3L);
-
-            System.out.println(storeClientService.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
+//            adminUserService.save(
+//                    ApplicationUserDTO.builder()
+//                            .email("admin@gmail.com")
+//                            .password("!Password123")
+//                            .build()
+//            );
+//            ApplicationUserDTO applicationUserDTO = clientUserService.save(
+//                    ApplicationUserDTO.builder()
+//                            .email("zink@gmail.com")
+//                            .password("!Password123")
+//                            .build()
+//            );
+//            /// populate cart
 //
-//            ///  remove 1 card from cart
-            storeClientService.removeFromShoppingCart(applicationUserDTO.getId(), 1L);
+//            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 1L);
+//            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 2L);
+//            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 3L);
 //
-            System.out.println(storeClientService.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
+//            System.out.println(storeClientService.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
+////
+////            ///  remove 1 card from cart
+//            storeClientService.removeFromShoppingCart(applicationUserDTO.getId(), 1L);
+////
+//            System.out.println(storeClientService.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
 
             List<Long> cardIds = new ArrayList<>();
             System.out.println("stocking up to 1000 cards");
