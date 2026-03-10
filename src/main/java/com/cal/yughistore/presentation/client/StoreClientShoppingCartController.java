@@ -26,13 +26,14 @@ public class StoreClientShoppingCartController {
         return getCartCardsResponse(userId);
     }
 
-    @GetMapping("/add/card={cardId}")
+    @GetMapping("/add/card={cardId}/quantity={quantity}")
     public ResponseEntity<List<YughioCardDTO>> addToShoppingCart(
             HttpServletRequest request,
-            @PathVariable Long cardId
+            @PathVariable Long cardId,
+            @PathVariable(required = false) int quantity
     ) {
         Long userId = getCurrentUserId(request);
-        storeClientService.addToShoppingCart(userId, cardId);
+        storeClientService.addToShoppingCart(userId, cardId, quantity);
         return getCartCardsResponse(userId);
     }
 
