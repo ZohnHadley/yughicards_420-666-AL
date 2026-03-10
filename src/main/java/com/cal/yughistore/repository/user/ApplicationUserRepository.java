@@ -1,6 +1,6 @@
 package com.cal.yughistore.repository.user;
 
-import com.cal.yughistore.model.applicaitonuser.ApplicationUser;
+import com.cal.yughistore.model.user.ApplicationUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
