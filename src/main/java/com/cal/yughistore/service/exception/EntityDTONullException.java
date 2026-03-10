@@ -10,4 +10,8 @@ public class EntityDTONullException extends RuntimeException {
         super("EntityDTO " + entityClass.getName() + " : " + message);
     }
 
+    public EntityDTONullException(Class<?> entityClass) {
+        super("EntityDTO " + entityClass.getName() + " : can't be null");
+    }
+
 }
