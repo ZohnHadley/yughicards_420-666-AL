@@ -7,6 +7,7 @@ import com.cal.yughistore.service.dto.applicationuser.UserPublicDTO;
 import com.cal.yughistore.service.dto.yughiocard.YughioCardDTO;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -19,7 +20,7 @@ import java.util.List;
 public class ShoppingCartDTO {
     private Long id;
     private UserPublicDTO applicationUser;
-    private List<YughioCardDTO> cards;
+    private List<YughioCardDTO> cards = new ArrayList<>();
 
 
     public static ShoppingCartDTO of(ShoppingCart shoppingCart) {

@@ -25,6 +25,7 @@ public class StoreClientService {
     /// get user shopping cart
 
     public ShoppingCartDTO getShoppingCartByUserID(Long userId) {
+
         logger.info("Getting shopping cart for user {}", userId);
         return shoppingCartService.getShoppingCartByUserId(userId);
     }
@@ -82,18 +83,7 @@ public class StoreClientService {
         if (cart == null || cart.getCards() == null) {
             return;
         }
-
-        // Ensure the list is mutable before attempting removal (DTOs may expose unmodifiable lists).
-        if (!(cart.getCards() instanceof java.util.ArrayList<?>)) {
-            cart.setCards(new java.util.ArrayList<>(cart.getCards()));
-        }
-
-        boolean removed = cart.getCards()
-                .removeIf(c -> c != null && c.getId() != null && c.getId().equals(cardId));
-
-        if (removed) {
-            shoppingCartService.save(cart);
-        }
+        shoppingCartService.save(cart);
     }
 
     public void clearShoppingCart(Long id) {
