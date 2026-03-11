@@ -67,21 +67,29 @@ public class StoreClientService {
 
     @Transactional
     public void removeFromShoppingCart(Long userId, Long cardId) {
-//        if (userId == null) {
-//            throw new EntityIdentifierNullException(ApplicationUser.class,"userId can't be null");
-//        }
-//        if (cardId == null) {
-//            throw new EntityIdentifierNullException(YughioCard.class,"cardId can't be null");
-//        }
-//
-//        ShoppingCartDTO cart = shoppingCartService.getShoppingCartByUserId(userId);
-//
-//        if (cart == null || cart.getCards() == null) {
-//            throw new ShoppingCartNotFoundException("Shopping cart not found for userId=" + userId);
-//        }
-//
-////        cart.getCards().removeIf(card -> card != null && card.getId() != null && card.getId().equals(cardId));
-//        shoppingCartService.save(cart);
+        if (userId == null) {
+            throw new EntityIdentifierNullException(ApplicationUser.class,"userId can't be null");
+        }
+        if (cardId == null) {
+            throw new EntityIdentifierNullException(YughioCard.class,"cardId can't be null");
+        }
+
+        ShoppingCartDTO cart = shoppingCartService.getShoppingCartByUserId(userId);
+
+        if (cart == null) {
+            throw new ShoppingCartNotFoundException("Shopping cart not found for userId=" + userId);
+        }
+
+        int index = 0;
+        for (YughioCardDTO card : cart.getCards()) {
+            if (card.getId() != null && card.getId().equals(cardId)) {
+                index = cart.getCards().indexOf(card);
+                break;
+            }
+        }
+        cart.getCards().remove(index);
+
+        shoppingCartService.save(cart);
     }
 
 //    @Transactional

@@ -3,9 +3,11 @@ package com.cal.yughistore.service.dto.user;
 
 import com.cal.yughistore.model.user.ShoppingCart;
 import com.cal.yughistore.model.user.ApplicationUser;
+import com.cal.yughistore.model.yughiocard.YughioCard;
 import com.cal.yughistore.service.dto.yughiocard.YughioCardDTO;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -23,13 +25,21 @@ public class ShoppingCartDTO {
 
     public static ShoppingCartDTO of(ShoppingCart shoppingCart) {
         if (shoppingCart == null) {
-            return null;
+            throw new IllegalArgumentException("Shopping cart must not be null");
+        }
+        if (shoppingCart.getCardList() == null) {
+            throw new IllegalArgumentException("Shopping cart must have at least one card");
+        }
+
+        List<YughioCardDTO> cards = new ArrayList<>();
+        for (YughioCard card : shoppingCart.getCardList()) {
+            cards.add(YughioCardDTO.of(card));
         }
 
         return ShoppingCartDTO.builder()
                 .id(shoppingCart.getId())
                 .applicationUser(UserPublicDTO.of(shoppingCart.getApplicationUser()))
-                .cards(shoppingCart.getCardList().stream().map(YughioCardDTO::of).toList())
+                .cards(cards)
                 .build();
     }
 
@@ -40,12 +50,15 @@ public class ShoppingCartDTO {
             userRef.setId(this.applicationUser.getId());
         }
 
+        List<YughioCard> cardList = new ArrayList<>();
+        for (YughioCardDTO card : this.cards) {
+            cardList.add(card.toYughioCard());
+        }
+
         ShoppingCart cart = ShoppingCart.builder()
                 .id(this.getId())
                 .applicationUser(userRef)
-                .cardList(this.cards == null
-                        ? java.util.List.of()
-                        : this.cards.stream().map(YughioCardDTO::toYughioCard).toList())
+                .cardList(cardList)
                 .build();
 
         if (userRef != null) {

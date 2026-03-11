@@ -15,8 +15,6 @@ public interface YughioCardRepository extends JpaRepository<YughioCard, Long> {
     // Récupérer une carte exacte par nom (ignore case)
     Optional<YughioCard> findByNameIgnoreCase(String name);
 
-    Optional<YughioCard> findYughioCardById(Long id);
-
     // Récupérer toutes les versions/sets d’une carte par nom (paged)
     Page<YughioCard> findAllByNameIgnoreCaseOrderBySetNameAsc(String name, Pageable pageable);
 
@@ -24,10 +22,10 @@ public interface YughioCardRepository extends JpaRepository<YughioCard, Long> {
     Page<YughioCard> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
     // Recherche par frameType
-    Page<YughioCard> getAllByFrameType(EnumFrameType frameType, Pageable pageable);
+    Page<YughioCard> findByFrameTypeContainingIgnoreCase(EnumFrameType frameType, Pageable pageable);
 
     // Recherche par type
-    Page<YughioCard> getAllByType(EnumCardType type, Pageable pageable);
+    Page<YughioCard> getAllByTypeContainingIgnoreCase(EnumCardType type, Pageable pageable);
 
     // Récupère toutes les versions (sets et raretés) d'une carte exacte
     List<YughioCard> findAllByNameIgnoreCaseOrderByRarityAsc(String name);
