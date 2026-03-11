@@ -1,6 +1,7 @@
 package com.cal.yughistore.service;
 
 import com.cal.yughistore.service.exception.EntityDTONullException;
+import com.cal.yughistore.service.exception.EntityIdentifierNullException;
 import com.cal.yughistore.utils.ConsoleLoadingBar;
 import com.cal.yughistore.model.yughiocard.CardImages;
 import com.cal.yughistore.model.yughiocard.CardPrices;
@@ -61,29 +62,35 @@ public class YughioCardService {
 
     @Transactional
     public YughioCardDTO save(YughioCardDTO dtoCard) {
-        if (dtoCard == null) throw new EntityDTONullException(YughioCardDTO.class ,"can't be null");
-
-        YughioCard entity = dtoCard.toYughioCard();
-
-        //if card properties is not null
-        if (entity.getCardProperties() != null) {
-            //update card properties to point to the new card
-            entity.getCardProperties().setYughioCard(entity);
+        if (dtoCard == null) {
+            throw new EntityDTONullException(YughioCardDTO.class, "can't be null");
         }
+        YughioCard card = dtoCard.toYughioCard();
+        YughioCard savedCard = cardRepository.save(card);
 
-        YughioCard savedCard = cardRepository.save(entity);
+        saveCardImages(dtoCard, savedCard);
 
-        if (dtoCard.getId() == null) {
-            saveCardImages(dtoCard, savedCard);
+        saveCardPrices(dtoCard, savedCard);
 
-            saveCardPrices(dtoCard, savedCard);
+        saveCardSets(savedCard, dtoCard.getCard_sets());
 
-            saveCardSets(savedCard, dtoCard.getCard_sets());
-        }
+        saveCardProperties(dtoCard, savedCard);
 
         YughioCardDTO response = YughioCardDTO.of(savedCard);
         logger.debug("Saved card: {}", response);
         return response;
+    }
+
+    ///
+    ///
+    ///
+    private void saveCardProperties(YughioCardDTO cardDTO, YughioCard card) {
+        if (cardDTO.getCardProperties() != null) {
+            CardProperties properties = cardDTO.getCardProperties().toCardProperties();
+            if (properties == null) return;
+            properties.setYughioCard(card);
+            cardPropertiesRepository.save(properties);
+        }
     }
 
     private void saveCardImages(YughioCardDTO dtoCard, YughioCard savedCard) {
@@ -121,21 +128,28 @@ public class YughioCardService {
         }
     }
 
+    ///
+    ///
+    ///
+
     @Transactional
     public List<YughioCardDTO> saveAll(List<YughioCardDTO> dtoCards) {
-
-        if (dtoCards == null || dtoCards.isEmpty()) {
-            throw new IllegalArgumentException("cards list can't be empty");
+        if (dtoCards == null) {
+            throw new EntityDTONullException("cards list can't be empty");
         }
 
-        int batchSize = 500;
-
         logger.info("saving {} cards to database", dtoCards.size());
+
+        int batchSize = 500;
 
         List<YughioCardDTO> response = new ArrayList<>(dtoCards.size());
 
         for (int index = 0; index < dtoCards.size(); index++) {
             YughioCardDTO dto = dtoCards.get(index);
+
+            if (dto == null) {
+                throw new EntityDTONullException("dto can't be null");
+            }
 
             response.add(save(dto));
 
@@ -154,50 +168,55 @@ public class YughioCardService {
         return response;
     }
 
-    private void saveCardProperties(YughioCard card) {
-        CardProperties properties = card.getCardProperties();
-        if (properties != null) {
-            properties.setYughioCard(card);
-            cardPropertiesRepository.save(properties);
-        }
-    }
-
-
-
-
     // ── Get ─────────────────────────────────────────────────────────────────
 
     @Transactional(readOnly = true)
     public YughioCardDTO getById(Long cardId) {
-
-        YughioCard card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new RuntimeException("Card not found with id: " + cardId));
-
-        return YughioCardDTO.of(card);
+        if (cardId == null) {
+            throw new EntityIdentifierNullException("card id cannot be null");
+        }
+        Optional<YughioCard> card = cardRepository.findById(cardId);
+        if (card.isEmpty()) {
+            throw new EntityIdentifierNullException("Card not found with id: " + cardId);
+        }
+        return YughioCardDTO.of(card.get());
     }
 
-    @Transactional(readOnly = true)
-    public YughioCardDTO getByName(String name) {
-        if (name.isBlank()) throw new RuntimeException("card name cannot be blank");
-        YughioCard card = cardRepository.findByNameIgnoreCase(name)
-                .orElseThrow(() -> new RuntimeException("Card not found with name: " + name));
-        return YughioCardDTO.of(card);
-    }
+//    @Transactional(readOnly = true)
+//    public YughioCardDTO getByName(String name) {
+//        if (name.isBlank()) {
+//            throw new RuntimeException("card name cannot be blank");
+//        }
+//        YughioCard card = cardRepository.findByNameIgnoreCase(name)
+//                .orElseThrow(() -> new RuntimeException("Card not found with name: " + name));
+//        return YughioCardDTO.of(card);
+//    }
+
+//    @Transactional(readOnly = true)
+//    public List<YughioCardDTO> getAllVersionsByName(String name, int page, int num) {
+//        if (name.isBlank()) throw new RuntimeException("card name cannot be blank");
+//        Pageable pageable = PageRequest.of(page, num);
+//        Page<YughioCard> cards = cardRepository.findAllByNameIgnoreCaseOrderBySetNameAsc(name, pageable);
+//        return cards.stream().map(YughioCardDTO::of).toList();
+//    }
 
     @Transactional(readOnly = true)
-    public List<YughioCardDTO> getAllVersionsByName(String name, int page, int num) {
+    public List<YughioCardDTO> getSearchByName(String name, int page, int num) {
         if (name.isBlank()) throw new RuntimeException("card name cannot be blank");
-        Pageable pageable = PageRequest.of(page, num);
-        Page<YughioCard> cards = cardRepository.findAllByNameIgnoreCaseOrderBySetNameAsc(name, pageable);
-        return cards.stream().map(YughioCardDTO::of).toList();
-    }
 
-    @Transactional(readOnly = true)
-    public List<YughioCardDTO> getBySearchName(String name, int page, int num) {
-        if (name.isBlank()) throw new RuntimeException("card name cannot be blank");
         Pageable pageable = PageRequest.of(page, num);
         Page<YughioCard> cards = cardRepository.findByNameContainingIgnoreCase(name, pageable);
-        return cards.stream().map(YughioCardDTO::of).toList();
+
+        List<YughioCardDTO> cardDTOs = new ArrayList<>();
+
+        for (YughioCard card : cards) {
+            if (card == null) {
+                continue;
+            }
+            cardDTOs.add(YughioCardDTO.of(card));
+        }
+
+        return cardDTOs;
     }
 
     @Transactional(readOnly = true)

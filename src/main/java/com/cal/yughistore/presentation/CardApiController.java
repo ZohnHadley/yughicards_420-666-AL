@@ -40,10 +40,10 @@ public class CardApiController {
     /// ///
 
     /// get by name ///
-    @GetMapping("/get-card/name={cardName}")
-    public ResponseEntity<YughioCardDTO> getNamedCardInformation(@PathVariable String cardName) {
-        return ResponseEntity.ok(cardService.getByName(cardName));
-    }
+//    @GetMapping("/get-card/name={cardName}")
+//    public ResponseEntity<YughioCardDTO> getNamedCardInformation(@PathVariable String cardName) {
+//        return ResponseEntity.ok(cardService.getByName(cardName));
+//    }
 
     /// ///
 
@@ -51,12 +51,12 @@ public class CardApiController {
 
     @GetMapping("/get-all-cards/search={cardName}/page={pageNumber}/num={numberOfCards}")
     public ResponseEntity<List<YughioCardDTO>> getCardInformationBySearchName(@PathVariable String cardName, @PathVariable int pageNumber, @PathVariable int numberOfCards) {
-        return ResponseEntity.ok(cardService.getBySearchName(cardName, pageNumber, numberOfCards));
+        return ResponseEntity.ok(cardService.getSearchByName(cardName, pageNumber, numberOfCards));
     }
 
     @GetMapping("/get-all-cards/search={cardName}/page={pageNumber}")
     public ResponseEntity<List<YughioCardDTO>> getCardInformationBySearchName(@PathVariable String cardName, @PathVariable int pageNumber) {
-        return ResponseEntity.ok(cardService.getBySearchName(cardName, pageNumber, pagination_default_number_of_elements_per_page));
+        return ResponseEntity.ok(cardService.getSearchByName(cardName, pageNumber, pagination_default_number_of_elements_per_page));
     }
 
     ///  ///
