@@ -54,7 +54,7 @@ class StoreClientServiceTest {
     void addToShoppingCart_shouldThrowWhenUserIdIsNull() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> storeClientService.addToShoppingCart(null, 1L)
+                () -> storeClientService.addToShoppingCart(null, 1L, 1)
         );
 
         assertEquals("userId can't be null", exception.getMessage());
@@ -65,7 +65,7 @@ class StoreClientServiceTest {
     void addToShoppingCart_shouldThrowWhenCardIdIsNull() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> storeClientService.addToShoppingCart(1L, null)
+                () -> storeClientService.addToShoppingCart(1L, null, 1)
         );
 
         assertEquals("cardId can't be null", exception.getMessage());
@@ -78,7 +78,7 @@ class StoreClientServiceTest {
 
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
-                () -> storeClientService.addToShoppingCart(1L, 99L)
+                () -> storeClientService.addToShoppingCart(1L, 99L, 1)
         );
 
         assertEquals("Shopping cart not found for userId=1", exception.getMessage());
@@ -102,7 +102,7 @@ class StoreClientServiceTest {
         when(shoppingCartService.getShoppingCartByUserId(1L)).thenReturn(cart);
         when(yughioCardService.getById(7L)).thenReturn(card);
 
-        storeClientService.addToShoppingCart(1L, 7L);
+        storeClientService.addToShoppingCart(1L, 7L, 1);
 
         assertNotNull(cart.getCards());
         assertEquals(1, cart.getCards().size());
@@ -126,7 +126,7 @@ class StoreClientServiceTest {
         when(shoppingCartService.getShoppingCartByUserId(1L)).thenReturn(cart);
         when(yughioCardService.getById(7L)).thenReturn(existingCard);
 
-        storeClientService.addToShoppingCart(1L, 7L);
+        storeClientService.addToShoppingCart(1L, 7L, 1);
 
         assertNotNull(cart.getCards());
         assertEquals(1, cart.getCards().size());
@@ -148,7 +148,7 @@ class StoreClientServiceTest {
         when(shoppingCartService.getShoppingCartByUserId(5L)).thenReturn(cart);
         when(yughioCardService.getById(2L)).thenReturn(newCard);
 
-        storeClientService.addToShoppingCart(5L, 2L);
+        storeClientService.addToShoppingCart(5L, 2L, 1);
 
         assertEquals(2, cart.getCards().size());
         assertEquals(List.of(1L, 2L), cart.getCards().stream().map(YughioCardDTO::getId).toList());

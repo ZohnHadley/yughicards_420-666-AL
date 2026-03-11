@@ -66,9 +66,9 @@ public class YughistoreApplication {
             );
             /// populate cart
 
-            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 1L);
-            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 2L);
-            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 3L);
+            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 1L,1);
+            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 2L, 1);
+            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 3L, 1);
 
             System.out.println(storeClientService.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
 

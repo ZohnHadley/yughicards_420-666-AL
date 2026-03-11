@@ -89,12 +89,12 @@ class StoreClientShoppingCartControllerTest {
             when(applicationUserService.getMe(token)).thenReturn(user);
             when(storeClientService.getShoppingCartByUserID(userId)).thenReturn(shoppingCartDTO);
 
-            ResponseEntity<List<YughioCardDTO>> response = controller.addToShoppingCart(request, cardId);
+            ResponseEntity<List<YughioCardDTO>> response = controller.addToShoppingCart(request, cardId, 1);
 
             assertEquals(200, response.getStatusCode().value());
             assertEquals(cards, response.getBody());
             verify(applicationUserService).getMe(token);
-            verify(storeClientService).addToShoppingCart(userId, cardId);
+            verify(storeClientService).addToShoppingCart(userId, cardId, 1);
             verify(storeClientService).getShoppingCartByUserID(userId);
         }
     }

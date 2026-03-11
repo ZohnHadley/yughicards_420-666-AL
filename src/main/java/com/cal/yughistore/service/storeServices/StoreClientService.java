@@ -36,12 +36,15 @@ public class StoreClientService {
 
     /// add to user shopping cart
     @Transactional
-    public void addToShoppingCart(Long userId, Long cardId) {
+    public void addToShoppingCart(Long userId, Long cardId, int quantity) {
         if (userId == null) {
             throw new IllegalArgumentException("userId can't be null");
         }
         if (cardId == null) {
             throw new IllegalArgumentException("cardId can't be null");
+        }
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("quantity must be greater than 0");
         }
 
         ShoppingCartDTO cart = getShoppingCartByUserID(userId);
@@ -50,6 +53,7 @@ public class StoreClientService {
         }
 
         YughioCardDTO card = yughioCardService.getById(cardId);
+        card.setQuantity(card.getQuantity());
 
         // Ensure the list is mutable (Stream#toList() can produce an unmodifiable list).
         if (cart.getCards() == null) {
@@ -61,12 +65,12 @@ public class StoreClientService {
         // Prevent duplicates (optional but usually desired)
         boolean alreadyInCart = cart.getCards().stream()
                 .anyMatch(c -> c != null && c.getId() != null && c.getId().equals(cardId));
-
         if (!alreadyInCart) {
             cart.getCards().add(card);
         }
 
         shoppingCartService.save(cart);
+
     }
 
     @Transactional
@@ -82,8 +86,19 @@ public class StoreClientService {
         if (cart == null || cart.getCards() == null) {
             return;
         }
+
+//        cart.getCards().removeIf(c -> c != null && c.getId() != null && c.getId().equals(cardId));
         shoppingCartService.save(cart);
     }
+
+//    @Transactional
+//    public void buyAllFromShoppingCart(){
+//        //decrements all cards in shopping cart by 1
+//        for (YughioCardDTO card : getShoppingCartByUserID(1L).getCards()) {
+//            int newQuantity = card.getQuantity() - 1;
+//            yughioCardService.updateQuantity(card,);
+//        }
+//    }
 
     public void clearShoppingCart(Long id) {
         ShoppingCartDTO cart = getShoppingCartByUserID(id);
