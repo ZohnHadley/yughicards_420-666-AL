@@ -60,6 +60,9 @@ public class YughistoreApplication {
                     ApplicationUserDTO.builder()
                             .email("zink@gmail.com")
                             .password("!Password123")
+                            .userName("Zink")
+                            .firstName("Zink")
+                            .lastName("User")
                             .build()
             );
             /// populate cart

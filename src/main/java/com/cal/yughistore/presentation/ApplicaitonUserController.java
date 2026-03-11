@@ -25,7 +25,7 @@ import com.cal.yughistore.service.dto.utils.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/user")
-@CrossOrigin(origins = "http://localhost:5173")
+// @CrossOrigin retiré — géré globalement par SecurityConfiguration
 public class ApplicaitonUserController {
 
 	private final AuthService authService;
@@ -33,7 +33,6 @@ public class ApplicaitonUserController {
 	private final ClientUserService clientUserService;
 	private final EmailService emailService;
 
-	//TODO : ONLY FOR CLIENTS (ADMIN ACCOUNTS WILL BE HARD CODED)
 	@PostMapping("/signup")
 	public ResponseEntity<ApplicationUserDTO> inscription(
 			@Valid @RequestBody ApplicationUserDTO ApplicationUserDTO
@@ -41,10 +40,7 @@ public class ApplicaitonUserController {
 		System.out.println("=== Requête reçue dans le controller ===");
 		System.out.println("Données reçues : " + ApplicationUserDTO);
 
-		// Sauvegarde de l'étudiant
-		ApplicationUserDTO savedClientUser = clientUserService.save(
-				ApplicationUserDTO
-		);
+		ApplicationUserDTO savedClientUser = clientUserService.save(ApplicationUserDTO);
 
 		System.out.println("=== Après sauvegarde ===");
 		System.out.println("Etudiant sauvegardé : " + savedClientUser);
@@ -63,21 +59,6 @@ public class ApplicaitonUserController {
 		);
 		System.out.println("Email à envoyer : " + emailEtudiant);
 		emailService.sendEmail(emailEtudiant);
-
-//        EmailMessage emailAdmin = new EmailMessage();
-//        emailAdmin.setTo("tonemail@example.com");
-//        emailAdmin.setSubject("Nouvelle inscription Client");
-//        emailAdmin.setBody(
-//                "<p>le client <strong>" +
-//                        savedClientUser.getEmail() +
-//                        " " +
-//                        savedClientUser.getEmail() +
-//                        "</strong> vient de s'inscrire.</p>" +
-//                        "<p>Email : " +
-//                        savedClientUser.getEmail() +
-//                        "</p>"
-//        );
-//        emailService.sendEmail(emailAdmin);
 
 		return ResponseEntity.ok(savedClientUser);
 	}
@@ -106,9 +87,8 @@ public class ApplicaitonUserController {
 		}
 	}
 
-
 	@PostMapping("/password-reset/request")
-	public ResponseEntity<String> requestPasswordReset(@RequestParam String email){
+	public ResponseEntity<String> requestPasswordReset(@RequestParam String email) {
 		try {
 			authService.userPasswordResetRequest(email);
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body("Email de réinitialisation envoyé.");
@@ -137,39 +117,39 @@ public class ApplicaitonUserController {
 	}
 
 	@GetMapping("/me")
-	public ResponseEntity<ApplicationUserDTO> getMe(HttpServletRequest request){
+	public ResponseEntity<ApplicationUserDTO> getMe(HttpServletRequest request) {
 		return ResponseEntity.accepted().contentType(MediaType.APPLICATION_JSON).body(
-			applicationUserService.getMe(request.getHeader("Authorization")));
+				applicationUserService.getMe(request.getHeader("Authorization")));
 	}
 
-    @PutMapping("/settings")
-    public ResponseEntity<ApiSuccessResponseDTO<UserSettingsDTO>> updateMySettings(
-            HttpServletRequest request,
-            @RequestBody UserSettingsDTO dto
-    ) {
-        Long id = applicationUserService.getMe(JwtTokenUtils.getTokenFromRequest(request)).getId();
-        UserSettingsDTO updated = applicationUserService.updateMySettings(id, dto);
+	@PutMapping("/settings")
+	public ResponseEntity<ApiSuccessResponseDTO<UserSettingsDTO>> updateMySettings(
+			HttpServletRequest request,
+			@RequestBody UserSettingsDTO dto
+	) {
+		Long id = applicationUserService.getMe(JwtTokenUtils.getTokenFromRequest(request)).getId();
+		UserSettingsDTO updated = applicationUserService.updateMySettings(id, dto);
 
-        return ResponseEntity.ok(
-                ApiSuccessResponseDTO.of(
-                        "USER_SETTINGS_UPDATED",
-                        "Les paramètres utilisateur ont été mis à jour avec succès.",
-                        updated
-                )
-        );
-    }
-
-    @GetMapping("/settings")
-    public ResponseEntity<ApiSuccessResponseDTO<UserSettingsDTO>> getMySettings(HttpServletRequest request) {
-        Long id = applicationUserService.getMe(JwtTokenUtils.getTokenFromRequest(request)).getId();
-        UserSettingsDTO settings = applicationUserService.getMySettings(id);
-
-        return ResponseEntity.ok(
+		return ResponseEntity.ok(
 				ApiSuccessResponseDTO.of(
-                        "USER_SETTINGS_FETCHED",
-                        "Paramètres utilisateur récupérés avec succès.",
-                        settings
-                )
-        );
-    }
+						"USER_SETTINGS_UPDATED",
+						"Les paramètres utilisateur ont été mis à jour avec succès.",
+						updated
+				)
+		);
+	}
+
+	@GetMapping("/settings")
+	public ResponseEntity<ApiSuccessResponseDTO<UserSettingsDTO>> getMySettings(HttpServletRequest request) {
+		Long id = applicationUserService.getMe(JwtTokenUtils.getTokenFromRequest(request)).getId();
+		UserSettingsDTO settings = applicationUserService.getMySettings(id);
+
+		return ResponseEntity.ok(
+				ApiSuccessResponseDTO.of(
+						"USER_SETTINGS_FETCHED",
+						"Paramètres utilisateur récupérés avec succès.",
+						settings
+				)
+		);
+	}
 }
