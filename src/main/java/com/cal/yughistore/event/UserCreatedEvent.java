@@ -1,6 +1,6 @@
 package com.cal.yughistore.event;
 
-import com.cal.yughistore.model.applicaitonuser.ApplicationUser;
+import com.cal.yughistore.model.user.ApplicationUser;
 import lombok.Getter;
 
 

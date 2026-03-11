@@ -1,8 +1,9 @@
 package com.cal.yughistore.presentation.storeController;
 
-import com.cal.yughistore.service.applicaitonuser.ApplicationUserService;
+import com.cal.yughistore.service.user.ApplicationUserService;
 import com.cal.yughistore.service.dto.yughiocard.YughioCardDTO;
 import com.cal.yughistore.service.storeServices.StoreClientService;
+import com.cal.yughistore.service.user.ShoppingCartService;
 import com.cal.yughistore.utils.JwtTokenUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:5173")
 public class StoreClientShoppingCartController {
 
+    private final ShoppingCartService shoppingCartService;
     private final StoreClientService storeClientService;
     private final ApplicationUserService applicationUserService;
 
@@ -26,13 +28,14 @@ public class StoreClientShoppingCartController {
         return getCartCardsResponse(userId);
     }
 
-    @GetMapping("/add/card={cardId}")
+    @GetMapping("/add/card={cardId}/quantity={quantity}")
     public ResponseEntity<List<YughioCardDTO>> addToShoppingCart(
             HttpServletRequest request,
-            @PathVariable Long cardId
+            @PathVariable Long cardId,
+            @PathVariable(required = false) int quantity
     ) {
         Long userId = getCurrentUserId(request);
-        storeClientService.addToShoppingCart(userId, cardId);
+        storeClientService.addToShoppingCart(userId, cardId, quantity);
         return getCartCardsResponse(userId);
     }
 
@@ -59,6 +62,6 @@ public class StoreClientShoppingCartController {
     }
 
     private ResponseEntity<List<YughioCardDTO>> getCartCardsResponse(Long userId) {
-        return ResponseEntity.ok(storeClientService.getShoppingCartByUserID(userId).getCards());
+        return ResponseEntity.ok(shoppingCartService.getShoppingCartByUserId(userId).getCards());
     }
 }

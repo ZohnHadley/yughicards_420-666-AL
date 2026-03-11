@@ -27,11 +27,13 @@ public class CardImages {
 
     @Builder
     public CardImages(
+            Long id,
             int image_group_api_id,
             String image_url,
             String image_url_small,
             String image_url_cropped
     ) {
+        this.id = id;
         this.image_group_api_id = image_group_api_id;
         this.image_url = image_url;
         this.image_url_small = image_url_small;

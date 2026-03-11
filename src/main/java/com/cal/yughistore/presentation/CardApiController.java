@@ -1,7 +1,10 @@
 package com.cal.yughistore.presentation;
 
+import com.cal.yughistore.model.yughiocard.enums.EnumCardType;
+import com.cal.yughistore.model.yughiocard.enums.EnumFrameType;
 import com.cal.yughistore.service.dto.yughiocard.YughioCardDTO;
-import com.cal.yughistore.service.yughiocard.YughioCardService;
+import com.cal.yughistore.service.YughioCardService;
+import com.cal.yughistore.utils.SimpleEnumUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,10 +43,10 @@ public class CardApiController {
     /// ///
 
     /// get by name ///
-    @GetMapping("/get-card/name={cardName}")
-    public ResponseEntity<YughioCardDTO> getNamedCardInformation(@PathVariable String cardName) {
-        return ResponseEntity.ok(cardService.getByName(cardName));
-    }
+//    @GetMapping("/get-card/name={cardName}")
+//    public ResponseEntity<YughioCardDTO> getNamedCardInformation(@PathVariable String cardName) {
+//        return ResponseEntity.ok(cardService.getByName(cardName));
+//    }
 
     /// ///
 
@@ -51,12 +54,12 @@ public class CardApiController {
 
     @GetMapping("/get-all-cards/search={cardName}/page={pageNumber}/num={numberOfCards}")
     public ResponseEntity<List<YughioCardDTO>> getCardInformationBySearchName(@PathVariable String cardName, @PathVariable int pageNumber, @PathVariable int numberOfCards) {
-        return ResponseEntity.ok(cardService.getBySearchName(cardName, pageNumber, numberOfCards));
+        return ResponseEntity.ok(cardService.getSearchByName(cardName, pageNumber, numberOfCards));
     }
 
     @GetMapping("/get-all-cards/search={cardName}/page={pageNumber}")
     public ResponseEntity<List<YughioCardDTO>> getCardInformationBySearchName(@PathVariable String cardName, @PathVariable int pageNumber) {
-        return ResponseEntity.ok(cardService.getBySearchName(cardName, pageNumber, pagination_default_number_of_elements_per_page));
+        return ResponseEntity.ok(cardService.getSearchByName(cardName, pageNumber, pagination_default_number_of_elements_per_page));
     }
 
     ///  ///
@@ -84,12 +87,21 @@ public class CardApiController {
 
     @GetMapping("/get-all-cards/frame={frameType}/page={pageNumber}/num={numberOfCards}")
     public ResponseEntity<List<YughioCardDTO>> getAllCardsPagedInformationByFrameType(@PathVariable String frameType, @PathVariable int pageNumber, @PathVariable int numberOfCards) {
-        return ResponseEntity.ok(cardService.getByFrameTypePaged(frameType, pageNumber, numberOfCards));
+        EnumFrameType type = SimpleEnumUtils.findEnumValue(EnumFrameType.class, frameType);
+        if (type == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok(cardService.getByFrameTypePaged(type, pageNumber, numberOfCards));
     }
 
     @GetMapping("/get-all-cards/frame={frameType}/page={pageNumber}")
     public ResponseEntity<List<YughioCardDTO>> getAllCardsPagedInformationByFrameType(@PathVariable String frameType, @PathVariable int pageNumber) {
-        return ResponseEntity.ok(cardService.getByFrameTypePaged(frameType, pageNumber, pagination_default_number_of_elements_per_page));
+        EnumFrameType type = SimpleEnumUtils.findEnumValue(EnumFrameType.class, frameType);
+        if (type == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(cardService.getByFrameTypePaged(type, pageNumber, pagination_default_number_of_elements_per_page));
     }
 
     /// ///
@@ -98,12 +110,20 @@ public class CardApiController {
 
     @GetMapping("/get-all-cards/type={cardType}/page={pageNumber}/num={numberOfCards}")
     public ResponseEntity<List<YughioCardDTO>> getAllCardsPagedInformationByCardType(@PathVariable String cardType, @PathVariable int pageNumber, @PathVariable int numberOfCards) {
-        return ResponseEntity.ok(cardService.getByTypePaged(cardType, pageNumber, numberOfCards));
+        EnumCardType type = SimpleEnumUtils.findEnumValue(EnumCardType.class, cardType);
+        if (type == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(cardService.getByTypePaged(type, pageNumber, numberOfCards));
     }
 
     @GetMapping("/get-all-cards/type={cardType}/page={pageNumber}")
     public ResponseEntity<List<YughioCardDTO>> getAllCardsPagedInformationByCardType(@PathVariable String cardType, @PathVariable int pageNumber) {
-        return ResponseEntity.ok(cardService.getByTypePaged(cardType, pageNumber, pagination_default_number_of_elements_per_page));
+        EnumCardType type = SimpleEnumUtils.findEnumValue(EnumCardType.class, cardType);
+        if (type == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(cardService.getByTypePaged(type, pageNumber, pagination_default_number_of_elements_per_page));
     }
 
     // Get all versions (sets + raretés) of a card by name

@@ -11,11 +11,10 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class CardSet {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     private String set_name;
+    @Id
+    @Column(unique = true)
     private String set_code;
     private String set_rarity;
     private String set_rarity_code;
