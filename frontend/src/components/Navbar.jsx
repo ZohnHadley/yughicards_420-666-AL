@@ -149,7 +149,7 @@ export default function Navbar({ language, setLanguage }) {
                         {/* Panier — toujours visible */}
                         <li>
                             <Link
-                                to="/cart"
+                                to="/shoppingCard"
                                 className="text-white hover:text-red-300 text-xl transition-all duration-200 hover:scale-110 block"
                             >
                                 <FaShoppingCart />

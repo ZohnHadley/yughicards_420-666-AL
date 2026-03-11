@@ -13,6 +13,7 @@ import ScrollToTop from "./components/ScrollToTop.jsx";
 import YughiohCardDetails from "./pages/YughiohCardDetails.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
+import ShoppingCart from "./pages/ShoppingCart.jsx";
 
 function App() {
     const [language, setLanguage] = useState("fr");
@@ -40,7 +41,13 @@ function App() {
                         <Route path="/register" element={<Register language={language}/>}/>
 
                         {/* Page details des cartes */}
+
                         <Route path="/cardDetails" element={<YughiohCardDetails language={language}/>}/>
+                        <Route path="/cardDetails" element={<YughiohCardDetails language={language}/>} />
+
+                        {/* Page du shoppingCart*/}
+                        <Route path="/shoppingCard" element={<ShoppingCart language={language}/>} />
+
                     </Routes>
                 </main>
 
