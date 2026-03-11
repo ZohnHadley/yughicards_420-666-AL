@@ -15,6 +15,7 @@ import com.cal.yughistore.repository.card.CardPricesRepository;
 import com.cal.yughistore.repository.card.CardSetRepository;
 import com.cal.yughistore.repository.card.CardPropertiesRepository;
 import com.cal.yughistore.repository.card.YughioCardRepository;
+import com.cal.yughistore.repository.card.CardImagesRepository;
 import com.cal.yughistore.service.dto.yughiocard.CardImagesDTO;
 import com.cal.yughistore.service.dto.yughiocard.CardPricesDTO;
 import com.cal.yughistore.service.dto.yughiocard.CardSetDTO;
@@ -65,9 +66,8 @@ public class YughioCardService {
         if (dtoCard == null) {
             throw new EntityDTONullException(YughioCardDTO.class, "can't be null");
         }
-        YughioCard card = dtoCard.toYughioCard();
-        YughioCard savedCard = cardRepository.save(card);
 
+        YughioCard savedCard = cardRepository.save(dtoCard.toYughioCard());
         saveCardImages(dtoCard, savedCard);
 
         saveCardPrices(dtoCard, savedCard);
@@ -85,31 +85,24 @@ public class YughioCardService {
     ///
     ///
     private void saveCardProperties(YughioCardDTO cardDTO, YughioCard card) {
-        if (cardDTO.getCardProperties() != null) {
-            CardProperties properties = cardDTO.getCardProperties().toCardProperties();
-            if (properties == null) return;
-            properties.setYughioCard(card);
-            cardPropertiesRepository.save(properties);
-        }
+        CardProperties properties = cardDTO.getCardProperties().toCardProperties();
+        properties.setYughioCard(card);
+        cardPropertiesRepository.save(properties);
     }
 
     private void saveCardImages(YughioCardDTO dtoCard, YughioCard savedCard) {
-        if (dtoCard.getCard_images() != null) {
-            for (CardImagesDTO ci : dtoCard.getCard_images()) {
-                CardImages images = ci.toCardImages();
-                images.setYughioCard(savedCard);
-                cardImagesRepository.save(images);
-            }
+        for (CardImagesDTO ci : dtoCard.getCard_images()) {
+            CardImages images = ci.toCardImages();
+            images.setYughioCard(savedCard);
+            cardImagesRepository.save(images);
         }
     }
 
     private void saveCardPrices(YughioCardDTO dtoCard, YughioCard savedCard) {
-        if (dtoCard.getCard_prices() != null) {
-            for (CardPricesDTO cp : dtoCard.getCard_prices()) {
-                CardPrices prices = cp.toCardPrices();
-                prices.setYughioCard(savedCard);
-                cardPriceRepository.save(prices);
-            }
+        for (CardPricesDTO cp : dtoCard.getCard_prices()) {
+            CardPrices prices = cp.toCardPrices();
+            prices.setYughioCard(savedCard);
+            cardPriceRepository.save(prices);
         }
     }
 
@@ -117,11 +110,11 @@ public class YughioCardService {
         if (sets == null || sets.isEmpty()) return;
         for (CardSetDTO s : sets) {
             CardSet entity = CardSet.builder()
-                    .set_name(s.set_name())
-                    .set_code(s.set_code())
-                    .set_rarity(s.set_rarity())
-                    .set_rarity_code(s.set_rarity_code())
-                    .set_price(s.set_price())
+                    .set_name(s.getSet_name())
+                    .set_code(s.getSet_code())
+                    .set_rarity(s.getSet_rarity())
+                    .set_rarity_code(s.getSet_rarity_code())
+                    .set_price(s.getSet_price())
                     .yughioCard(card)
                     .build();
             cardSetRepository.save(entity);
@@ -177,9 +170,9 @@ public class YughioCardService {
         }
         Optional<YughioCard> card = cardRepository.findById(cardId);
         if (card.isEmpty()) {
-            throw new EntityIdentifierNullException("Card not found with id: " + cardId);
+            throw new EntityIdentifierNullException("card not found");
         }
-        return YughioCardDTO.of(card.get());
+        return card.map(YughioCardDTO::of).orElse(null);
     }
 
     @Transactional(readOnly = true)
