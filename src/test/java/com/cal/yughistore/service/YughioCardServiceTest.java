@@ -53,7 +53,6 @@ public class YughioCardServiceTest {
         );
     }
 
-
     //region card service saving tests
     @Test
     void save_shouldReturnSavedCardDto() {
@@ -187,6 +186,7 @@ public class YughioCardServiceTest {
     }
     //endregion
 
+    //region card service getSearchByName tests
     @Test
     void getByFrameTypePaged_shouldReturnCardDTOList(){
         YughioCard yughioCard = YughioCard.builder()
@@ -219,7 +219,9 @@ public class YughioCardServiceTest {
     void getByFrameTypePaged_invalidFrameType_shouldThrowRuntimeException(){
         assertThrows(RuntimeException.class, () -> yughioCardService.getByFrameTypePaged(EnumFrameType.EFFECT, 0, 1));
     }
+    //endregion
 
+    //region card service getByType tests
     @Test
     void getByTypePaged_shouldReturnCardDTOList(){
         YughioCard yughioCard = YughioCard.builder()
@@ -252,4 +254,6 @@ public class YughioCardServiceTest {
     void getByTypePaged_invalidType_shouldThrowRuntimeException(){
         assertThrows(RuntimeException.class, () -> yughioCardService.getByTypePaged(EnumCardType.EFFECT_MONSTER, 0, 1));
     }
+    //endregion
+
 }

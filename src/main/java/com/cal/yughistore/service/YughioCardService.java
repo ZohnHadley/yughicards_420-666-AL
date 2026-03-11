@@ -182,30 +182,17 @@ public class YughioCardService {
         return YughioCardDTO.of(card.get());
     }
 
-//    @Transactional(readOnly = true)
-//    public YughioCardDTO getByName(String name) {
-//        if (name.isBlank()) {
-//            throw new RuntimeException("card name cannot be blank");
-//        }
-//        YughioCard card = cardRepository.findByNameIgnoreCase(name)
-//                .orElseThrow(() -> new RuntimeException("Card not found with name: " + name));
-//        return YughioCardDTO.of(card);
-//    }
-
-//    @Transactional(readOnly = true)
-//    public List<YughioCardDTO> getAllVersionsByName(String name, int page, int num) {
-//        if (name.isBlank()) throw new RuntimeException("card name cannot be blank");
-//        Pageable pageable = PageRequest.of(page, num);
-//        Page<YughioCard> cards = cardRepository.findAllByNameIgnoreCaseOrderBySetNameAsc(name, pageable);
-//        return cards.stream().map(YughioCardDTO::of).toList();
-//    }
+    @Transactional(readOnly = true)
+    public List<YughioCardDTO> getAllVersionsByName(String name, int page, int num) {
+        if (name.isBlank()) throw new RuntimeException("card name cannot be blank");
+        Pageable pageable = PageRequest.of(page, num);
+        Page<YughioCard> cards = cardRepository.findAllByNameIgnoreCaseOrderBySetNameAsc(name, pageable);
+        return cards.stream().map(YughioCardDTO::of).toList();
+    }
 
     @Transactional(readOnly = true)
     public List<YughioCardDTO> getSearchByName(String name, int page, int num) {
-        if (name.isBlank()) {
-            throw new RuntimeException("card name cannot be blank");
-        }
-
+        if (name.isBlank()) throw new RuntimeException("card name cannot be blank");
         Pageable pageable = PageRequest.of(page, num);
         Page<YughioCard> cards = cardRepository.findByNameContainingIgnoreCase(name, pageable);
 
