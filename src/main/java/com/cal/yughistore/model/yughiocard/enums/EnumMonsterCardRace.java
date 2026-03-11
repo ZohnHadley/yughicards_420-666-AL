@@ -1,7 +1,7 @@
 package com.cal.yughistore.model.yughiocard.enums;
 
 public enum EnumMonsterCardRace {
-    NULL,
+    NULL( "NULL"),
 
     AQUA,
     BEAST,
@@ -28,5 +28,15 @@ public enum EnumMonsterCardRace {
     WARRIOR,
     WINGED_BEAST,
     WYRM,
-    ZOMBIE
+    ZOMBIE;
+
+    private final String name;
+
+    EnumMonsterCardRace(String name){
+        this.name = name;
+    }
+
+    EnumMonsterCardRace(){
+        this.name = this.name();
+    }
 }

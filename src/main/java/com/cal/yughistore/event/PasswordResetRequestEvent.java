@@ -1,6 +1,6 @@
 package com.cal.yughistore.event;
 
-import com.cal.yughistore.services.dto.applicationuser.ApplicationUserDTO;
+import com.cal.yughistore.service.dto.user.ApplicationUserDTO;
 import lombok.Getter;
 
 @Getter
