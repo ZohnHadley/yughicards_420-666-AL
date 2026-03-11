@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface ApplicationUserRepository extends JpaRepository<ApplicationUser, Long> {
 
     @Query("""
-        select u from ApplicationUser u where trim(lower(u.credentials.email)) = :email
+        select u from ApplicationUser u where trim(lower(u.credentials.email)) = trim(lower(:email))
     """)
     Optional<ApplicationUser> findApplicationUserByEmail(@Param("email") String email);
 }

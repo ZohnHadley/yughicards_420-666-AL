@@ -5,6 +5,7 @@ import com.cal.yughistore.model.user.AdminUser;
 import com.cal.yughistore.model.user.ApplicationUser;
 import com.cal.yughistore.model.user.ClientUser;
 import com.cal.yughistore.model.user.auth.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -37,6 +38,7 @@ public class ApplicationUserDTO {
     @NotBlank(message = "Email is mandatory")
     @Email private String email;
 
+    @JsonIgnore
     private ShoppingCart shoppingCart = new ShoppingCart();
 
     @NotBlank(message = "Password is mandatory")
