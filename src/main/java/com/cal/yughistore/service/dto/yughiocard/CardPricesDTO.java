@@ -21,6 +21,7 @@ public class CardPricesDTO {
 
     public static CardPricesDTO fromCardPrices(CardPrices cardPrices) {
         return CardPricesDTO.builder()
+                .id(cardPrices.getId())
                 .cardmarket_price(cardPrices.getCardmarket_price())
                 .tcgplayer_price(cardPrices.getTcgplayer_price())
                 .ebay_price(cardPrices.getEbay_price())

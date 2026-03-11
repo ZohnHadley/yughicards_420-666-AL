@@ -1,0 +1,70 @@
+package com.cal.yughistore.service.dto.user;
+
+
+import com.cal.yughistore.model.user.ShoppingCart;
+import com.cal.yughistore.model.user.ApplicationUser;
+import com.cal.yughistore.model.yughiocard.YughioCard;
+import com.cal.yughistore.service.dto.yughiocard.YughioCardDTO;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+public class ShoppingCartDTO {
+    private Long id;
+    private UserPublicDTO applicationUser;
+    private List<YughioCardDTO> cards;
+
+
+    public static ShoppingCartDTO of(ShoppingCart shoppingCart) {
+        if (shoppingCart == null) {
+            throw new IllegalArgumentException("Shopping cart must not be null");
+        }
+        if (shoppingCart.getCardList() == null) {
+            throw new IllegalArgumentException("Shopping cart must have at least one card");
+        }
+
+        List<YughioCardDTO> cards = new ArrayList<>();
+        for (YughioCard card : shoppingCart.getCardList()) {
+            cards.add(YughioCardDTO.of(card));
+        }
+
+        return ShoppingCartDTO.builder()
+                .id(shoppingCart.getId())
+                .applicationUser(UserPublicDTO.of(shoppingCart.getApplicationUser()))
+                .cards(cards)
+                .build();
+    }
+
+    public ShoppingCart toShoppingCart() {
+        ApplicationUser userRef = null;
+        if (this.applicationUser != null && this.applicationUser.getId() != null) {
+            userRef = new ApplicationUser();
+            userRef.setId(this.applicationUser.getId());
+        }
+
+        List<YughioCard> cardList = new ArrayList<>();
+        for (YughioCardDTO card : this.cards) {
+            cardList.add(card.toYughioCard());
+        }
+
+        ShoppingCart cart = ShoppingCart.builder()
+                .id(this.getId())
+                .applicationUser(userRef)
+                .cardList(cardList)
+                .build();
+
+        if (userRef != null) {
+            userRef.setShoppingCart(cart);
+        }
+
+        return cart;
+    }
+}

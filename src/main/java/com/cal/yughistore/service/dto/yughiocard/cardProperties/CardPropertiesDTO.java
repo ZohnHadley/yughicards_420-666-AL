@@ -48,6 +48,8 @@ public class CardPropertiesDTO {
     }
 
     public static CardPropertiesDTO of(CardProperties properties) {
+        if (properties == null) return null;
+
         CardPropertiesDTO dto;
 
         if (properties.getClass().equals(PropertiesMonsterCard.class)) {
