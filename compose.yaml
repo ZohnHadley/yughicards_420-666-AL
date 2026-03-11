@@ -1,11 +1,8 @@
 services:
-#  ollama:
-#    image: ollama/ollama:latest
-#    ports:
-#      - "11434:11434"
-#    command: >
-#      serve & sleep 5 && run llama3.1:8b
-
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
   postgres:
     image: pgvector/pgvector:pg17
     restart: always
@@ -15,4 +12,3 @@ services:
       - POSTGRES_PASSWORD=muto
     ports:
       - "5433:5432"
-
