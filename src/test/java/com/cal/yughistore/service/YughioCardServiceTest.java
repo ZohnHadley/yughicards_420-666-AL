@@ -146,7 +146,7 @@ public class YughioCardServiceTest {
     }
 
     @Test
-    void getById_nonExistingId_shouldThrowRuntimeException() {
+    void getById_nonExistingId_shouldThrowEntityIdentifierNullException() {
         when(cardRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(EntityIdentifierNullException.class, () -> yughioCardService.getById(1L));

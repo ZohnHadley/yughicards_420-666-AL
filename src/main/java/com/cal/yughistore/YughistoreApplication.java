@@ -1,5 +1,6 @@
 package com.cal.yughistore;
 
+import com.cal.yughistore.service.YughioCardService;
 import com.cal.yughistore.service.user.ApplicationUserService;
 import com.cal.yughistore.service.user.AdminUserService;
 import com.cal.yughistore.service.user.ClientUserService;
@@ -45,7 +46,7 @@ public class YughistoreApplication {
     }
 
     @Bean
-    CommandLineRunner commandLineRunner(ApplicationContext context, ShoppingCartService shoppingCartService) {
+    CommandLineRunner commandLineRunner(ApplicationContext context, ShoppingCartService shoppingCartService, YughioCardService yughioCardService) {
         return args -> {
             ConsoleLoadingBar consoleLoadingBar = new ConsoleLoadingBar();
 
@@ -63,7 +64,7 @@ public class YughistoreApplication {
             );
             /// populate cart
 
-            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 1L,1);
+            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 1L, 1);
             storeClientService.addToShoppingCart(applicationUserDTO.getId(), 2L, 1);
             storeClientService.addToShoppingCart(applicationUserDTO.getId(), 3L, 1);
 
@@ -77,9 +78,12 @@ public class YughistoreApplication {
             List<Long> cardIds = new ArrayList<>();
             System.out.println("stocking up to 1000 cards");
             for (int i = 1; i <= 1000; i++) {
-                cardIds.add((long) i);
-                storeAdminService.incrementCardStock(((long) i), 30);
-                consoleLoadingBar.printProgress(i, 1000);
+                if (yughioCardService.getById((long) i) != null)
+                    cardIds.add((long) i);
+            }
+
+            for (Long cardId : cardIds) {
+                storeAdminService.incrementCardStock(cardId, 30);
             }
             consoleLoadingBar.finish();
         };
