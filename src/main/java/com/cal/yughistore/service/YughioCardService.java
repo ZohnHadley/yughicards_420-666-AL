@@ -169,9 +169,7 @@ public class YughioCardService {
             throw new EntityIdentifierNullException("card id cannot be null");
         }
         Optional<YughioCard> card = cardRepository.findById(cardId);
-        if (card.isEmpty()) {
-            throw new EntityIdentifierNullException("card not found");
-        }
+
         return card.map(YughioCardDTO::of).orElse(null);
     }
 
