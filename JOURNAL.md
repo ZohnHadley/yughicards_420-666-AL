@@ -19,7 +19,7 @@
 
 ### 2 février: Générer/Crée un projet vide avec les dépendances nécessaire pour le backend 
 
-- **Regarder** une partie du vidéo sure Sprint AI **“Bootiful Spring AI by Mark Pollack, Christian Tzolov, Josh Long, James Ward”** pour avoir une idée d’où commencer. 
+- **Regarder** une partie du vidéo sure Sprint AI **“[Bootiful Spring AI by Mark Pollack, Christian Tzolov, Josh Long, James Ward](https://www.youtube.com/watch?v=Sw3PlFXfWj4)”** pour avoir une idée d’où commencer. 
 
 - **Remue-méninges** pour choisir les outiles et le model d'IA à utiliser pour le chatbox :
   - **Les critères pour notre IA** :
@@ -511,9 +511,26 @@ Boutons interactifs pour retirer des cartes et passer la commande.
         -Boutton pour creer son compte
 
 **internalisation**: Utilisation du fichier de traductions afin d’adapter automatiquement le contenu de la page selon la langue sélectionnée (français / anglais).
-  
 
+---
 
+### 6pm à 10pm 8 Mars et 12pm à 6pm 9 Mars: BE - Implémentation spring_ai avec ollama (llama3.1:8b) :
+
+**Recherche** : **Regarder** le vidéo **“[Bootiful Spring AI by Mark Pollack, Christian Tzolov, Josh Long, James Ward](https://www.youtube.com/watch?v=Sw3PlFXfWj4)”** pour m'aider à implémenter spring ai avec un LLM.
+
+**Implémenter** spring ai avec ollama (llama3.1:8b):
+  - Configurer spring ai (application properties) pour utiliser ollama et llama3.1:8b
+      
+  - Tester l'intégration avec des requêtes simples pour voir si cela fonctionne
+**Remue-méninges** pour ce qui est pertinent du system-prompt (context initial) de l'IA:
+**Implémentation** d'un vector-store pour les cartes (id, nom, description et quantité)
+    - permet à l'IA de mieux comprendre les cartes et leur contexte
+**Re-Tester** 
+    - pour voir si l'IA fonctionne correctement avec le nouveau system-prompt
+    - pour voir s'il reste en context avec le nouveau system-prompt 
+    - pour voir si l'IA comprend les cartes et leur contexte
+
+**Regarder** le vidéo **"[Modular RAG Architectures with Java and Spring AI](https://www.youtube.com/watch?v=ZcB4pNwPklI)"** pour mieux  m'informer sur les vector store, comment structuré notre projet et m'informer plus sur RAG
 
 
 
