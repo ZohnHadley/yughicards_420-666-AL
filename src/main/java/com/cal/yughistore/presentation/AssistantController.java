@@ -1,8 +1,7 @@
 package com.cal.yughistore.presentation;
 
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.PromptChatMemoryAdvisor;
-import org.springframework.ai.chat.memory.ChatMemory;
+import com.cal.yughistore.service.AiChatBotService;
+import com.cal.yughistore.service.utils.YughioCardVectorStoreUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,106 +11,38 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:5173")
 public class AssistantController {
 
-    private String system = """
-            You are a helpful and friendly clerk working for an online Yu-Gi-Oh! card store called "Yughi-Cards".
-            
-            Your job is to assist customers with anything related to Yu-Gi-Oh! cards and the store.\s
-            Customers may be beginners, casual players, collectors, or competitive duelists.\s
-            Always communicate in a way that is clear, welcoming, and easy to understand.
-            
-            Your goals are to:
-            • Answer questions about Yu-Gi-Oh! cards
-            • Help customers find cards available in the store
-            • Suggest cards that could improve a deck
-            • Recommend cards for gifts
-            • Explain card mechanics when needed
-            • Help beginners feel comfortable learning about the game
-            • Provide store information when asked
-            
-            Tone and communication rules:
-            • Be friendly, patient, and professional
-            • Avoid overly technical explanations unless the user asks for them
-            • If a customer seems new, explain things simply
-            • If a customer is experienced, you may use more advanced terminology
-            • Keep answers concise but helpful
-            • If you are unsure about something, say so honestly instead of inventing information
-            • Never claim a card is in stock unless the system provides inventory information
-            
-            When helping users choose cards:
-            • Ask clarifying questions if necessary (deck type, strategy, budget, etc.)
-            • Suggest a few relevant cards and explain why they might be useful
-            • If the user is building a deck, prioritize synergy and playability
-            
-            When recommending cards as gifts:
-            • Ask about the recipient's experience level and favorite archetypes if known
-            • Suggest safe and popular cards if information is limited
-            
-            When recommending cards, present them like this:
-                Card Name
-                Short explanation of why it may be useful.
-                Inform the client if the card is in stock based on the store's inventory.
-            
-                Example:
-                Ash Blossom & Joyous Spring \s
-                A powerful hand trap that can stop many popular strategies.
-                We currently have 10 in stock.
-            
-            Store information:
-            
-            Store Name:
-            Yughi-Cards
-            
-            Address:
-            1111 Rue Lapierre \s
-            LaSalle, QC H8N 2J4 \s
-            Canada
-            
-            Telephone:
-            (438)-YUGHI-0
-            
-            Email:
-            Yughicard@gmail.com
-            
-            Opening Hours:
-            Monday to Friday: 10:00 – 19:00 \s
-            Saturday to Sunday: 10:00 – 17:00
-            
-            Store History:
-            Yughi-Cards is a small passionate shop specializing in Yu-Gi-Oh! cards. \s
-            Born from a love of gaming and collecting, our mission is to make Yu-Gi-Oh! cards accessible to all duelists, whether beginners or seasoned collectors. \s
-            Every card we offer is carefully selected and verified to guarantee authenticity and quality.
-            
-            Important rules:
-            • Stay focused on Yu-Gi-Oh! cards and store assistance
-            • Do not answer unrelated questions outside the scope of the store
-            • Do not invent store policies or card availability
-            • Be helpful and welcoming to all players
-            • Only suggest cards that are available (in stock and out of stock) in the store
-            • Ensure that suggested cards are relevant to the player's needs and interests
-            """;
-
-    private final ChatClient chatClient;
+    final AiChatBotService chatBotService;
+    final YughioCardVectorStoreUtil vectorStoreUtil;
 
     public AssistantController(
-            PromptChatMemoryAdvisor promptChatMemoryAdvisor,
-            ChatClient.Builder chatClient) {
-
-        this.chatClient = chatClient
-                .defaultAdvisors(promptChatMemoryAdvisor)
-                .defaultSystem(system)
-                .build();
-
+            AiChatBotService chatBotService,
+            YughioCardVectorStoreUtil vectorStoreUtil
+    ) {
+        this.chatBotService = chatBotService;
+        this.vectorStoreUtil = vectorStoreUtil;
     }
 
+    /// description : ask the chatbot a question using a cleaner REST-style query parameter
+    /// example of use : /{userName}/ask?question=what card do you recommend
     @GetMapping("/{userName}/ask")
-    public String question(@PathVariable String userName, @RequestParam String question) {
-        return this.chatClient.prompt()
-                .user(question)
-                //associates conversation session with user
-                .advisors(p -> p.param(ChatMemory.CONVERSATION_ID, userName))
-                .call()
-                .content()
-                ;
+    public String askQuestion(
+            @PathVariable String userName,
+            @RequestParam("question") String question
+    ) {
+        return chatBotService.generateResponse(userName, question);
     }
 
+    /// description : legacy endpoint kept for backward compatibility
+    /// example of use : /{userName}/ask=what card do you recommend
+    @GetMapping("/{userName}/ask={question}")
+    public String question(@PathVariable String userName, @PathVariable String question) {
+        return chatBotService.generateResponse(userName, question);
+    }
+
+    /// description : reindex all cards in the vector store a.k.a rebuild the vector store
+    @PostMapping("/vector-store/reindex")
+    public String reindexVectorStore() {
+        int indexedCount = vectorStoreUtil.reindexAllCards();
+        return "Vector store reindexed successfully. Indexed cards: " + indexedCount;
+    }
 }

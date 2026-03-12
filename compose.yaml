@@ -4,7 +4,7 @@ services:
     ports:
       - "11434:11434"
   postgres:
-    image: pgvector/pgvector:pg17
+    image: pgvector/pgvector:latest
     restart: always
     environment:
       - POSTGRES_DB=postgres
