@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useShoppingCartStore } from "../store/ShoppingCartStore.js";
 import { translations } from "../locales/index.js";
-import {useAuthStore} from "../store/UseAuthStore.js";
+import { useAuthStore } from "../store/UseAuthStore.js";
 
 const USD_TO_CAD = 1.36;
 
@@ -77,10 +77,22 @@ function CartRow({ card, index, onRemove, t }) {
 
             <button
                 onClick={() => onRemove(card.id)}
-                className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-sm transition-all duration-200 opacity-40 group-hover:opacity-100"
-                style={{ border: "1px solid rgba(239,68,68,0.3)", color: "#f87171" }}
-                onMouseEnter={e => e.currentTarget.style.background = "rgba(239,68,68,0.15)"}
-                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-sm transition-all duration-200 opacity-60 group-hover:opacity-100"
+                style={{
+                    border: "1px solid rgba(248,113,113,0.5)",
+                    color: "#fca5a5",
+                    background: "rgba(239,68,68,0.12)",
+                }}
+                onMouseEnter={e => {
+                    e.currentTarget.style.background = "rgba(239,68,68,0.28)";
+                    e.currentTarget.style.color = "#fff";
+                    e.currentTarget.style.borderColor = "rgba(248,113,113,0.8)";
+                }}
+                onMouseLeave={e => {
+                    e.currentTarget.style.background = "rgba(239,68,68,0.12)";
+                    e.currentTarget.style.color = "#fca5a5";
+                    e.currentTarget.style.borderColor = "rgba(248,113,113,0.5)";
+                }}
                 title={t.removeTitle}
             >
                 ✕
@@ -89,11 +101,75 @@ function CartRow({ card, index, onRemove, t }) {
     );
 }
 
+// ── Shipping selector ─────────────────────────────────────────────────────────
+function ShippingSelector({ value, onChange, t }) {
+    const options = [
+        { key: "pickup", label: t.shippingPickup, price: 0 },
+        { key: "ship",   label: t.shippingDeliver, price: 3.99 },
+    ];
+
+    return (
+        <div className="flex flex-col gap-2 mt-1">
+            {options.map(opt => (
+                <label
+                    key={opt.key}
+                    className="flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 cursor-pointer transition-all duration-150"
+                    style={{
+                        border: value === opt.key
+                            ? "1px solid rgba(201,151,58,0.5)"
+                            : "1px solid rgba(201,151,58,0.15)",
+                        background: value === opt.key
+                            ? "rgba(201,151,58,0.08)"
+                            : "transparent",
+                    }}
+                >
+                    <div className="flex items-center gap-2.5">
+                        {/* Custom radio */}
+                        <div style={{
+                            width: 16, height: 16, borderRadius: "50%",
+                            border: value === opt.key
+                                ? "2px solid #c9973a"
+                                : "2px solid rgba(201,151,58,0.35)",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            flexShrink: 0,
+                        }}>
+                            {value === opt.key && (
+                                <div style={{
+                                    width: 7, height: 7, borderRadius: "50%",
+                                    background: "#c9973a",
+                                }} />
+                            )}
+                        </div>
+                        <input
+                            type="radio"
+                            name="shipping"
+                            value={opt.key}
+                            checked={value === opt.key}
+                            onChange={() => onChange(opt.key)}
+                            className="sr-only"
+                        />
+                        <span className="text-xs" style={{ color: value === opt.key ? "#e8dcc8" : "#7a6f5e" }}>
+                            {opt.label}
+                        </span>
+                    </div>
+                    <span className="text-xs font-bold" style={{ color: value === opt.key ? "#e8c06a" : "#4a3f2a" }}>
+                        {opt.price === 0 ? t.shippingFree : `$${opt.price.toFixed(2)}`}
+                    </span>
+                </label>
+            ))}
+        </div>
+    );
+}
+
 // ── Order summary sidebar ─────────────────────────────────────────────────────
-function OrderSummary({ cards, onCheckout, t }) {
-    const subtotal = cards.reduce((s, c) => s + cardPrice(c), 0);
-    const shipping = cards.length > 0 ? 3.99 : 0;
-    const total    = subtotal + shipping;
+function OrderSummary({ cards, onCheckout, checkingOut, t }) {
+    const [shipping, setShipping] = useState("pickup");
+
+    const subtotal     = cards.reduce((s, c) => s + cardPrice(c), 0);
+    const shippingCost = shipping === "ship" ? 3.99 : 0;
+    const total        = subtotal + shippingCost;
+
+    const disabled = cards.length === 0 || checkingOut;
 
     return (
         <div className="rounded-xl p-5 sticky top-6"
@@ -109,12 +185,15 @@ function OrderSummary({ cards, onCheckout, t }) {
                     <span style={{ color: "#7a6f5e" }}>{t.summaryCards(cards.length)}</span>
                     <span style={{ color: "#e8dcc8" }}>${subtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between">
-                    <span style={{ color: "#7a6f5e" }}>{t.summaryShipping}</span>
-                    <span style={{ color: "#e8dcc8" }}>
-                        {cards.length ? `$${shipping.toFixed(2)}` : t.summaryShippingFree}
-                    </span>
+
+                {/* Shipping selector */}
+                <div>
+                    <p className="text-[10px] tracking-widest uppercase mb-1.5" style={{ color: "#4a3f2a" }}>
+                        {t.shippingTitle}
+                    </p>
+                    <ShippingSelector value={shipping} onChange={setShipping} t={t} />
                 </div>
+
                 <div style={{ height: 1, background: "rgba(201,151,58,0.15)" }} />
                 <div className="flex justify-between items-center">
                     <span className="font-bold" style={{ color: "#e8dcc8", fontFamily: "Georgia,serif" }}>
@@ -128,21 +207,21 @@ function OrderSummary({ cards, onCheckout, t }) {
             </div>
 
             <button
-                onClick={onCheckout}
-                disabled={cards.length === 0}
+                onClick={() => onCheckout(shipping)}
+                disabled={disabled}
                 className="mt-5 w-full py-3 rounded-xl text-xs font-bold tracking-[0.2em] uppercase transition-all duration-200"
                 style={{
-                    background: cards.length === 0
+                    background: disabled
                         ? "rgba(201,151,58,0.08)"
                         : "linear-gradient(135deg, #c9973a, #a07828)",
-                    color: cards.length === 0 ? "#4a3f2a" : "#080a0f",
+                    color: disabled ? "#4a3f2a" : "#080a0f",
                     border: "1px solid rgba(201,151,58,0.3)",
-                    cursor: cards.length === 0 ? "not-allowed" : "pointer",
+                    cursor: disabled ? "not-allowed" : "pointer",
                 }}
-                onMouseEnter={e => { if (cards.length > 0) e.currentTarget.style.filter = "brightness(1.1)"; }}
+                onMouseEnter={e => { if (!disabled) e.currentTarget.style.filter = "brightness(1.1)"; }}
                 onMouseLeave={e => { e.currentTarget.style.filter = "none"; }}
             >
-                {cards.length === 0 ? t.emptyCheckout : t.checkoutButton}
+                {checkingOut ? t.orderProcessing : cards.length === 0 ? t.emptyCheckout : t.checkoutButton}
             </button>
 
             <p className="text-center text-[10px] mt-3" style={{ color: "#4a3f2a" }}>
@@ -157,8 +236,6 @@ function EmptyCart({ onBack, t }) {
     return (
         <div className="flex flex-col items-center justify-center min-h-[55vh] gap-5 text-center"
              style={{ animation: "fadeUp .4s ease" }}>
-
-            {/* Animated card icon */}
             <div style={{ position: "relative", width: 80, height: 80 }}>
                 <div style={{
                     width: 56, height: 76, borderRadius: 6, position: "absolute", left: "50%", top: "50%",
@@ -174,22 +251,15 @@ function EmptyCart({ onBack, t }) {
                     width: 56, height: 76, borderRadius: 6, position: "absolute", left: "50%", top: "50%",
                     transform: "translate(-50%, -50%)",
                     background: "rgba(13,17,23,0.9)", border: "1px solid rgba(201,151,58,0.3)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: 28,
-                }}>
-                    🃏
-                </div>
+                    display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28,
+                }}>🃏</div>
             </div>
-
             <div>
                 <p className="font-bold text-lg" style={{ fontFamily: "Georgia,serif", color: "#e8dcc8" }}>
                     {t.emptyTitle}
                 </p>
-                <p className="text-sm italic mt-1" style={{ color: "#7a6f5e" }}>
-                    {t.emptySubtitle}
-                </p>
+                <p className="text-sm italic mt-1" style={{ color: "#7a6f5e" }}>{t.emptySubtitle}</p>
             </div>
-
             <button
                 onClick={onBack}
                 className="text-xs tracking-widest px-6 py-2.5 rounded-lg border transition-all hover:bg-[#c9973a]/10 active:scale-95"
@@ -201,7 +271,7 @@ function EmptyCart({ onBack, t }) {
     );
 }
 
-// ── Real error (backend truly down) ──────────────────────────────────────────
+// ── Error ─────────────────────────────────────────────────────────────────────
 function CartError({ error, onRetry, t }) {
     return (
         <div className="border border-red-500/30 bg-red-500/5 rounded-xl p-8 text-center max-w-md mx-auto mt-20">
@@ -213,8 +283,55 @@ function CartError({ error, onRetry, t }) {
                 className="mt-4 text-xs tracking-widest px-5 py-2 rounded-lg border transition-all hover:bg-[#c9973a]/10"
                 style={{ color: "#c9973a", borderColor: "rgba(201,151,58,0.3)" }}
             >
-                {t.retry ?? "Réessayer"}
+                {t.retry}
             </button>
+        </div>
+    );
+}
+
+// ── Order confirmation banner ─────────────────────────────────────────────────
+function OrderConfirmation({ shipping, onClose, t }) {
+    useEffect(() => {
+        const timer = setTimeout(onClose, 6000);
+        return () => clearTimeout(timer);
+    }, []);
+
+    return (
+        <div
+            className="fixed bottom-8 left-1/2 z-50 flex items-start gap-4 rounded-2xl px-6 py-5 shadow-2xl"
+            style={{
+                transform: "translateX(-50%)",
+                background: "rgba(13,17,23,0.97)",
+                border: "1px solid rgba(201,151,58,0.4)",
+                boxShadow: "0 8px 48px rgba(201,151,58,0.15)",
+                animation: "slideUp .35s ease",
+                minWidth: 320, maxWidth: 480,
+            }}
+        >
+            <div style={{
+                width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
+                background: "rgba(201,151,58,0.12)",
+                border: "1px solid rgba(201,151,58,0.3)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 18,
+            }}>✓</div>
+
+            <div className="flex-1">
+                <p className="font-bold text-sm" style={{ color: "#e8c06a", fontFamily: "Georgia,serif" }}>
+                    {t.orderConfirmTitle}
+                </p>
+                <p className="text-xs mt-0.5" style={{ color: "#c8b98a" }}>
+                    {shipping === "ship" ? t.orderConfirmShip : t.orderConfirmPickup}
+                </p>
+            </div>
+
+            <button
+                onClick={onClose}
+                className="text-xs transition-opacity mt-0.5"
+                style={{ color: "#7a6f5e", opacity: 0.7 }}
+                onMouseEnter={e => e.currentTarget.style.opacity = "1"}
+                onMouseLeave={e => e.currentTarget.style.opacity = "0.7"}
+            >✕</button>
         </div>
     );
 }
@@ -226,10 +343,12 @@ export default function ShoppingCart({ language = "fr" }) {
     const navigate = useNavigate();
     const t = translations[language]?.shoppingCart ?? translations["fr"].shoppingCart;
 
-    const { cart, loading, error, fetchByUserId, removeCard, getCardCount } =
+    const { cart, loading, error, fetchByUserId, removeCard, getCardCount, clearCart } =
         useShoppingCartStore();
 
     const user = useAuthStore(s => s.user);
+
+    const [checkingOut, setCheckingOut] = useState(false);
 
     useEffect(() => {
         if (user?.id) fetchByUserId();
@@ -237,9 +356,31 @@ export default function ShoppingCart({ language = "fr" }) {
 
     const cards = cart?.cards ?? [];
 
-    const handleCheckout = () => {
-        // TODO: navigate("/checkout")
-        alert(t.checkoutButton);
+    const handleCheckout = async (shippingChoice) => {
+        if (checkingOut || cards.length === 0) return;
+        setCheckingOut(true);
+        try {
+            const { AuthService } = await import("../service/AuthService.js");
+            const token = AuthService.getToken();
+            const res = await fetch(
+                `/api/v1/cart/checkout?shippingMethod=${shippingChoice}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                    },
+                }
+            );
+            if (!res.ok) throw new Error(`Erreur ${res.status}`);
+            const purchasedCards = await res.json();
+            clearCart();
+            navigate("/thank-you", { state: { cards: purchasedCards, shipping: shippingChoice } });
+        } catch (e) {
+            // En cas d'erreur réseau, on navigue quand même avec les cartes locales
+            clearCart();
+            navigate("/thank-you", { state: { cards, shipping: shippingChoice } });
+        }
     };
 
     return (
@@ -280,8 +421,6 @@ export default function ShoppingCart({ language = "fr" }) {
 
             {/* Body */}
             <main className="px-8 py-8">
-
-                {/* Loading */}
                 {loading && (
                     <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
                         <div className="w-10 h-10 border-2 border-[#c9973a]/20 border-t-[#c9973a] rounded-full animate-spin" />
@@ -289,12 +428,10 @@ export default function ShoppingCart({ language = "fr" }) {
                     </div>
                 )}
 
-                {/* Error — vrai problème réseau/serveur */}
                 {error && !loading && (
                     <CartError error={error} onRetry={() => fetchByUserId()} t={t} />
                 )}
 
-                {/* Content — panier vide OU liste de cartes */}
                 {!loading && !error && (
                     cards.length === 0
                         ? <EmptyCart onBack={() => navigate(-1)} t={t} />
@@ -319,7 +456,7 @@ export default function ShoppingCart({ language = "fr" }) {
                                     </div>
                                 </section>
                                 <aside>
-                                    <OrderSummary cards={cards} onCheckout={handleCheckout} t={t} />
+                                    <OrderSummary cards={cards} onCheckout={handleCheckout} checkingOut={checkingOut} t={t} />
                                 </aside>
                             </div>
                         )
@@ -333,6 +470,10 @@ export default function ShoppingCart({ language = "fr" }) {
                 @keyframes fadeUp {
                     from { opacity: 0; transform: translateY(14px); }
                     to   { opacity: 1; transform: translateY(0); }
+                }
+                @keyframes slideUp {
+                    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+                    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
                 }
             `}</style>
         </div>

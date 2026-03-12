@@ -13,6 +13,7 @@ import ShoppingCart from "./pages/ShoppingCart.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import {useAuthStore} from "./store/UseAuthStore.js";
+import ThankYou from "./pages/ThankYou.jsx";
 
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
                         <Route path="/register" element={<Register language={language}/>}/>
                         <Route path="/cardDetails" element={<YughiohCardDetails language={language}/>}/>
                         <Route path="/shoppingCard" element={<ShoppingCart language={language}/>}/>
+                        <Route path="/thank-you" element={<ThankYou language={language} />} />
                     </Routes>
                 </main>
                 <Footer language={language}/>

@@ -20,6 +20,8 @@ import {LoginFr} from "./francais/LoginFr.js";
 import {RegisterFr} from "./francais/RegistrerFr.js";
 import {LoginEn} from "./english/LoginEn.js";
 import {RegisterEn} from "./english/RegisterEn.js";
+import {ThankYouFr} from "./francais/ThankYouFr.js";
+import {ThankYouEn} from "./english/ThankYouEn.js";
 
 export const translations = {
     fr: {
@@ -34,6 +36,7 @@ export const translations = {
         shoppingCart: ShoppingCartFr,
         login: LoginFr,
         register: RegisterFr,
+        thankYou: ThankYouFr
     },
     en: {
         navbar: NavbarEn,
@@ -47,6 +50,7 @@ export const translations = {
         shoppingCart: ShoppingCartEn,
         login: LoginEn,
         register: RegisterEn,
+        thankYou: ThankYouEn
     }
 }
 export const languages = [
