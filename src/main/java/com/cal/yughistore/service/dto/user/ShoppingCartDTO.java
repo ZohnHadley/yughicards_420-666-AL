@@ -1,9 +1,7 @@
 package com.cal.yughistore.service.dto.user;
 
-
+import com.cal.yughistore.model.user.CartItem;
 import com.cal.yughistore.model.user.ShoppingCart;
-import com.cal.yughistore.model.user.ApplicationUser;
-import com.cal.yughistore.model.yughiocard.YughioCard;
 import com.cal.yughistore.service.dto.yughiocard.YughioCardDTO;
 import lombok.*;
 
@@ -20,51 +18,44 @@ import java.util.List;
 public class ShoppingCartDTO {
     private Long id;
     private UserPublicDTO applicationUser;
-    private List<YughioCardDTO> cards;
 
+    // Chaque entrée représente UNE carte avec sa quantité
+    private List<CartItemDTO> items;
 
-    public static ShoppingCartDTO of(ShoppingCart shoppingCart) {
-        if (shoppingCart == null) {
-            throw new IllegalArgumentException("Shopping cart must not be null");
-        }
-        if (shoppingCart.getCardList() == null) {
-            throw new IllegalArgumentException("Shopping cart must have at least one card");
-        }
+    // ── of(ShoppingCart) ────────────────────────────────────────────────────
+    public static ShoppingCartDTO of(ShoppingCart cart) {
+        if (cart == null) throw new IllegalArgumentException("Shopping cart must not be null");
 
-        List<YughioCardDTO> cards = new ArrayList<>();
-        for (YughioCard card : shoppingCart.getCardList()) {
-            cards.add(YughioCardDTO.of(card));
+        List<CartItemDTO> items = new ArrayList<>();
+        if (cart.getItems() != null) {
+            for (CartItem item : cart.getItems()) {
+                items.add(CartItemDTO.of(item));
+            }
         }
 
         return ShoppingCartDTO.builder()
-                .id(shoppingCart.getId())
-                .applicationUser(UserPublicDTO.of(shoppingCart.getApplicationUser()))
-                .cards(cards)
+                .id(cart.getId())
+                .applicationUser(UserPublicDTO.of(cart.getApplicationUser()))
+                .items(items)
                 .build();
     }
 
-    public ShoppingCart toShoppingCart() {
-        ApplicationUser userRef = null;
-        if (this.applicationUser != null && this.applicationUser.getId() != null) {
-            userRef = new ApplicationUser();
-            userRef.setId(this.applicationUser.getId());
+    // ── Retourne une liste plate de cartes (une entrée par quantité) ────────
+    // Utilisé par les anciens endpoints qui retournent List<YughioCardDTO>
+    public List<YughioCardDTO> getCards() {
+        List<YughioCardDTO> cards = new ArrayList<>();
+        if (items == null) return cards;
+        for (CartItemDTO item : items) {
+            for (int i = 0; i < item.getQuantity(); i++) {
+                cards.add(item.getCard());
+            }
         }
+        return cards;
+    }
 
-        List<YughioCard> cardList = new ArrayList<>();
-        for (YughioCardDTO card : this.cards) {
-            cardList.add(card.toYughioCard());
-        }
-
-        ShoppingCart cart = ShoppingCart.builder()
-                .id(this.getId())
-                .applicationUser(userRef)
-                .cardList(cardList)
-                .build();
-
-        if (userRef != null) {
-            userRef.setShoppingCart(cart);
-        }
-
-        return cart;
+    // Setter de compatibilité pour StoreClientService.clearShoppingCart()
+    public void setCards(List<YughioCardDTO> ignored) {
+        if (this.items == null) this.items = new ArrayList<>();
+        else this.items.clear();
     }
 }

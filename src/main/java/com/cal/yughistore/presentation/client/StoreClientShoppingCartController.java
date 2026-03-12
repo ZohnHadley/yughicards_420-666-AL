@@ -36,7 +36,14 @@ public class StoreClientShoppingCartController {
     ) {
         Long userId = getCurrentUserId(request);
         storeClientService.addToShoppingCart(userId, cardId, quantity);
-        return getCartCardsResponse(userId);
+
+        List<YughioCardDTO> cards = shoppingCartService.getShoppingCartByUserId(userId).getCards();
+        System.out.println("🛒 Panier après add: " + cards.size() + " cartes");
+        for (YughioCardDTO c : cards) {
+            System.out.println("  → " + c.getName() + " (id=" + c.getId() + ")");
+        }
+
+        return ResponseEntity.ok(cards);
     }
 
     @GetMapping("/remove/card={cardId}")
@@ -68,7 +75,7 @@ public class StoreClientShoppingCartController {
     @PostMapping("/checkout")
     public ResponseEntity<List<YughioCardDTO>> checkout(
             HttpServletRequest request,
-            @RequestParam String shippingMethod 
+            @RequestParam String shippingMethod   // "pickup" ou "ship"
     ) {
         Long userId = getCurrentUserId(request);
 
@@ -77,8 +84,8 @@ public class StoreClientShoppingCartController {
                 .getShoppingCartByUserId(userId)
                 .getCards();
 
-        // 2. Vide le panier
-        storeClientService.clearShoppingCart(userId);
+        // 2. Décrémente le stock ET vide le panier
+        storeClientService.buyAllFromShoppingCart(userId);
 
         // 3. Retourne les cartes achetées + méthode de livraison dans le header
         return ResponseEntity.ok()

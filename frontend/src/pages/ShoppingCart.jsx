@@ -24,12 +24,21 @@ function frameColor(card) {
 }
 
 // ── Single cart row ───────────────────────────────────────────────────────────
-function CartRow({ card, index, onRemove, t }) {
+function CartRow({ card, qty, index, onRemove, onChangeQty, t }) {
     const fc = frameColor(card);
-    const cad = cardPrice(card).toFixed(2);
+    const unitPrice = cardPrice(card);
+    const totalCad  = (unitPrice * qty).toFixed(2);
     const imgUrl = card.card_images?.[0]?.image_url_small ?? card.card_images?.[0]?.image_url;
     const isMonster = card.atk != null;
     const typeLabel = card.type?.replaceAll("_", " ") ?? "";
+    const [updating, setUpdating] = useState(false);
+
+    const handleQtyChange = async (newQty) => {
+        if (updating || newQty === qty) return;
+        setUpdating(true);
+        try { await onChangeQty(card.id, newQty); }
+        finally { setUpdating(false); }
+    };
 
     return (
         <div
@@ -40,6 +49,7 @@ function CartRow({ card, index, onRemove, t }) {
                 borderLeft: `3px solid ${fc.border}`,
                 padding: "0.85rem 1rem",
                 animation: `fadeUp .35s ease ${index * 60}ms both`,
+                opacity: updating ? 0.6 : 1,
             }}
             onMouseEnter={e => e.currentTarget.style.boxShadow = `0 4px 24px ${fc.glow}`}
             onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}
@@ -68,9 +78,30 @@ function CartRow({ card, index, onRemove, t }) {
                 )}
             </div>
 
+            {/* Quantity stepper */}
+            <div className="shrink-0 flex items-center rounded-lg overflow-hidden"
+                 style={{ border: "1px solid rgba(201,151,58,0.25)" }}>
+                <button
+                    onClick={() => handleQtyChange(qty - 1)}
+                    disabled={qty <= 1 || updating}
+                    className="w-7 h-7 flex items-center justify-center text-base transition-all hover:opacity-80 disabled:opacity-25 disabled:cursor-not-allowed"
+                    style={{ background: "rgba(201,151,58,0.08)", color: "#c9973a" }}
+                >−</button>
+                <span className="w-8 text-center text-xs font-bold tabular-nums"
+                      style={{ color: "#c9973a", fontFamily: "Georgia,serif" }}>
+                    ×{qty}
+                </span>
+                <button
+                    onClick={() => handleQtyChange(qty + 1)}
+                    disabled={qty >= 3 || updating}
+                    className="w-7 h-7 flex items-center justify-center text-base transition-all hover:opacity-80 disabled:opacity-25 disabled:cursor-not-allowed"
+                    style={{ background: "rgba(201,151,58,0.08)", color: "#c9973a" }}
+                >+</button>
+            </div>
+
             <div className="shrink-0 text-right">
                 <p className="text-sm font-bold" style={{ color: "#e8c06a", fontFamily: "Georgia,serif" }}>
-                    ${cad}
+                    ${totalCad}
                 </p>
                 <p className="text-[10px]" style={{ color: "#7a6f5e" }}>{t.cadLabel}</p>
             </div>
@@ -343,7 +374,7 @@ export default function ShoppingCart({ language = "fr" }) {
     const navigate = useNavigate();
     const t = translations[language]?.shoppingCart ?? translations["fr"].shoppingCart;
 
-    const { cart, loading, error, fetchByUserId, removeCard, getCardCount, clearCart } =
+    const { cart, loading, error, fetchByUserId, addCard, removeCard, removeAllOfCard, getCardCount, clearCart } =
         useShoppingCartStore();
 
     const user = useAuthStore(s => s.user);
@@ -355,6 +386,18 @@ export default function ShoppingCart({ language = "fr" }) {
     }, [user?.id]);
 
     const cards = cart?.cards ?? [];
+
+    const handleChangeQty = async (cardId, newQty) => {
+        const currentQty = cards.filter(c => c.id === cardId).length;
+        const diff = newQty - currentQty;
+        if (diff === 0) return;
+        if (diff > 0) {
+            const cardDTO = cards.find(c => c.id === cardId);
+            for (let i = 0; i < diff; i++) await addCard(cardDTO);
+        } else {
+            for (let i = 0; i < Math.abs(diff); i++) await removeCard(cardId);
+        }
+    };
 
     const handleCheckout = async (shippingChoice) => {
         if (checkingOut || cards.length === 0) return;
@@ -444,12 +487,22 @@ export default function ShoppingCart({ language = "fr" }) {
                                         {t.cardCount(cards.length)}
                                     </p>
                                     <div className="flex flex-col gap-2">
-                                        {cards.map((card, i) => (
+                                        {/* Groupe les cartes identiques en une seule ligne avec quantité */}
+                                        {Object.values(
+                                            cards.reduce((acc, card) => {
+                                                const key = card.id;
+                                                if (acc[key]) { acc[key].qty += 1; }
+                                                else { acc[key] = { card, qty: 1 }; }
+                                                return acc;
+                                            }, {})
+                                        ).map(({ card, qty }, i) => (
                                             <CartRow
                                                 key={card.id}
                                                 card={card}
+                                                qty={qty}
                                                 index={i}
-                                                onRemove={removeCard}
+                                                onRemove={removeAllOfCard}
+                                                onChangeQty={handleChangeQty}
                                                 t={t}
                                             />
                                         ))}

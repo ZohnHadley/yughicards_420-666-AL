@@ -12,9 +12,7 @@ const authHeaders = () => {
 
 export const ShoppingCartService = {
     getByUserId: async () => {
-        const res = await fetch(`/api/v1/cart/get`, {
-            headers: authHeaders(),
-        });
+        const res = await fetch(`/api/v1/cart/get`, { headers: authHeaders() });
         if (res.status === 404) return EMPTY_CART;
         if (!res.ok) throw new Error(`Erreur serveur (${res.status})`);
         const cards = await res.json();

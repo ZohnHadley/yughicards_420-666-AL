@@ -144,7 +144,10 @@ export default function YughiohInventory({language = "fr"}) {
     const addToCart = async ({card, set, qty}, e) => {
         e.stopPropagation();
         try {
-            await addCard(card);
+            // Appelle addCard qty fois
+            for (let i = 0; i < qty; i++) {
+                await addCard(card);
+            }
             const label = [card.name, set?.set_code, set?.set_rarity].filter(Boolean).join(" · ");
             setToast(`✦ ${qty}× ${label} ajoutée${qty > 1 ? "s" : ""}`);
         } catch (err) {

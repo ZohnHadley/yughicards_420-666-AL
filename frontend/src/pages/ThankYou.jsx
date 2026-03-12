@@ -30,6 +30,15 @@ export default function ThankYou({ language = "fr" }) {
     const cards    = location.state?.cards    ?? [];
     const shipping = location.state?.shipping ?? "pickup";
 
+    // Groupe les cartes identiques (même id)
+    const grouped = Object.values(
+        cards.reduce((acc, card) => {
+            if (acc[card.id]) { acc[card.id].qty += 1; }
+            else { acc[card.id] = { card, qty: 1 }; }
+            return acc;
+        }, {})
+    );
+
     const subtotal     = cards.reduce((s, c) => s + cardPrice(c), 0);
     const shippingCost = shipping === "ship" ? 3.99 : 0;
     const total        = subtotal + shippingCost;
@@ -96,10 +105,11 @@ export default function ThankYou({ language = "fr" }) {
                         </div>
 
                         <div className="flex flex-col divide-y" style={{ divideColor: "rgba(201,151,58,0.08)" }}>
-                            {cards.map((card, i) => {
-                                const imgUrl  = card.card_images?.[0]?.image_url_small ?? card.card_images?.[0]?.image_url;
-                                const color   = frameColor(card);
-                                const price   = cardPrice(card).toFixed(2);
+                            {grouped.map(({ card, qty }, i) => {
+                                const imgUrl     = card.card_images?.[0]?.image_url_small ?? card.card_images?.[0]?.image_url;
+                                const color      = frameColor(card);
+                                const unitPrice  = cardPrice(card);
+                                const totalPrice = (unitPrice * qty).toFixed(2);
 
                                 return (
                                     <div key={card.id ?? i}
@@ -107,7 +117,7 @@ export default function ThankYou({ language = "fr" }) {
                                          style={{
                                              background: "rgba(13,17,23,0.6)",
                                              borderLeft: `3px solid ${color}`,
-                                             borderBottom: i < cards.length - 1 ? "1px solid rgba(201,151,58,0.08)" : "none",
+                                             borderBottom: i < grouped.length - 1 ? "1px solid rgba(201,151,58,0.08)" : "none",
                                              animation: `fadeUp .3s ease ${i * 50}ms both`,
                                          }}>
                                         <div className="shrink-0 rounded overflow-hidden"
@@ -127,9 +137,22 @@ export default function ThankYou({ language = "fr" }) {
                                                 {card.type?.replaceAll("_", " ") ?? ""}
                                             </p>
                                         </div>
+
+                                        {/* Qty badge */}
+                                        {qty > 1 && (
+                                            <div className="shrink-0 px-2 py-0.5 rounded-md text-xs font-bold"
+                                                 style={{
+                                                     background: "rgba(201,151,58,0.1)",
+                                                     border: "1px solid rgba(201,151,58,0.25)",
+                                                     color: "#c9973a",
+                                                 }}>
+                                                ×{qty}
+                                            </div>
+                                        )}
+
                                         <p className="text-sm font-bold shrink-0"
                                            style={{ color: "#e8c06a", fontFamily: "Georgia,serif" }}>
-                                            ${price}
+                                            ${totalPrice}
                                         </p>
                                     </div>
                                 );
