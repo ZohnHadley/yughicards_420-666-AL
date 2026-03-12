@@ -5,6 +5,8 @@ import {translations} from "../locales/index.js";
 import CardTile from "../components/CardTile.jsx";
 import {RARITY_PALETTE} from "../theme/rarityPalette.js";
 import {useAuthStore} from "../store/UseAuthStore.js";
+import AdminCardTile from "../components/admin/AdminCardTile.jsx";
+import {AdminService} from "../service/AdminService.js";
 
 const PAGE_SIZE = 20;
 
@@ -24,7 +26,7 @@ function buildRarityMap(cards) {
 
 export default function YughiohInventory({language = "fr"}) {
     const t = translations[language].yughiohInventory;
-    const {cards, loading, error, fetchAllCards, searchCards} = useYughioInventoryStore();
+    const {cards, loading, error, fetchAllCards, searchCards, updateCardQuantity, removeCard} = useYughioInventoryStore();
     const {addCard, fetchByUserId} = useShoppingCartStore();
     const {user, fetchMe} = useAuthStore();
 
@@ -40,6 +42,33 @@ export default function YughiohInventory({language = "fr"}) {
         {key: "Spell",   label: t.filterSpell   ?? "Magie"},
         {key: "Trap",    label: t.filterTrap     ?? "Piège"},
     ];
+
+
+    const isAdmin = user?.role === "ADMIN";
+
+    const handleStockChange = async (cardId, delta, direction) => {
+        try {
+            const updated = direction === "increment"
+                ? await AdminService.incrementStock(cardId, delta)
+                : await AdminService.decrementStock(cardId, delta);
+            updateCardQuantity(cardId, updated.quantity); // ← force le re-render via le store
+            setToast(`✦ ${updated.name} : stock ${direction === "increment" ? "+" : "−"}${delta} → ${updated.quantity}`);
+        } catch (e) {
+            setToast(`⚠ ${e.message}`);
+        }
+        setTimeout(() => setToast(null), 2500);
+    };
+
+    const handleDelete = async (cardId) => {
+        try {
+            await AdminService.deleteCard(cardId);
+            removeCard(cardId);
+            setToast("✦ Carte supprimée");
+        } catch (e) {
+            setToast(`⚠ ${e.message}`);
+        }
+        setTimeout(() => setToast(null), 2500);
+    };
 
     // Rehydrate user après refresh de page si token présent mais user null
     useEffect(() => {
@@ -282,16 +311,30 @@ export default function YughiohInventory({language = "fr"}) {
                     <>
                         <div className="grid grid-cols-5 gap-4">
                             {variants.map(({card, set, img, key}, i) => (
-                                <CardTile
-                                    key={key}
-                                    card={card}
-                                    set={set}
-                                    img={img}
-                                    rarityMap={rarityMap}
-                                    onAdd={addToCart}
-                                    delay={Math.min(i * 18, 280)}
-                                    t={t}
-                                />
+                                isAdmin ? (
+                                    <AdminCardTile
+                                        key={key}
+                                        card={card}
+                                        set={set}
+                                        img={img}
+                                        rarityMap={rarityMap}
+                                        onStockChange={handleStockChange}
+                                        onDelete={handleDelete}
+                                        delay={Math.min(i * 18, 280)}
+                                        t={t}
+                                    />
+                                ) : (
+                                    <CardTile
+                                        key={key}
+                                        card={card}
+                                        set={set}
+                                        img={img}
+                                        rarityMap={rarityMap}
+                                        onAdd={addToCart}
+                                        delay={Math.min(i * 18, 280)}
+                                        t={t}
+                                    />
+                                )
                             ))}
                         </div>
 

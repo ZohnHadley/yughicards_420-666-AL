@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { translations } from "../locales/index.js";
 import { RARITY_PALETTE } from "../theme/rarityPalette.js";
-import {YughioCardService} from "../service/YughioInventoryService.js";
+import { YughioCardService } from "../service/YughioInventoryService.js";
+import { AdminService } from "../service/AdminService.js";
+import { useAuthStore } from "../store/UseAuthStore.js";
 
 const USD_TO_CAD = 1.36;
 
@@ -70,27 +72,107 @@ function SetRow({ s, isSelected, onClick }) {
             <div className="flex items-center gap-3 min-w-0">
                 <span className="w-2 h-2 rounded-full shrink-0" style={{ background: rStyle.c }} />
                 <div className="min-w-0">
-                    {/* FIX 1 — nom du set toujours crème, jamais influencé par rStyle */}
-                    <p className="text-[11px] font-bold truncate text-[#e8dcc8]">
-                        {s.set_name}
-                    </p>
+                    <p className="text-[11px] font-bold truncate text-[#e8dcc8]">{s.set_name}</p>
                     <p className="text-[10px] font-mono tracking-widest mt-0.5" style={{ color: rStyle.c, opacity: 0.7 }}>
                         {s.set_code}
                     </p>
                 </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-                <span
-                    className="text-[9px] font-bold px-2 py-[3px] rounded-full tracking-wide"
-                    style={{ color: rStyle.c, background: rStyle.b, border: `1px solid ${rStyle.e}` }}
-                >
+                <span className="text-[9px] font-bold px-2 py-[3px] rounded-full tracking-wide"
+                      style={{ color: rStyle.c, background: rStyle.b, border: `1px solid ${rStyle.e}` }}>
                     {s.set_rarity}
                 </span>
-                {cad && (
-                    <span className="text-xs font-bold text-[#e8c06a]">${cad}</span>
-                )}
+                {cad && <span className="text-xs font-bold text-[#e8c06a]">${cad}</span>}
             </div>
         </button>
+    );
+}
+
+// ── Admin Stock Box ────────────────────────────────────────────────────────
+function AdminStockBox({ card, setFullCard }) {
+    const [delta, setDelta] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [toast, setToast] = useState(null);
+
+    const showToast = (msg) => {
+        setToast(msg);
+        setTimeout(() => setToast(null), 2500);
+    };
+
+    const handle = async (fn) => {
+        setLoading(true);
+        try { await fn(); }
+        finally { setLoading(false); }
+    };
+
+    const stockColor = !card?.quantity || card.quantity <= 0
+        ? "#ef4444"
+        : card.quantity <= 3 ? "#f59e0b" : "#34d399";
+
+    return (
+        <div className="rounded-2xl p-5 flex flex-col gap-4"
+             style={{ background: "rgba(13,17,23,0.9)", border: "1px solid rgba(239,68,68,0.2)" }}>
+
+            <p className="text-[10px] tracking-[0.3em] uppercase font-sans" style={{ color: "#ef4444" }}>
+                ⟡ Admin · Stock
+            </p>
+
+            {/* Stock actuel */}
+            <div className="flex flex-col items-center py-3 rounded-xl"
+                 style={{ background: "rgba(0,0,0,0.3)", border: `1px solid ${stockColor}33` }}>
+                <span className="text-[9px] tracking-widest uppercase" style={{ color: "#4a3f2a" }}>stock actuel</span>
+                <span className="text-4xl font-black tabular-nums"
+                      style={{ color: stockColor, fontFamily: "Georgia,serif" }}>
+                    {card?.quantity ?? 0}
+                </span>
+            </div>
+
+            {/* Delta stepper */}
+            <div className="flex items-center justify-between gap-3">
+                <span className="text-[10px] tracking-widest uppercase font-sans" style={{ color: "#7a6f5e" }}>
+                    quantité
+                </span>
+                <div className="flex items-center rounded-lg overflow-hidden"
+                     style={{ border: "1px solid rgba(201,151,58,0.25)" }}>
+                    <button onClick={() => setDelta(d => Math.max(1, d - 1))} disabled={delta <= 1}
+                            className="w-8 h-8 flex items-center justify-center transition hover:opacity-70 disabled:opacity-25"
+                            style={{ background: "rgba(201,151,58,0.06)", color: "#c9973a" }}>−</button>
+                    <span className="w-10 text-center text-sm font-bold" style={{ color: "#c9973a" }}>{delta}</span>
+                    <button onClick={() => setDelta(d => Math.min(99, d + 1))} disabled={delta >= 99}
+                            className="w-8 h-8 flex items-center justify-center transition hover:opacity-70 disabled:opacity-25"
+                            style={{ background: "rgba(201,151,58,0.06)", color: "#c9973a" }}>+</button>
+                </div>
+            </div>
+
+            {/* Boutons +/- */}
+            <div className="flex gap-2">
+                <button
+                    onClick={() => handle(async () => {
+                        const updated = await AdminService.incrementStock(card.id, delta);
+                        setFullCard(prev => ({ ...prev, quantity: updated.quantity }));
+                        showToast(`✦ Stock +${delta} → ${updated.quantity}`);
+                    })}
+                    disabled={loading}
+                    className="flex-1 py-2.5 rounded-xl text-xs font-bold tracking-widest uppercase transition hover:brightness-110 disabled:opacity-40"
+                    style={{ background: "rgba(52,211,153,0.12)", color: "#34d399", border: "1px solid rgba(52,211,153,0.3)" }}
+                >+ Ajouter {delta}</button>
+                <button
+                    onClick={() => handle(async () => {
+                        const updated = await AdminService.decrementStock(card.id, delta);
+                        setFullCard(prev => ({ ...prev, quantity: updated.quantity }));
+                        showToast(`✦ Stock −${delta} → ${updated.quantity}`);
+                    })}
+                    disabled={loading || (card?.quantity ?? 0) <= 0}
+                    className="flex-1 py-2.5 rounded-xl text-xs font-bold tracking-widest uppercase transition hover:brightness-110 disabled:opacity-40"
+                    style={{ background: "rgba(239,68,68,0.1)", color: "#fca5a5", border: "1px solid rgba(239,68,68,0.25)" }}
+                >− Retirer {delta}</button>
+            </div>
+
+            {toast && (
+                <p className="text-center text-xs" style={{ color: "#e8c06a" }}>{toast}</p>
+            )}
+        </div>
     );
 }
 
@@ -99,6 +181,8 @@ export default function YughiohCardDetails({ language = "fr" }) {
     const t = translations[language].yughiohCardDetails;
     const { state } = useLocation();
     const navigate = useNavigate();
+    const user = useAuthStore(s => s.user);
+    const isAdmin = user?.role === "ADMIN";
 
     const card = state?.card;
     const allSets = card?.card_sets ?? [];
@@ -107,10 +191,8 @@ export default function YughiohCardDetails({ language = "fr" }) {
     const [selectedSet, setSelectedSet] = useState(initialSet);
     const [qty, setQty] = useState(1);
     const [toast, setToast] = useState(null);
-
-    // FIX 2 — fetch complet depuis le backend pour avoir card_desc (effet)
-    // getCardById est déjà dans ton service, aucun endpoint manquant pour ça
     const [fullCard, setFullCard] = useState(card ?? null);
+
     useEffect(() => {
         if (!card?.id) return;
         YughioCardService.getCardById(card.id)
@@ -124,8 +206,6 @@ export default function YughiohCardDetails({ language = "fr" }) {
     const imgUrl = img?.image_url ?? img?.image_url_small
         ?? state?.img?.image_url ?? state?.img?.image_url_small;
 
-    // rStyle : uniquement pour décorations (bordures, glows, badges)
-    // JAMAIS appliqué au texte du titre card.name
     const rStyle = getRarityStyle(selectedSet?.set_rarity);
 
     const rawPrice = selectedSet?.set_price && parseFloat(selectedSet.set_price) > 0
@@ -142,20 +222,15 @@ export default function YughiohCardDetails({ language = "fr" }) {
     const isLink     = typeUpper.includes("LINK");
     const isPendulum = typeUpper.includes("PENDULUM");
 
-    // Toutes les props monstre sont dans cardProperties (PropertiesMonsterCard)
-    // Les enums (race, attribute) sont sérialisés comme { name: "DARK" } ou juste "DARK"
     const cp = fullCard?.cardProperties ?? {};
     const cardAtk       = cp.atk       ?? null;
     const cardDef       = cp.def       ?? null;
     const cardLevel     = cp.level     ?? null;
     const cardLinkval   = cp.linkval   ?? null;
     const cardScale     = cp.scale     ?? null;
-    // Les enums Jackson sérialisent soit le string directement soit { name: "DARK" }
     const cardRace      = cp.race?.name ?? cp.race ?? null;
     const cardAttribute = cp.attribute?.name ?? cp.attribute ?? null;
-
-    // Texte d'effet : champ 'description' dans YughioCard (mappé depuis 'desc' YGOPRODeck)
-    const effectText = fullCard?.description ?? null;
+    const effectText    = fullCard?.description ?? null;
 
     const handleAdd = () => {
         const label = [fullCard?.name, selectedSet?.set_code, selectedSet?.set_rarity].filter(Boolean).join(" · ");
@@ -173,9 +248,7 @@ export default function YughiohCardDetails({ language = "fr" }) {
                 <button
                     onClick={() => navigate(-1)}
                     className="mt-4 px-6 py-2 rounded-xl text-xs tracking-widest uppercase border border-[#c9973a]/30 text-[#c9973a] hover:bg-[#c9973a]/10 transition"
-                >
-                    {t.backToInventory}
-                </button>
+                >{t.backToInventory}</button>
             </div>
         );
     }
@@ -184,46 +257,42 @@ export default function YughiohCardDetails({ language = "fr" }) {
         <div className="min-h-screen bg-[#080a0f] text-[#e8dcc8]" style={{ fontFamily: "Georgia,serif" }}>
 
             {/* Ambient glow */}
-            <div
-                className="fixed top-0 left-0 w-[700px] h-[700px] pointer-events-none opacity-20"
-                style={{ background: `radial-gradient(circle, ${rStyle.c}22 0%, transparent 65%)`, transform: "translate(-20%, -20%)", transition: "background 0.6s ease" }}
-            />
+            <div className="fixed top-0 left-0 w-[700px] h-[700px] pointer-events-none opacity-20"
+                 style={{ background: `radial-gradient(circle, ${rStyle.c}22 0%, transparent 65%)`, transform: "translate(-20%, -20%)", transition: "background 0.6s ease" }} />
 
             {/* Header */}
             <header className="sticky top-0 z-40 px-8 py-4 border-b border-[#c9973a]/15 flex items-center gap-4"
                     style={{ background: "rgba(8,10,15,0.92)", backdropFilter: "blur(16px)" }}>
-                <button
-                    onClick={() => navigate(-1)}
-                    className="text-xs tracking-widest uppercase text-[#9a8e7a] hover:text-[#e8c06a] transition-colors duration-200 flex items-center gap-2"
-                >
+                <button onClick={() => navigate(-1)}
+                        className="text-xs tracking-widest uppercase text-[#9a8e7a] hover:text-[#e8c06a] transition-colors duration-200 flex items-center gap-2">
                     <span>{t.backToInventory}</span>
                 </button>
+                {isAdmin && (
+                    <span className="ml-auto text-[10px] tracking-widest uppercase px-3 py-1 rounded-full"
+                          style={{ color: "#ef4444", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)" }}>
+                        ⟡ Mode Admin
+                    </span>
+                )}
             </header>
 
             <main className="px-8 py-10 max-w-6xl mx-auto">
                 <div className="grid grid-cols-[320px_1fr] gap-12 items-start">
 
-                    {/* ── LEFT: image + buy box ── */}
+                    {/* ── LEFT: image + action box ── */}
                     <div className="flex flex-col gap-5 sticky top-24">
 
-                        <div
-                            className="relative rounded-2xl overflow-hidden"
-                            style={{
-                                background: "linear-gradient(145deg, #0c1420, #130e00)",
-                                border: `1px solid ${rStyle.e}`,
-                                boxShadow: `0 0 40px ${rStyle.e}, 0 24px 48px rgba(0,0,0,0.7)`,
-                                aspectRatio: "0.717",
-                            }}
-                        >
+                        <div className="relative rounded-2xl overflow-hidden"
+                             style={{
+                                 background: "linear-gradient(145deg, #0c1420, #130e00)",
+                                 border: `1px solid ${rStyle.e}`,
+                                 boxShadow: `0 0 40px ${rStyle.e}, 0 24px 48px rgba(0,0,0,0.7)`,
+                                 aspectRatio: "0.717",
+                             }}>
                             {imgUrl
-                                ? <img
-                                    key={imgUrl}
-                                    src={imgUrl}
-                                    alt={fullCard?.name}
-                                    className="w-full h-full object-cover"
-                                    style={{ animation: "fadeUp .4s ease both" }}
-                                    onError={e => e.target.style.display = "none"}
-                                />
+                                ? <img key={imgUrl} src={imgUrl} alt={fullCard?.name}
+                                       className="w-full h-full object-cover"
+                                       style={{ animation: "fadeUp .4s ease both" }}
+                                       onError={e => e.target.style.display = "none"} />
                                 : <div className="w-full h-full flex items-center justify-center text-[#7a6f5e] text-sm italic">no image</div>
                             }
                             <div className={`absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 rounded-lg leading-none
@@ -232,60 +301,63 @@ export default function YughiohCardDetails({ language = "fr" }) {
                             </div>
                         </div>
 
-                        {/* Buy box */}
-                        <div className="rounded-2xl p-5 flex flex-col gap-4"
-                             style={{ background: "rgba(13,17,23,0.9)", border: `1px solid ${rStyle.e}` }}>
-                            <div className="flex items-end justify-between">
-                                <div>
-                                    <p className="text-[10px] tracking-[0.3em] uppercase text-[#7a6f5e] mb-1 font-sans">{t.price}</p>
-                                    {cad
-                                        ? <p className="text-3xl font-black text-[#e8c06a]">
-                                            ${cad}
-                                            <span className="text-sm text-[#7a6f5e] font-normal ml-1">{t.cadCurrency}</span>
-                                        </p>
-                                        : <p className="text-2xl text-[#7a6f5e]">—</p>
-                                    }
+                        {/* Action box — admin ou client */}
+                        {isAdmin ? (
+                            <AdminStockBox card={fullCard} setFullCard={setFullCard} />
+                        ) : (
+                            <div className="rounded-2xl p-5 flex flex-col gap-4"
+                                 style={{ background: "rgba(13,17,23,0.9)", border: `1px solid ${rStyle.e}` }}>
+                                <div className="flex items-end justify-between">
+                                    <div>
+                                        <p className="text-[10px] tracking-[0.3em] uppercase text-[#7a6f5e] mb-1 font-sans">{t.price}</p>
+                                        {cad
+                                            ? <p className="text-3xl font-black text-[#e8c06a]">
+                                                ${cad}
+                                                <span className="text-sm text-[#7a6f5e] font-normal ml-1">{t.cadCurrency}</span>
+                                            </p>
+                                            : <p className="text-2xl text-[#7a6f5e]">—</p>
+                                        }
+                                    </div>
+                                    {cad && qty > 1 && (
+                                        <div className="text-right">
+                                            <p className="text-[10px] tracking-widest text-[#7a6f5e] uppercase font-sans">{t.subtotal}</p>
+                                            <p className="text-lg font-bold text-[#c9a96e]">${(parseFloat(cad) * qty).toFixed(2)}</p>
+                                        </div>
+                                    )}
                                 </div>
-                                {cad && qty > 1 && (
-                                    <div className="text-right">
-                                        <p className="text-[10px] tracking-widest text-[#7a6f5e] uppercase font-sans">{t.subtotal}</p>
-                                        <p className="text-lg font-bold text-[#c9a96e]">${(parseFloat(cad) * qty).toFixed(2)}</p>
+
+                                {!oos ? (
+                                    <div className="flex flex-col gap-3">
+                                        <div className="flex items-center gap-3">
+                                            <p className="text-[10px] tracking-[0.25em] uppercase text-[#7a6f5e] font-sans">{t.quantity}</p>
+                                            <div className="flex items-center rounded-xl overflow-hidden border ml-auto" style={{ borderColor: rStyle.e }}>
+                                                <button onClick={() => setQty(q => Math.max(1, q - 1))} disabled={qty <= 1}
+                                                        className="w-9 h-9 text-lg flex items-center justify-center transition hover:opacity-80 disabled:opacity-25 disabled:cursor-not-allowed"
+                                                        style={{ color: rStyle.c, background: rStyle.b }}>−</button>
+                                                <span className="w-10 text-center text-sm font-bold tabular-nums" style={{ color: rStyle.c }}>{qty}</span>
+                                                <button onClick={() => setQty(q => Math.min(maxQty, q + 1))} disabled={qty >= maxQty}
+                                                        className="w-9 h-9 text-lg flex items-center justify-center transition hover:opacity-80 disabled:opacity-25 disabled:cursor-not-allowed"
+                                                        style={{ color: rStyle.c, background: rStyle.b }}>+</button>
+                                            </div>
+                                        </div>
+                                        <button onClick={handleAdd}
+                                                className="w-full py-3 rounded-xl text-sm font-black tracking-widest uppercase transition-all duration-200 hover:brightness-110 active:scale-95"
+                                                style={{ background: `linear-gradient(135deg, ${rStyle.c}dd, ${rStyle.c})`, color: "#080a0f", boxShadow: `0 4px 20px ${rStyle.c}40` }}>
+                                            {t.addToCart} ✦
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="w-full py-3 rounded-xl flex items-center justify-center text-sm font-bold tracking-widest uppercase text-red-400/50 border border-red-500/20 cursor-not-allowed">
+                                        {t.outOfStock}
                                     </div>
                                 )}
                             </div>
-
-                            {!oos ? (
-                                <div className="flex flex-col gap-3">
-                                    <div className="flex items-center gap-3">
-                                        <p className="text-[10px] tracking-[0.25em] uppercase text-[#7a6f5e] font-sans">{t.quantity}</p>
-                                        <div className="flex items-center rounded-xl overflow-hidden border ml-auto" style={{ borderColor: rStyle.e }}>
-                                            <button onClick={() => setQty(q => Math.max(1, q - 1))} disabled={qty <= 1}
-                                                    className="w-9 h-9 text-lg flex items-center justify-center transition hover:opacity-80 disabled:opacity-25 disabled:cursor-not-allowed"
-                                                    style={{ color: rStyle.c, background: rStyle.b }}>−</button>
-                                            <span className="w-10 text-center text-sm font-bold tabular-nums" style={{ color: rStyle.c }}>{qty}</span>
-                                            <button onClick={() => setQty(q => Math.min(maxQty, q + 1))} disabled={qty >= maxQty}
-                                                    className="w-9 h-9 text-lg flex items-center justify-center transition hover:opacity-80 disabled:opacity-25 disabled:cursor-not-allowed"
-                                                    style={{ color: rStyle.c, background: rStyle.b }}>+</button>
-                                        </div>
-                                    </div>
-                                    <button onClick={handleAdd}
-                                            className="w-full py-3 rounded-xl text-sm font-black tracking-widest uppercase transition-all duration-200 hover:brightness-110 active:scale-95"
-                                            style={{ background: `linear-gradient(135deg, ${rStyle.c}dd, ${rStyle.c})`, color: "#080a0f", boxShadow: `0 4px 20px ${rStyle.c}40` }}>
-                                        {t.addToCart} ✦
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="w-full py-3 rounded-xl flex items-center justify-center text-sm font-bold tracking-widest uppercase text-red-400/50 border border-red-500/20 cursor-not-allowed">
-                                    {t.outOfStock}
-                                </div>
-                            )}
-                        </div>
+                        )}
                     </div>
 
                     {/* ── RIGHT: details ── */}
                     <div className="flex flex-col gap-8">
 
-                        {/* Title — FIX 1 : gradient FIXE doré, jamais lié à rStyle */}
                         <div>
                             <div className="flex items-center gap-3 mb-2">
                                 {selectedSet?.set_rarity && (
@@ -295,15 +367,12 @@ export default function YughiohCardDetails({ language = "fr" }) {
                                     </span>
                                 )}
                             </div>
-                            <h1
-                                className="text-4xl font-black leading-tight"
+                            <h1 className="text-4xl font-black leading-tight"
                                 style={{
-                                    /* Gradient fixe — ne change JAMAIS quand on clique une édition */
                                     background: "linear-gradient(135deg, #e8dcc8 0%, #c9973a 70%)",
                                     WebkitBackgroundClip: "text",
                                     WebkitTextFillColor: "transparent",
-                                }}
-                            >
+                                }}>
                                 {fullCard?.name}
                             </h1>
                             {fullCard?.type && (
@@ -313,37 +382,26 @@ export default function YughiohCardDetails({ language = "fr" }) {
                             )}
                         </div>
 
-                        {/* Boîte monstre — toutes les lignes toujours visibles, "—" si données pas encore fetchées */}
+                        {/* Monster stats */}
                         {isMonster && (
                             <div className="rounded-2xl overflow-hidden"
                                  style={{ background: "rgba(13,17,23,0.7)", border: "1px solid rgba(255,255,255,0.06)" }}>
-
-                                {/* ── 1. ATTRIBUTE ── */}
                                 <div className="flex items-center gap-4 px-5 py-3 border-b border-white/5">
                                     <span className="text-[10px] tracking-[0.25em] uppercase text-[#7a6f5e] w-32 shrink-0 font-sans">{t.attribute}</span>
                                     <div className="flex items-center gap-2">
                                         {cardAttribute && (
-                                            <img
-                                                src={`/images/Attributes/${cardAttribute}.png`}
-                                                alt={cardAttribute}
-                                                className="w-6 h-6 object-contain"
-                                                onError={e => e.target.style.display = "none"}
-                                            />
+                                            <img src={`/images/Attributes/${cardAttribute}.png`} alt={cardAttribute}
+                                                 className="w-6 h-6 object-contain" onError={e => e.target.style.display = "none"} />
                                         )}
-                                        <span className="text-sm font-bold text-[#e8dcc8]">
-                                            {cardAttribute ?? "—"}
-                                        </span>
+                                        <span className="text-sm font-bold text-[#e8dcc8]">{cardAttribute ?? "—"}</span>
                                     </div>
                                 </div>
 
-                                {/* ── 2. LEVEL / RANK / LINK RATING ── toujours affiché */}
                                 <div className="flex items-center gap-4 px-5 py-3 border-b border-white/5">
-                                    <span
-                                        className="text-[10px] tracking-[0.25em] uppercase text-[#7a6f5e] w-32 shrink-0 font-sans">
+                                    <span className="text-[10px] tracking-[0.25em] uppercase text-[#7a6f5e] w-32 shrink-0 font-sans">
                                         {isLink ? t.linkVal : isXyz ? t.rank : isPendulum ? t.scale : t.level}
                                     </span>
                                     <div className="flex items-center gap-2">
-                                        {/* Étoiles si valeur disponible */}
                                         {cardLevel != null && !isLink && (
                                             <div className="flex gap-0.5">
                                                 {Array.from({ length: Math.min(cardLevel, 13) }).map((_, i) => (
@@ -354,13 +412,9 @@ export default function YughiohCardDetails({ language = "fr" }) {
                                                 ))}
                                             </div>
                                         )}
-                                        {isLink && cardLinkval != null && (
-                                            <span className="text-base text-[#34d399]">⬡</span>
-                                        )}
+                                        {isLink && cardLinkval != null && <span className="text-base text-[#34d399]">⬡</span>}
                                         <span className="text-sm font-bold text-[#e8dcc8] ml-1">
-                                            {isLink
-                                                ? (cardLinkval ?? "—")
-                                                : (cardLevel ?? "—")}
+                                            {isLink ? (cardLinkval ?? "—") : (cardLevel ?? "—")}
                                         </span>
                                         {isPendulum && cardScale != null && (
                                             <span className="text-xs text-[#7a6f5e] ml-2">({t.scale}: {cardScale})</span>
@@ -368,15 +422,11 @@ export default function YughiohCardDetails({ language = "fr" }) {
                                     </div>
                                 </div>
 
-                                {/* ── 4. Type ── */}
                                 <div className="flex items-center gap-4 px-5 py-3 border-b border-white/5">
                                     <span className="text-[10px] tracking-[0.25em] uppercase text-[#7a6f5e] w-32 shrink-0 font-sans">{t.race}</span>
-                                    <span className="text-sm font-semibold text-[#e8dcc8]">
-                                        {cardRace ?? "—"}
-                                    </span>
+                                    <span className="text-sm font-semibold text-[#e8dcc8]">{cardRace ?? "—"}</span>
                                 </div>
 
-                                {/* ── 5. ATK ── */}
                                 <div className="flex items-center gap-4 px-5 py-3 border-b border-white/5">
                                     <span className="text-[10px] tracking-[0.25em] uppercase text-[#7a6f5e] w-32 shrink-0 font-sans">{t.atk}</span>
                                     {cardAtk != null
@@ -385,7 +435,6 @@ export default function YughiohCardDetails({ language = "fr" }) {
                                     }
                                 </div>
 
-                                {/* ── 6. DEF (pas affiché pour Link) ── */}
                                 {!isLink && (
                                     <div className="flex items-center gap-4 px-5 py-4">
                                         <span className="text-[10px] tracking-[0.25em] uppercase text-[#7a6f5e] w-32 shrink-0 font-sans">{t.def}</span>
@@ -398,33 +447,28 @@ export default function YughiohCardDetails({ language = "fr" }) {
                             </div>
                         )}
 
-                        {/* Infos pour Spell/Trap (pas monstre) */}
+                        {/* Spell/Trap info */}
                         {!isMonster && (
                             <div className="rounded-2xl p-5"
                                  style={{ background: "rgba(13,17,23,0.7)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                                {/* Spell/Trap subtype icon */}
                                 <div className="flex items-center gap-3 py-2 border-b border-white/5 mb-1">
                                     <span className="text-[10px] tracking-[0.25em] uppercase text-[#7a6f5e] w-32 shrink-0 font-sans">{t.race}</span>
                                     <div className="flex items-center gap-2">
                                         {(() => {
-                                            // Map race/subtype to filename
                                             const spellTrapMap = {
-                                                "Normal":      typeUpper.includes("SPELL") ? "SPELL" : "TRAP",
-                                                "Continuous":  "Continuous",
-                                                "Counter":     "Counter",
-                                                "Equip":       "Equip",
-                                                "Field":       "Field",
-                                                "Quick-Play":  "Quick-Play",
-                                                "Ritual":      "Ritual",
+                                                "Normal":     typeUpper.includes("SPELL") ? "SPELL" : "TRAP",
+                                                "Continuous": "Continuous",
+                                                "Counter":    "Counter",
+                                                "Equip":      "Equip",
+                                                "Field":      "Field",
+                                                "Quick-Play": "Quick-Play",
+                                                "Ritual":     "Ritual",
                                             };
                                             const iconFile = spellTrapMap[cardRace] ?? (typeUpper.includes("SPELL") ? "SPELL" : "TRAP");
                                             return (
-                                                <img
-                                                    src={`/images/Attributes/${iconFile}.png`}
-                                                    alt={cardRace}
-                                                    className="w-6 h-6 object-contain"
-                                                    onError={e => e.target.style.display = "none"}
-                                                />
+                                                <img src={`/images/Attributes/${iconFile}.png`} alt={cardRace}
+                                                     className="w-6 h-6 object-contain"
+                                                     onError={e => e.target.style.display = "none"} />
                                             );
                                         })()}
                                         <span className="text-sm font-semibold text-[#e8dcc8]">{cardRace ?? "—"}</span>
@@ -434,7 +478,7 @@ export default function YughiohCardDetails({ language = "fr" }) {
                             </div>
                         )}
 
-                        {/* FIX 2 — Description / Effet : texte fetchable via card_desc */}
+                        {/* Effect text */}
                         <div className="rounded-2xl p-5"
                              style={{ background: "rgba(13,17,23,0.7)", border: "1px solid rgba(255,255,255,0.06)" }}>
                             <p className="text-[10px] tracking-[0.35em] uppercase text-[#7a6f5e] mb-3 font-sans">

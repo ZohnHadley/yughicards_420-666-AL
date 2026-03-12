@@ -15,7 +15,6 @@ import Register from "./pages/Register.jsx";
 import {useAuthStore} from "./store/UseAuthStore.js";
 import ThankYou from "./pages/ThankYou.jsx";
 
-
 function App() {
     const [language, setLanguage] = useState("fr");
     const [ready, setReady] = useState(false);
@@ -26,7 +25,7 @@ function App() {
             .finally(() => setReady(true));
     }, []);
 
-    if (!ready) return null; // ou un spinner si tu veux
+    if (!ready) return null;
 
     return (
         <Router>
@@ -45,6 +44,7 @@ function App() {
                         <Route path="/cardDetails" element={<YughiohCardDetails language={language}/>}/>
                         <Route path="/shoppingCard" element={<ShoppingCart language={language}/>}/>
                         <Route path="/thank-you" element={<ThankYou language={language} />} />
+
                     </Routes>
                 </main>
                 <Footer language={language}/>
