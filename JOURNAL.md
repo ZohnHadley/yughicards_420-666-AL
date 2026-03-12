@@ -521,6 +521,14 @@ UPDATE - ### 11 et 12 Mars: FE - Implémentation de la page remerciement pour le
         -Boutton pour creer son compte
 
 **internalisation**: Utilisation du fichier de traductions afin d’adapter automatiquement le contenu de la page selon la langue sélectionnée (français / anglais).
+
+---
+### 12 Mars (3pm - 5:30pm): FE - Implémentation de la fonctionnalité pour ajouter ou retirer des cartes de l'inventaire pour l'admin:
+
+Fonctionnalité qui sert à mettre à jour les stocks du magasin.
+
+**Page catalogue des cartes**: Page qui montre l'inventaire des cartes du boutique. L'admin peut ajouter ou retirer
+**Page détails des cartes**: Une fois qu'on clique sur une carte, une page des détails s'ouvre. L'admin peut voir les détails des cartes et soit décidé d'ajouter ou retirer des cartes de l'inventaire. 
   
 
 
