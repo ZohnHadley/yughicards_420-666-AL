@@ -26,11 +26,9 @@ public class ApplicationUserDTO {
     @Size(min = 4)
     private String userName;
 
-    @NotBlank(message = "First name is mandatory")
     @Size(min = 4)
     private String firstName;
 
-    @NotBlank(message = "Last name is mandatory")
     @Size(min = 2)
     private String lastName;
 
