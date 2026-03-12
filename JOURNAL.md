@@ -476,7 +476,7 @@
 - **Lue l'article de** [Denis Mutunga](https://medium.com/@denis.mutunga/back-end-architecture-for-the-cart-system-7c222bb99ef3) pour avoir une idée de comment implémenter le pannier d'achat.
 
 ---
-### 4 Mars: (4:40pm - 5:15pm)) FE - Implémentation du pannier d'achat du client :
+### 4 Mars: (4:40pm - 5:15pm) FE - Implémentation du pannier d'achat du client :
   **ShoppingCart service FE** : 
     - Création des fonctions pour communiquer avec le backend (getByUserId, getByEmail, addCard, removeCard).
     - Gestion des erreurs et des cas où le panier est vide ou inexistant.
@@ -493,6 +493,11 @@ Fonctions calculées pour le total et le nombre de cartes.
 
 Boutons interactifs pour retirer des cartes et passer la commande.
   **internalisation**: Utilisation du fichier de traductions afin d’adapter automatiquement le contenu de la page selon la langue sélectionnée (français / anglais).
+
+UPDATE - ### 11 Mars: (8pm - 10pm) FE - Implémentation de la page remerciement pour les achats :
+  **Bufix**: Fix l'erreur qu'on ne pouvait plus register et se connecter a notre compte.
+   
+  **Page remerciement**: Page qui remercie et montre les commandes du client après qu'il a passé ses commandes.
 
 ---
 ### 4 et 6 Mars: FE - Implémentation du formulaire pour login, register et logout:
