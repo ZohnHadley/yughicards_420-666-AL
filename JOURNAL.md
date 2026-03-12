@@ -494,11 +494,16 @@ Fonctions calculées pour le total et le nombre de cartes.
 Boutons interactifs pour retirer des cartes et passer la commande.
   **internalisation**: Utilisation du fichier de traductions afin d’adapter automatiquement le contenu de la page selon la langue sélectionnée (français / anglais).
 
-UPDATE - ### 11 Mars: (8pm - 10pm) FE - Implémentation de la page remerciement pour les achats :
+UPDATE - ### 11 et 12 Mars: FE - Implémentation de la page remerciement pour les achats + client peut ajouter et retirer du panier d'achat + passer sa commande:
   **Bufix**: Fix l'erreur qu'on ne pouvait plus register et se connecter a notre compte.
    
-  **Page remerciement**: Page qui remercie et montre les commandes du client après qu'il a passé ses commandes.
+  **Page remerciement**: Page qui remercie et montre les commandes du client après qu'il a passé ses commandes en montrant le prix total et des cartes qu'il a acheté.
 
+  **Page catalogue des cartes**: Le client peut ajouté jusqu'à max 3 copies de la meme carte dans son panier d'achat
+  **Page panier**: 
+      -Dans le panier d'achat, le client peut modifier, soit en ajoutant ou retirant les nombres de copies des cartes qu'il veut acheter
+      -Il y a un boutton "X" pour retirer d'un seul coup la même copie d'une carte
+      -Un boutton pour passer sa commande. Une fois sa commande sera passé, la page de remerciement sera affiché avec ses commandes de cartes.
 ---
 ### 4 et 6 Mars: FE - Implémentation du formulaire pour login, register et logout:
 **LoginPage**: 
