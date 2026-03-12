@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useShoppingCartStore } from "../store/ShoppingCartStore.js";
 import { translations } from "../locales/index.js";
+import {useAuthStore} from "../store/UseAuthStore.js";
 
 const USD_TO_CAD = 1.36;
 
@@ -228,12 +229,11 @@ export default function ShoppingCart({ language = "fr" }) {
     const { cart, loading, error, fetchByUserId, removeCard, getCardCount } =
         useShoppingCartStore();
 
-    // TODO: remplace par le vrai userId depuis ton auth context / JWT
-    const userId = 1;
+    const user = useAuthStore(s => s.user);
 
     useEffect(() => {
-        fetchByUserId(userId);
-    }, [userId]);
+        if (user?.id) fetchByUserId();
+    }, [user?.id]);
 
     const cards = cart?.cards ?? [];
 
@@ -291,7 +291,7 @@ export default function ShoppingCart({ language = "fr" }) {
 
                 {/* Error — vrai problème réseau/serveur */}
                 {error && !loading && (
-                    <CartError error={error} onRetry={() => fetchByUserId(userId)} t={t} />
+                    <CartError error={error} onRetry={() => fetchByUserId()} t={t} />
                 )}
 
                 {/* Content — panier vide OU liste de cartes */}

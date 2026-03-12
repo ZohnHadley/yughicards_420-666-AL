@@ -14,11 +14,10 @@ export const useShoppingCartStore = create((set, get) => ({
     error: null,
 
     // ── Fetch ─────────────────────────────────────────────────────────────────
-    fetchByUserId: async (userId) => {
-        if (!userId) return;
+    fetchByUserId: async () => {
         set({ loading: true, error: null });
         try {
-            const cart = await ShoppingCartService.getByUserId(userId);
+            const cart = await ShoppingCartService.getByUserId();
             set({ cart: normalizeCart(cart), loading: false });
         } catch (e) {
             set({ error: e.message, loading: false });
@@ -39,26 +38,22 @@ export const useShoppingCartStore = create((set, get) => ({
     // ── Add card (optimistic) ─────────────────────────────────────────────────
     addCard: async (cardDTO) => {
         const { cart } = get();
-        if (!cart?.applicationUser?.id) throw new Error("Aucun utilisateur chargé dans le panier.");
         if (!cardDTO?.id) throw new Error("La carte doit avoir un id.");
 
-        const userId = cart.applicationUser.id;
         const cardId = cardDTO.id;
-
-        const alreadyIn = cart.cards.some((c) => c.id === cardId);
+        const alreadyIn = (cart?.cards ?? []).some((c) => c.id === cardId);
         if (alreadyIn) return;
 
         // Optimistic update
         set((state) => ({
-            cart: { ...state.cart, cards: [...state.cart.cards, cardDTO] },
+            cart: { ...state.cart, cards: [...(state.cart?.cards ?? []), cardDTO] },
         }));
 
         try {
-            await ShoppingCartService.addCard(userId, cardId);
+            await ShoppingCartService.addCard(cardId); // plus de userId
         } catch (e) {
-            // Rollback
             set((state) => ({
-                cart: { ...state.cart, cards: state.cart.cards.filter((c) => c.id !== cardId) },
+                cart: { ...state.cart, cards: (state.cart?.cards ?? []).filter((c) => c.id !== cardId) },
                 error: e.message,
             }));
             throw e;

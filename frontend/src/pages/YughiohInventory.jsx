@@ -1,11 +1,12 @@
 import React, {useEffect, useState, useMemo} from "react";
 import {useYughioInventoryStore} from "../store/YughiohInventoryStore.js";
+import {useShoppingCartStore} from "../store/ShoppingCartStore.js";
 import {translations} from "../locales/index.js";
 import CardTile from "../components/CardTile.jsx";
 import {RARITY_PALETTE} from "../theme/rarityPalette.js";
+import {useAuthStore} from "../store/UseAuthStore.js";
 
 const PAGE_SIZE = 20;
-const USD_TO_CAD = 1.36;
 
 function buildRarityMap(cards) {
     const map = new Map();
@@ -24,13 +25,12 @@ function buildRarityMap(cards) {
 export default function YughiohInventory({language = "fr"}) {
     const t = translations[language].yughiohInventory;
     const {cards, loading, error, fetchAllCards, searchCards} = useYughioInventoryStore();
+    const {addCard, fetchByUserId} = useShoppingCartStore();
+    const {user, fetchMe} = useAuthStore();
 
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(0);
     const [toast, setToast] = useState(null);
-
-    // activeFilters: Set of "Monster" | "Spell" | "Trap"
-    // Empty set = show all
     const [activeFilters, setActiveFilters] = useState(new Set());
     const [sortBy, setSortBy] = useState("default");
     const [stockOnly, setStockOnly] = useState(false);
@@ -41,10 +41,16 @@ export default function YughiohInventory({language = "fr"}) {
         {key: "Trap",    label: t.filterTrap     ?? "Piège"},
     ];
 
-    // Toggle a filter key:
-    // - if it's the only active one → deselect (back to All)
-    // - if it's active with others → just remove it
-    // - if it's inactive → add it
+    // Rehydrate user après refresh de page si token présent mais user null
+    useEffect(() => {
+        if (!user) fetchMe();
+    }, []);
+
+    // Charge le panier dès que l'utilisateur est connu
+    useEffect(() => {
+        if (user?.id) fetchByUserId(user.id);
+    }, [user?.id]);
+
     const handleFilterToggle = (key) => {
         setActiveFilters(prev => {
             const next = new Set(prev);
@@ -93,7 +99,6 @@ export default function YughiohInventory({language = "fr"}) {
     const filteredVariants = useMemo(() => {
         let list = allVariants;
 
-        // Multi-select type filter — empty set means "All"
         if (activeFilters.size > 0) {
             list = list.filter(({card}) => {
                 const type = card.type?.toUpperCase() ?? "";
@@ -135,10 +140,16 @@ export default function YughiohInventory({language = "fr"}) {
         window.scrollTo({top: 0, behavior: "smooth"});
     }, [page]);
 
-    const addToCart = ({card, set, qty}, e) => {
+    // ── Ajouter au panier ─────────────────────────────────────────────────────
+    const addToCart = async ({card, set, qty}, e) => {
         e.stopPropagation();
-        const label = [card.name, set?.set_code, set?.set_rarity].filter(Boolean).join(" · ");
-        setToast(`✦ ${qty}× ${label} ajoutée${qty > 1 ? "s" : ""}`);
+        try {
+            await addCard(card);
+            const label = [card.name, set?.set_code, set?.set_rarity].filter(Boolean).join(" · ");
+            setToast(`✦ ${qty}× ${label} ajoutée${qty > 1 ? "s" : ""}`);
+        } catch (err) {
+            setToast(`⚠ ${err.message}`);
+        }
         setTimeout(() => setToast(null), 2200);
     };
 
@@ -171,11 +182,7 @@ export default function YughiohInventory({language = "fr"}) {
 
             {/* ── Filter Bar ── */}
             <div className="px-8 pt-4 pb-4 border-b border-[#c9973a]/10 flex flex-wrap items-center gap-3">
-
-                {/* Type tabs — individual toggles + "Tout" resets all */}
                 <div className="flex rounded-xl overflow-hidden" style={{border: "1px solid rgba(201,151,58,0.25)"}}>
-
-                    {/* Tout — always visible, resets filters */}
                     <button
                         onClick={() => { setActiveFilters(new Set()); setPage(0); }}
                         className="px-5 py-2 text-xs font-bold tracking-widest uppercase transition-all duration-200"
@@ -188,7 +195,6 @@ export default function YughiohInventory({language = "fr"}) {
                         {t.filterAll ?? "Tout"}
                     </button>
 
-                    {/* Monster / Spell / Trap — individually toggleable */}
                     {TYPE_TABS.map(({key, label}, idx) => {
                         const isActive = activeFilters.has(key);
                         return (
@@ -200,7 +206,6 @@ export default function YughiohInventory({language = "fr"}) {
                                     background: isActive ? "rgba(201,151,58,0.22)" : "rgba(255,255,255,0.02)",
                                     color: isActive ? "#e8c06a" : "#9a8e7a",
                                     borderRight: idx < TYPE_TABS.length - 1 ? "1px solid rgba(201,151,58,0.15)" : "none",
-                                    // Subtle underline indicator when active
                                     boxShadow: isActive ? "inset 0 -2px 0 #c9973a" : "none",
                                 }}
                             >
@@ -210,10 +215,8 @@ export default function YughiohInventory({language = "fr"}) {
                     })}
                 </div>
 
-                {/* Separator */}
                 <div className="w-px h-6 bg-[#c9973a]/20 mx-1" />
 
-                {/* Sort select */}
                 <select
                     value={sortBy}
                     onChange={e => handleSortChange(e.target.value)}
@@ -229,7 +232,6 @@ export default function YughiohInventory({language = "fr"}) {
                     <option value="priceHigh">{t.sortPriceHigh ?? "Prix ↓"}</option>
                 </select>
 
-                {/* In Stock toggle */}
                 <button
                     onClick={handleStockToggle}
                     className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold tracking-wide uppercase transition-all duration-200"
@@ -294,7 +296,6 @@ export default function YughiohInventory({language = "fr"}) {
                             <p className="text-center text-[#7a6f5e] italic mt-20">{t.noCards}</p>
                         )}
 
-                        {/* Pagination */}
                         <div className="flex items-center justify-center gap-3 mt-12">
                             <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}
                                     className="px-5 py-2 text-xs tracking-widest border border-[#c9973a]/30 rounded-lg text-[#c9973a] hover:bg-[#c9973a]/10 transition disabled:opacity-30 disabled:cursor-not-allowed">
