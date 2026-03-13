@@ -33,22 +33,24 @@ public class CardPropertiesDTO {
         return new CardProperties();
     }
 
-    public static CardPropertiesDTO toDto(JsonNode node) {
-        EnumCardType type = SimpleEnumUtils.findEnumValue(EnumCardType.class, node.get("type").asText());
-        CardProperties properties = getCardProperties(type);
-
-        if (properties.getClass().equals(PropertiesMonsterCard.class)) {
-            return PropertiesMonsterCardDTO.of(node);
-        } else if (properties.getClass().equals(PropertiesSpellCard.class)) {
-            return PropertiesSpellCardDTO.of(node);
-        } else if (properties.getClass().equals(PropertiesTrapCard.class)) {
-            return PropertiesTrapCardDTO.of(node);
-        }
-        return new CardPropertiesDTO();
-    }
+//    public static CardPropertiesDTO toDto(JsonNode node) {
+//        EnumCardType type = SimpleEnumUtils.findEnumValue(EnumCardType.class, node.get("type").asText());
+//        CardProperties properties = getCardProperties(type);
+//
+//        if (properties.getClass().equals(PropertiesMonsterCard.class)) {
+//            return PropertiesMonsterCardDTO.of(node);
+//        } else if (properties.getClass().equals(PropertiesSpellCard.class)) {
+//            return PropertiesSpellCardDTO.of(node);
+//        } else if (properties.getClass().equals(PropertiesTrapCard.class)) {
+//            return PropertiesTrapCardDTO.of(node);
+//        }
+//        return new CardPropertiesDTO();
+//    }
 
     public static CardPropertiesDTO of(CardProperties properties) {
-        if (properties == null) return null;
+        if (properties == null) {
+            return new CardPropertiesDTO();
+        }
 
         CardPropertiesDTO dto;
 

@@ -1,5 +1,6 @@
 package com.cal.yughistore.model.yughiocard.properties;
 
+import com.cal.yughistore.model.TextImbbededObject;
 import com.cal.yughistore.model.yughiocard.YughioCard;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -12,8 +13,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString(exclude = "yughioCard")
-@Table(name = "card_properties")
-public class CardProperties {
+public class CardProperties implements TextImbbededObject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,4 +23,10 @@ public class CardProperties {
     @OneToOne
     @JsonBackReference
     private YughioCard yughioCard;
+
+    @Override
+    public String toEmbeddingText() {
+        return String.format("CardProperties[id=%d]", id);
+    }
+
 }

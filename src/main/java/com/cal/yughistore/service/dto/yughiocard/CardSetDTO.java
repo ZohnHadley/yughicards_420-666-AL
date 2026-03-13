@@ -11,6 +11,7 @@ import lombok.*;
 @Setter
 @ToString
 public class CardSetDTO {
+    private Long id;
     private String set_name;
     private String set_code;
     private String set_rarity;
@@ -29,11 +30,12 @@ public class CardSetDTO {
 
     public CardSet toCardSet() {
         return CardSet.builder()
-                .set_name(this.set_name)
-                .set_code(this.set_code)
-                .set_rarity(this.set_rarity)
-                .set_rarity_code(this.set_rarity_code)
-                .set_price(this.set_price)
+                .id(this.getId())
+                .set_name(this.getSet_name())
+                .set_code(this.getSet_code())
+                .set_rarity(this.getSet_rarity())
+                .set_rarity_code(this.getSet_code())
+                .set_price(this.getSet_price())
                 .build();
     }
 }

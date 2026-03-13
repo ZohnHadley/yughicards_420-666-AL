@@ -39,10 +39,4 @@ public class AssistantController {
         return chatBotService.generateResponse(userName, question);
     }
 
-    /// description : reindex all cards in the vector store a.k.a rebuild the vector store
-    @PostMapping("/vector-store/reindex")
-    public String reindexVectorStore() {
-        int indexedCount = vectorStoreUtil.reindexAllCards();
-        return "Vector store reindexed successfully. Indexed cards: " + indexedCount;
-    }
 }

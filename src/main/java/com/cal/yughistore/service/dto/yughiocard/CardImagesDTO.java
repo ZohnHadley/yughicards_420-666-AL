@@ -12,17 +12,18 @@ import lombok.*;
 @ToString
 public class CardImagesDTO {
 
-    private Long id;
-    private int image_group_api_id;
+    private int images_id;
     private String image_url;
     private String image_url_small;
     private String image_url_cropped;
 
 
-    public static CardImagesDTO fromCardPrices(CardImages cardImages) {
+    public static CardImagesDTO of(CardImages cardImages) {
+        if (cardImages == null) {
+            return new CardImagesDTO();
+        }
         return CardImagesDTO.builder()
-                .id(cardImages.getId())
-                .image_group_api_id(cardImages.getImage_group_api_id())
+                .images_id(cardImages.getImages_id())
                 .image_url(cardImages.getImage_url())
                 .image_url_small(cardImages.getImage_url_small())
                 .image_url_cropped(cardImages.getImage_url_cropped())
@@ -31,8 +32,7 @@ public class CardImagesDTO {
 
     public CardImages toCardImages() {
         return CardImages.builder()
-                .id(getId())
-                .image_group_api_id(getImage_group_api_id())
+                .images_id(getImages_id())
                 .image_url(getImage_url())
                 .image_url_small(getImage_url_small())
                 .image_url_cropped(getImage_url_cropped())

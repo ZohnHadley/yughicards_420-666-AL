@@ -1,6 +1,7 @@
 package com.cal.yughistore.service;
 import com.cal.yughistore.repository.card.YughioCardRepository;
 import com.cal.yughistore.service.dto.yughiocard.YughioCardDTO;
+import com.cal.yughistore.service.utils.YughioCardVectorStoreUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ApiServiceTest {
+
+    @Mock
+    private YughioCardVectorStoreUtil vectorStoreUtil;
 
     @Mock
     private YughioCardRepository cardRepository;
@@ -50,6 +54,7 @@ class ApiServiceTest {
         when(restClientBuilder.build()).thenReturn(restClient);
 
         apiService = new ApiService(
+                vectorStoreUtil,
                 cardRepository,
                 yughioCardService,
                 restClientBuilder,

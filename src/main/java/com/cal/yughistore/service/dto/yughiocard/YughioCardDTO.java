@@ -25,33 +25,33 @@ import java.util.List;
 public class YughioCardDTO {
     private static final Logger logger = LoggerFactory.getLogger(YughioCardDTO.class);
 
-    private Long id;
+    private Long id = null;
     private int api_id;
-    private String name = "";
+    private String name = "null card";
     private EnumCardType type = EnumCardType.NULL;
     private EnumFrameType frameType = EnumFrameType.NULL;
     private String description = "";
     private String ygoprodeck_url = "";
 
-    private EnumPropertiesConfigType cardConfig;
+    private EnumPropertiesConfigType cardConfig = EnumPropertiesConfigType.NULL;
     @NonNull
     @Builder.Default
     private CardPropertiesDTO cardProperties = new CardPropertiesDTO();
     @NonNull
     @Builder.Default
-    private List<CardImagesDTO> card_images = new ArrayList<>();
+    private CardImagesDTO card_images = new CardImagesDTO();
     @NonNull
     @Builder.Default
-    private List<CardPricesDTO> card_prices = new ArrayList<>();
+    private CardPricesDTO card_prices = new CardPricesDTO();
     @NonNull
     @Builder.Default
     private List<CardSetDTO> card_sets = new ArrayList<>();
 
     private int quantity = 0;
 
-    private String rarity = "";
-    private String setName = "";
-    private String setCode = "";
+//    private String rarity = "";
+//    private String setName = "";
+//    private String setCode = "";
 
     // ── Static helpers ──────────────────────────────────────────────────────
 
@@ -66,37 +66,29 @@ public class YughioCardDTO {
         return new CardPropertiesDTO();
     }
 
-    private static List<CardImagesDTO> cardImageGroupsFromNode(JsonNode node) {
-        List<CardImagesDTO> cardImages = new ArrayList<>();
-        JsonNode list = node.get("card_images");
-        if (list == null || !list.isArray()) return cardImages;
-        for (JsonNode img : list) {
-            cardImages.add(CardImagesDTO.builder()
-                    .image_group_api_id(img.get("id").asInt())
-                    .image_url(img.get("image_url").asText(""))
-                    .image_url_small(img.get("image_url_small").asText(""))
-                    .image_url_cropped(img.get("image_url_cropped").asText(""))
-                    .build());
-        }
-        return cardImages;
+    private static CardImagesDTO cardImageGroupsFromNode(JsonNode node) {
+        JsonNode nodeData = node.get("card_images").get(0);
+
+        return CardImagesDTO.builder()
+                .images_id(nodeData.get("id").asInt())
+                .image_url(nodeData.get("image_url").asText())
+                .image_url_small(nodeData.get("image_url_small").asText())
+                .image_url_cropped(nodeData.get("image_url_cropped").asText())
+                .build();
     }
 
-    private static List<CardPricesDTO> cardPricesFromNode(JsonNode node) {
-        List<CardPricesDTO> prices = new ArrayList<>();
-        JsonNode list = node.get("card_prices");
-        if (list == null || !list.isArray()) return prices;
-        for (JsonNode p : list) {
-            prices.add(
-                    CardPricesDTO.builder()
-                            .cardmarket_price(p.get("cardmarket_price").asText(""))
-                            .tcgplayer_price(p.get("tcgplayer_price").asText(""))
-                            .ebay_price(p.get("ebay_price").asText(""))
-                            .amazon_price(p.get("amazon_price").asText(""))
-                            .coolstuffinc_price(p.get("coolstuffinc_price").asText(""))
-                            .build()
-            );
-        }
-        return prices;
+    private static CardPricesDTO cardPricesFromNode(JsonNode node) {
+        JsonNode nodeData = node.get("card_prices").get(0);
+
+        return CardPricesDTO.builder()
+                .cardmarket_price(nodeData.get("cardmarket_price").asDouble(0))
+                .tcgplayer_price(nodeData.get("tcgplayer_price").asDouble(0))
+                .ebay_price(nodeData.get("ebay_price").asDouble(0))
+                .amazon_price(nodeData.get("amazon_price").asDouble(0))
+                .coolstuffinc_price(nodeData.get("coolstuffinc_price").asDouble(0))
+                .build();
+
+
     }
 
     private static List<CardSetDTO> cardSetsFromNode(JsonNode node) {
@@ -105,11 +97,11 @@ public class YughioCardDTO {
         if (list == null || !list.isArray()) return sets;
         for (JsonNode s : list) {
             sets.add(CardSetDTO.builder()
-                            .set_name(s.get("set_name").asText(""))
-                            .set_code(s.get("set_code").asText(""))
-                            .set_rarity(s.get("set_rarity").asText(""))
-                            .set_rarity_code(s.get("set_rarity_code").asText(""))
-                            .set_price(s.get("set_price").asText("0.00"))
+                    .set_name(s.get("set_name").asText(""))
+                    .set_code(s.get("set_code").asText(""))
+                    .set_rarity(s.get("set_rarity").asText(""))
+                    .set_rarity_code(s.get("set_rarity_code").asText(""))
+                    .set_price(s.get("set_price").asText("0.00"))
                     .build());
         }
         return sets;
@@ -175,46 +167,12 @@ public class YughioCardDTO {
         return value.replaceAll(" ", "_").replaceAll("-", "_");
     }
 
-    // ── of(YughioCard) — utilisé pour toutes les réponses API ──────────────
-    // ⚠ C'était ici le bug : card_sets n'était jamais retourné au frontend
-
 
     public static CardPropertiesDTO toCardPropertiesDto(YughioCard card) {
         if (card.getCardProperties() == null) {
             return new CardPropertiesDTO();
         }
         return CardPropertiesDTO.of(card.getCardProperties());
-    }
-
-    private static List<CardImagesDTO> toCardImageDtos(YughioCard card) {
-        if (card.getCard_images() == null) {
-            return List.of();
-        }
-        return card.getCard_images().stream()
-                .map(img -> CardImagesDTO.builder()
-                        .id(img.getId())
-                        .image_group_api_id(img.getImage_group_api_id())
-                        .image_url(img.getImage_url())
-                        .image_url_small(img.getImage_url_small())
-                        .image_url_cropped(img.getImage_url_cropped())
-                        .build())
-                .toList();
-    }
-
-    private static List<CardPricesDTO> toCardPriceDtos(YughioCard card) {
-        if (card.getCard_prices() == null) {
-            return new ArrayList<>();
-        }
-        return card.getCard_prices().stream()
-                .map(price -> CardPricesDTO.builder()
-                        .id(price.getId())
-                        .cardmarket_price(price.getCardmarket_price())
-                        .tcgplayer_price(price.getTcgplayer_price())
-                        .ebay_price(price.getEbay_price())
-                        .amazon_price(price.getAmazon_price())
-                        .coolstuffinc_price(price.getCoolstuffinc_price())
-                        .build())
-                .toList();
     }
 
     private static List<CardSetDTO> toCardSetDtos(YughioCard card) {
@@ -232,17 +190,14 @@ public class YughioCardDTO {
                 .api_id(card.getApi_id())
                 .name(card.getName())
                 .quantity(card.getQuantity())
-                .rarity(card.getRarity())
-                .setName(card.getSetName())
-                .setCode(card.getSetCode())
                 .type(card.getType())
                 .frameType(card.getFrameType())
                 .description(card.getDescription())
                 .ygoprodeck_url(card.getYgoprodeck_url())
                 .cardConfig(card.getCardConfig())
                 .cardProperties(toCardPropertiesDto(card))
-                .card_images(toCardImageDtos(card))
-                .card_prices(toCardPriceDtos(card))
+                .card_images(CardImagesDTO.of(card.getCard_images()))
+                .card_prices(CardPricesDTO.of(card.getCard_prices()))
                 .card_sets(toCardSetDtos(card))
                 .build();
     }
@@ -255,18 +210,14 @@ public class YughioCardDTO {
                 .api_id(this.getApi_id())
                 .name(this.getName())
                 .quantity(this.getQuantity())
-                .rarity(this.getRarity())
-                .setName(this.getSetName())
-                .setCode(this.getSetCode() == null ? "" : this.getSetCode())
                 .type(this.getType())
                 .frameType(this.getFrameType())
                 .description(this.getDescription())
                 .ygoprodeck_url(this.getYgoprodeck_url())
                 .cardConfig(this.getCardConfig())
-//                .cardProperties(this.getCardProperties().toCardProperties())
-//                .card_images(this.getCard_images().stream().map(CardImagesDTO::toCardImages).toList())
-//                .card_prices(this.getCard_prices().stream().map(CardPricesDTO::toCardPrices).toList())
-                // card_sets est sauvegardé séparément dans YughioCardService.saveCardSets()
+                .card_prices(this.getCard_prices().toCardPrices())
+                .card_images(this.getCard_images().toCardImages())
+                .card_sets(this.getCard_sets().stream().map(CardSetDTO::toCardSet).toList())
                 .build();
     }
 }

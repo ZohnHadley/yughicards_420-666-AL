@@ -32,7 +32,7 @@ public class StoreClientService {
         if (userId == null) {
             throw new EntityIdentifierNullException(ApplicationUser.class);
         }
-        if (cardId == null) {
+        if (cardId == null || cardId == -1L) {
             throw new EntityIdentifierNullException(YughioCard.class);
         }
         if (quantity <= 0) {
@@ -70,14 +70,14 @@ public class StoreClientService {
         if (userId == null) {
             throw new EntityIdentifierNullException(ApplicationUser.class,"userId can't be null");
         }
-        if (cardId == null) {
+        if (cardId == null || cardId == -1L) {
             throw new EntityIdentifierNullException(YughioCard.class,"cardId can't be null");
         }
 
         ShoppingCartDTO cart = shoppingCartService.getShoppingCartByUserId(userId);
 
-        if (cart == null) {
-            throw new ShoppingCartNotFoundException("Shopping cart not found for userId=" + userId);
+        if(cart.getCards().isEmpty()){
+            return;
         }
 
         int index = 0;

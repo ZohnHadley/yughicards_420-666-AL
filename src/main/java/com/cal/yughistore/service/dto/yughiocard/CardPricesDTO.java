@@ -9,19 +9,20 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 public class CardPricesDTO {
-    private Long id;
-    private String cardmarket_price;
-    private String tcgplayer_price;
-    private String ebay_price;
-    private String amazon_price;
-    private String coolstuffinc_price;
+    private Double cardmarket_price = 0.0;
+    private Double tcgplayer_price = 0.0;
+    private Double ebay_price = 0.0;
+    private Double amazon_price = 0.0;
+    private Double coolstuffinc_price = 0.0;
 
 
-    public static CardPricesDTO fromCardPrices(CardPrices cardPrices) {
+    public static CardPricesDTO of(CardPrices cardPrices) {
+        if (cardPrices == null){
+            return new CardPricesDTO();
+        }
+
         return CardPricesDTO.builder()
-                .id(cardPrices.getId())
                 .cardmarket_price(cardPrices.getCardmarket_price())
                 .tcgplayer_price(cardPrices.getTcgplayer_price())
                 .ebay_price(cardPrices.getEbay_price())
@@ -32,7 +33,6 @@ public class CardPricesDTO {
 
     public CardPrices toCardPrices() {
         return new CardPrices(
-                this.id,
                 this.cardmarket_price,
                 this.tcgplayer_price,
                 this.ebay_price,

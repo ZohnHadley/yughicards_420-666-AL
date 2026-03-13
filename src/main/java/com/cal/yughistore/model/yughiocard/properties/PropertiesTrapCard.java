@@ -9,7 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 public class PropertiesTrapCard extends CardProperties {
     @Column(nullable = false)
     private EnumNonMonsterCardRace race;
@@ -17,5 +16,10 @@ public class PropertiesTrapCard extends CardProperties {
     @Builder
     public PropertiesTrapCard(EnumNonMonsterCardRace race) {
         this.race = race;
+    }
+
+    @Override
+    public String toEmbeddingText() {
+        return String.format("card race %s", race.name().toLowerCase().replaceAll("_", " "));
     }
 }
