@@ -1,6 +1,5 @@
 package com.cal.yughistore.service.dto.user;
 
-
 import com.cal.yughistore.model.user.ShoppingCart;
 import com.cal.yughistore.model.user.ApplicationUser;
 import com.cal.yughistore.model.yughiocard.YughioCard;

@@ -46,6 +46,7 @@ public class SecurityConfiguration {
     private static final String USER_SHOPPING_CART_PATH      = "/api/v1/cart/**";
     private static final String ADMIN_PATH = "/api/v1/admin/**";
     private static final String CLIENT_PATH = "/api/v1/client/**";
+    private static final String SHOPPING_CART_PATH       = "/api/store/cart/**";
 
     // Swagger/OpenAPI
     private static final String SWAGGER_UI_PATH        = "/swagger-ui/**";
@@ -62,34 +63,32 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
 
-                        // ── Preflight CORS — toujours public ─────────────────
+                        // ── Preflight CORS ────────────────────────────────────────
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // ── Swagger — public ──────────────────────────────────
-                        .requestMatchers(
-                                SWAGGER_UI_PATH,
-                                SWAGGER_UI_HTML_PATH,
-                                API_DOCS_PATH,
-                                SWAGGER_RESOURCES_PATH,
-                                SWAGGER_CONFIG_PATH,
-                                WEBJARS_PATH
-                        ).permitAll()
+                        // ── Swagger ───────────────────────────────────────────────
+                        .requestMatchers(SWAGGER_UI_PATH, SWAGGER_UI_HTML_PATH,
+                                API_DOCS_PATH, SWAGGER_RESOURCES_PATH,
+                                SWAGGER_CONFIG_PATH, WEBJARS_PATH).permitAll()
 
                                 // User endpoints
                                 .requestMatchers(AI_PATH).permitAll()
+                                // ── Routes publiques USER (spécifiques d'abord) ───────────
+                                .requestMatchers(HttpMethod.POST, USER_SIGNUP_PATH).permitAll()
+                                .requestMatchers(HttpMethod.POST, USER_SIGNIN_PATH).permitAll()
+                                .requestMatchers(HttpMethod.POST, USER_PASSWORD_RESET_PATH).permitAll()
+
+                                // ── Routes protégées ──────────────────────────────────────
                                 .requestMatchers(ADMIN_PATH).hasAnyAuthority(Role.ADMIN.name())
-                                .requestMatchers(USER_PATH).permitAll()
-                                .requestMatchers(HttpMethod.POST, USER_PASSWORD_RESET_PATH).hasAnyAuthority(Role.CLIENT.name())
-                                .requestMatchers(HttpMethod.GET, USER_SHOPPING_CART_PATH).permitAll()
+                                .requestMatchers(USER_PATH).authenticated()
 
-                                .requestMatchers(ADMIN_PATH).hasAnyAuthority(Role.CLIENT.name())
+                        // ── Panier ────────────────────────────────────────────────
+                        .requestMatchers(SHOPPING_CART_PATH).authenticated()
 
-                                // Yu-Gi-Oh cards endpoints
-//                        .requestMatchers(YUGHIO_CARD_DATA_PATH).permitAll()
-                                .requestMatchers(HttpMethod.GET, YUGHIO_CARD_DATA_PATH).permitAll()
-                                .requestMatchers(YUGHIO_CARD_SINGLE_PATH).permitAll()
+                        // ── Yu-Gi-Oh cards ────────────────────────────────────────
+                        .requestMatchers(HttpMethod.GET, YUGHIO_CARD_DATA_PATH).permitAll()
+                        .requestMatchers(YUGHIO_CARD_SINGLE_PATH).permitAll()
 
-                        // ── Tout le reste → authentifié ───────────────────────
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers.frameOptions(f -> f.disable()))
@@ -103,11 +102,7 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
-        // ⚡ IMPORTANT : port exact de votre frontend
         configuration.setAllowedOrigins(List.of("http://localhost:5173"));
-
-        // Autoriser tous les principaux methods
         configuration.setAllowedMethods(Arrays.asList(
                 HttpMethod.GET.name(),
                 HttpMethod.POST.name(),
@@ -115,8 +110,6 @@ public class SecurityConfiguration {
                 HttpMethod.DELETE.name(),
                 HttpMethod.OPTIONS.name()
         ));
-
-        // Autoriser headers utilisés par le frontend
         configuration.setAllowedHeaders(Arrays.asList(
                 "Authorization",
                 "Cache-Control",
@@ -124,12 +117,7 @@ public class SecurityConfiguration {
                 "Accept",
                 "X-Requested-With"
         ));
-
-        // Permet JWT / credentials
         configuration.setAllowCredentials(true);
-
-        // Expose headers si nécessaire
-        // configuration.setExposedHeaders(List.of("Custom-Header"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
