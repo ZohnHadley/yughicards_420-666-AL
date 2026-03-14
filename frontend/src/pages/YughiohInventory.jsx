@@ -115,12 +115,12 @@ export default function YughiohInventory({language = "fr"}) {
         cards.flatMap((card) => {
             const sets = card.card_sets ?? [];
             if (sets.length === 0) {
-                return [{card, set: null, img: card.card_images?.[0], key: `${card.id}-noset`}];
+                return [{card, set: null, img: card.card_images, key: `${card.id}-noset`}];
             }
             return sets.map((set, i) => ({
                 card,
                 set,
-                img: card.card_images?.[i] ?? card.card_images?.[0],
+                img: card.card_images?.[i] ?? card.card_images,
                 key: `${card.id}-${set.set_code}-${i}`,
             }));
         }), [cards]);

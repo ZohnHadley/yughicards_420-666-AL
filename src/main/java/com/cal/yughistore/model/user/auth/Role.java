@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public enum Role {
+    GUEST("GUEST"),
     ADMIN("ADMIN"),
     CLIENT("CLIENT");
 

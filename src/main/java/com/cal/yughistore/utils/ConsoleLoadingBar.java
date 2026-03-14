@@ -24,17 +24,21 @@ public class ConsoleLoadingBar {
 
         StringBuilder bar = new StringBuilder();
 
-        bar.append("\r[");
+        bar.append("\r╡");
         for (int i = 0; i < width; i++) {
-            bar.append(i < progress ? "█" : "░");
+            bar.append(i < progress ? "█" : "▒");
         }
-        bar.append("] ").append(percent).append("% (")
+        bar.append("╞ ").append(percent).append("% (")
                 .append(current).append("/").append(total).append(")");
 
         System.out.print(bar);
     }
 
     public void finish() {
-        System.out.println("Done!");
+        finish("");
+    }
+
+    public void finish(String message) {
+        System.out.println(" "+message+" All Done!");
     }
 }

@@ -11,7 +11,6 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 public class PropertiesMonsterCard extends CardProperties {
 
     @Column(nullable = false)
@@ -32,12 +31,23 @@ public class PropertiesMonsterCard extends CardProperties {
             int level,
             EnumMonsterCardRace race,
             EnumCardAttribute attribute
-    ){
+    ) {
         this.atk = atk;
         this.def = def;
         this.level = level;
         this.race = race;
         this.attribute = attribute;
+    }
+
+    @Override
+    public String toEmbeddingText() {
+        return String.format("card atk %s, card def %s, card level %s, card race %s, card attribute %s",
+                atk,
+                def,
+                level,
+                race,
+                attribute
+        );
     }
 
 }

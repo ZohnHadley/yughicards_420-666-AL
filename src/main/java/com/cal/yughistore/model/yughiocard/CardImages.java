@@ -1,40 +1,27 @@
 package com.cal.yughistore.model.yughiocard;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+
+@Embeddable
 @NoArgsConstructor
 @Getter
-@Setter
-@ToString(exclude = "yughioCard")
+@Builder
 public class CardImages {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonBackReference
-    private Long id;
-
-    private int image_group_api_id;
+    private int images_id;
     private String image_url;
     private String image_url_small;
     private String image_url_cropped;
 
-    @ManyToOne
-    @JsonBackReference
-    private YughioCard yughioCard;
-
     @Builder
     public CardImages(
-            Long id,
-            int image_group_api_id,
+            int images_id,
             String image_url,
             String image_url_small,
             String image_url_cropped
     ) {
-        this.id = id;
-        this.image_group_api_id = image_group_api_id;
+        this.images_id = images_id;
         this.image_url = image_url;
         this.image_url_small = image_url_small;
         this.image_url_cropped = image_url_cropped;

@@ -40,26 +40,11 @@ public class YughioCard {
     @Column(nullable = false)
     private Integer quantity = 0;
 
-    @Column(nullable = true, length = 50)
-    private String rarity = "";
+    @Embedded
+    private CardImages card_images = new CardImages();
 
-    @Column(length = 200)
-    private String setName = "";
-    @Column(length = 50)
-    private String setCode = "";
-
-    @OneToMany(
-            mappedBy = "yughioCard",
-            cascade = jakarta.persistence.CascadeType.ALL
-    )
-    @JsonManagedReference
-    private List<CardImages> card_images;
-    @OneToMany(
-            mappedBy = "yughioCard",
-            cascade = jakarta.persistence.CascadeType.ALL
-    )
-    @JsonManagedReference
-    private List<CardPrices> card_prices;
+    @Embedded
+    private CardPrices card_prices = new CardPrices();
 
     /// Properties (depends on card type (trap, spell, monster, etc) ) ///
     private EnumPropertiesConfigType cardConfig;
@@ -68,6 +53,7 @@ public class YughioCard {
     @JoinColumn(insertable = false, updatable = false)
     @JsonManagedReference
     private CardProperties cardProperties;
+
 
     @OneToMany(mappedBy = "yughioCard", cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -86,12 +72,9 @@ public class YughioCard {
             String ygoprodeck_url,
             EnumPropertiesConfigType cardConfig,
             CardProperties cardProperties,
-            List<CardImages> card_images,
-            List<CardPrices> card_prices,
-            List<CardSet> card_sets,
-            String rarity,
-            String setName,
-            String setCode
+            CardPrices card_prices,
+            CardImages card_images,
+            List<CardSet> card_sets
     ) {
 
         this.id = id;
@@ -103,12 +86,10 @@ public class YughioCard {
         this.ygoprodeck_url = ygoprodeck_url;
         this.cardConfig = cardConfig;
         this.cardProperties = cardProperties;
-        this.card_images = (card_images != null) ? card_images : new ArrayList<>();
-        this.card_prices = (card_prices != null) ? card_prices : new ArrayList<>();
+        this.card_images = card_images;
+        this.card_prices = card_prices;
         this.card_sets = (card_sets != null) ? card_sets : new ArrayList<>();
         this.quantity = quantity;
-        this.rarity = rarity;
-        this.setName = setName;
-        this.setCode = setCode;
     }
+
 }

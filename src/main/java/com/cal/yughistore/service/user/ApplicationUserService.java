@@ -71,9 +71,20 @@ public class ApplicationUserService {
                         )
                 );
         return switch (user.getRole()) {
+            case GUEST -> getGuestDTO(user.getId());
             case ADMIN -> getAdminDTO(user.getId());
             case CLIENT -> getClientDTO(user.getId());
         };
+    }
+
+    private ApplicationUserDTO getGuestDTO(Long id) {
+        return ApplicationUserDTO.builder().build();
+//        final Optional<GuestUser> adminUserOptional = adminUserRepository.findById(
+//                id
+//        );
+//        return adminUserOptional.isPresent()
+//                ? ApplicationUserDTO.of(adminUserOptional.get())
+//                : new ApplicationUserDTO();
     }
 
     private ApplicationUserDTO getAdminDTO(Long id) {

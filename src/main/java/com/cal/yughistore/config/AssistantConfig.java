@@ -2,10 +2,12 @@ package com.cal.yughistore.config;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.PromptChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -15,6 +17,11 @@ import javax.sql.DataSource;
 
 @Configuration
 public class AssistantConfig {
+
+    @Bean
+    QuestionAnswerAdvisor questionAnswerAdvisor(VectorStore vectorStore) {
+        return QuestionAnswerAdvisor.builder(vectorStore).build();
+    }
 
     @Bean
     PromptChatMemoryAdvisor promptChatMemoryAdvisor(DataSource dataSource) {

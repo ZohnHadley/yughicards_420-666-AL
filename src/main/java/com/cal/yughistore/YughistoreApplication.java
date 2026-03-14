@@ -69,7 +69,7 @@ public class YughistoreApplication {
             /// stock up cards FIRST
             List<Long> cardIds = new ArrayList<>();
             System.out.println("stocking up to 1000 cards");
-            for (int i = 1; i <= 1000; i++) {
+            for (int i = 1; i < 1000; i++) {
                 if (yughioCardService.getById((long) i) != null)
                     cardIds.add((long) i);
             }

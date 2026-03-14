@@ -1,13 +1,17 @@
 package com.cal.yughistore.service;
 
 import com.cal.yughistore.repository.card.YughioCardRepository;
+import com.cal.yughistore.service.utils.YughioCardVectorStoreUtil;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.PromptChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.vectorstore.filter.Filter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,12 +20,12 @@ import java.util.stream.Collectors;
 @Service
 public class AiChatBotService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AiChatBotService.class);
     private static final String CARD_DOCUMENT_SOURCE = "yughio-card";
 
-    private final VectorStore vectorStore;
-    private final YughioCardRepository cardRepository;
-
+    private final QuestionAnswerAdvisor questionAnswerAdvisor;
     private final PromptChatMemoryAdvisor promptChatMemoryAdvisor;
+    private final VectorStore vectorStore;
     private final ChatClient chatClient;
 
     private final String system = """
@@ -70,16 +74,15 @@ public class AiChatBotService {
             """;
 
     public AiChatBotService(
-            VectorStore vectorStore,
-            YughioCardRepository cardRepository,
+            VectorStore vectorStore, YughioCardRepository cardRepository, QuestionAnswerAdvisor questionAnswerAdvisor,
             PromptChatMemoryAdvisor promptChatMemoryAdvisor,
             ChatClient.Builder chatClient
     ) {
         this.vectorStore = vectorStore;
-        this.cardRepository = cardRepository;
+        this.questionAnswerAdvisor = questionAnswerAdvisor;
         this.promptChatMemoryAdvisor = promptChatMemoryAdvisor;
         this.chatClient = chatClient
-                .defaultAdvisors(promptChatMemoryAdvisor)
+                .defaultAdvisors(questionAnswerAdvisor, promptChatMemoryAdvisor)
                 .defaultSystem(system)
                 .build();
     }
@@ -123,10 +126,14 @@ public class AiChatBotService {
                     SearchRequest.builder()
                             .query(userMessage)
                             .topK(5)
-                            .similarityThreshold(0.40d)
+                            .similarityThreshold(0.10d)
                             .filterExpression(sourceFilter)
                             .build()
             );
+
+            logger.info("Vector search for query='{}' returned {} results",
+                    userMessage,
+                    results == null ? 0 : results.size());
 
             if (results == null || results.isEmpty()) {
                 return "No relevant card documents found.";
@@ -136,6 +143,7 @@ public class AiChatBotService {
                     .map(Document::getText)
                     .collect(Collectors.joining("\n---\n"));
         } catch (Exception e) {
+            logger.error("Vector search failed for query='{}'", userMessage, e);
             return "Card context unavailable due to vector search error.";
         }
     }

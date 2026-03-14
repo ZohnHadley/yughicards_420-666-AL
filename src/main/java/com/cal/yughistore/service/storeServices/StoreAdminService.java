@@ -25,13 +25,7 @@ public class StoreAdminService {
         if (cardId == null) {
             throw new EntityIdentifierNullException(YughioCardDTO.class);
         }
-
-        YughioCardDTO card = yughioCardService.getById(cardId);
-        if (card == null) {
-            throw new IllegalArgumentException("Card not found for id: " + cardId);
-        }
-
-        return card;
+        return yughioCardService.getById(cardId);
     }
 
     @Transactional
@@ -40,7 +34,8 @@ public class StoreAdminService {
 
         try {
             if (cardDTO == null || cardDTO.getId() == null) {
-                throw new EntityDTONullException(YughioCardDTO.class);
+                System.err.println("storeAdminService : updateQuantity card is invalid");
+                return cardDTO;
             }
             if (quantity < 0) {
                 quantity = 0;

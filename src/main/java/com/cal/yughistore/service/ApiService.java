@@ -1,5 +1,6 @@
 package com.cal.yughistore.service;
 
+import com.cal.yughistore.service.utils.YughioCardVectorStoreUtil;
 import com.cal.yughistore.utils.ConsoleLoadingBar;
 import com.cal.yughistore.repository.card.YughioCardRepository;
 import com.cal.yughistore.service.dto.yughiocard.YughioCardDTO;
@@ -17,17 +18,21 @@ import java.util.List;
 
 @Service
 public class ApiService {
+    private final YughioCardVectorStoreUtil vectorStoreUtil;
+
     private final ConsoleLoadingBar consoleLoadingBar = new ConsoleLoadingBar();
     private static final Logger logger = LoggerFactory.getLogger(ApiService.class);
+
     private final YughioCardRepository cardRepository;
     private final YughioCardService yughioCardService;
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
     private final String url = "https://db.ygoprodeck.com/api/v7";
 
-    public ApiService(YughioCardRepository cardRepository, YughioCardService yughioCardService,
+    public ApiService(YughioCardVectorStoreUtil vectorStoreUtil, YughioCardRepository cardRepository, YughioCardService yughioCardService,
                       RestClient.Builder builder,
                       ObjectMapper objectMapper) {
+        this.vectorStoreUtil = vectorStoreUtil;
         this.cardRepository = cardRepository;
         this.yughioCardService = yughioCardService;
         this.restClient = builder.baseUrl(url).build();
@@ -51,7 +56,6 @@ public class ApiService {
     public void init() {
         if (cardRepository.count() == 0) {
             loadApiCardData();
-//            loadApiCardDataFromStaticFile();
         } else {
             logger.info("Cards already exist. Skipping API load.");
         }
@@ -66,20 +70,22 @@ public class ApiService {
             JsonNode dataList = objectMapper.readTree(result).get("data");
             if (dataList != null && dataList.isArray() && !dataList.isEmpty()) {
 
-                for (int index =0; index < dataList.size(); index++) {
+                for (int index = 0; index < dataList.size(); index++) {
                     JsonNode node = dataList.get(index);
                     YughioCardDTO cardDto = YughioCardDTO.of(node);
                     dtoList.add(cardDto);
                     consoleLoadingBar.printProgress(index + 1, dataList.size());
                 }
-                consoleLoadingBar.finish();
+                consoleLoadingBar.finish("loading from api");
                 yughioCardService.saveAll(dtoList);
+//                vectorStoreUtil.indexAllCards();
+
             }
-            return;
         } catch (Exception e) {
-            logger.error("ApiService : failed to load all cards data from api {}", e.getMessage());
+            loadApiCardDataFromStaticFile();
+
         }
-        loadApiCardDataFromStaticFile();
+
     }
 
     private void loadApiCardDataFromStaticFile() {
@@ -100,15 +106,15 @@ public class ApiService {
             JsonNode root = objectMapper.readTree(is);
             JsonNode dataList = root.get("data");
 
-            for (int index =0; index < dataList.size(); index++) {
+            for (int index = 0; index < dataList.size(); index++) {
                 JsonNode node = dataList.get(index);
                 YughioCardDTO cardDto = YughioCardDTO.of(node);
                 dtoList.add(cardDto);
                 consoleLoadingBar.printProgress(index + 1, dataList.size());
             }
-            consoleLoadingBar.finish();
-
+            consoleLoadingBar.finish("loading from file");
             yughioCardService.saveAll(dtoList);
+            vectorStoreUtil.indexAllCards();
 
         } catch (Exception e) {
             logger.error("ApiService : failed to load all cards info from static file", e);

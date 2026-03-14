@@ -12,7 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
+@Builder
 public class UserPublicDTO {
 
     private Long id;
@@ -53,6 +53,9 @@ public class UserPublicDTO {
     }
 
     public static UserPublicDTO of(ApplicationUser user) {
+        if(user == null){
+            return new UserPublicDTO();
+        }
         return UserPublicDTO.builder()
                 .id(user.getId())
                 .profilePictureUrl(user.getProfilePictureUrl())
