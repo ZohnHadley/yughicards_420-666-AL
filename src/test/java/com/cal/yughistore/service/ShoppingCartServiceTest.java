@@ -69,7 +69,7 @@ class ShoppingCartServiceTest {
         ShoppingCartDTO responseCart = shoppingCartService.save(cartDTO);
         //
         assertEquals(responseCart.getId(), savedCart.getId());
-        assertEquals(responseCart.getCards().size(), savedCart.getCards().size());
+        assertEquals(responseCart.getCartItemsList().size(), savedCart.getCartItemsList().size());
         assertEquals(responseCart.getApplicationUser().getId(), savedCart.getApplicationUser().getId());
     }
 
@@ -104,7 +104,7 @@ class ShoppingCartServiceTest {
         ShoppingCartDTO responseCart = shoppingCartService.getShoppingCartByUserId(savedUserDTO.getId());
         //
         assertEquals(responseCart.getId(), savedCart.getId());
-        assertEquals(responseCart.getCards().size(), savedCart.getCards().size());
+        assertEquals(responseCart.getCartItemsList().size(), savedCart.getCartItemsList().size());
         assertEquals(responseCart.getApplicationUser().getId(), savedCart.getApplicationUser().getId());
         assertEquals(responseCart.getApplicationUser().getEmail(), savedCart.getApplicationUser().getEmail());
     }
@@ -121,7 +121,7 @@ class ShoppingCartServiceTest {
         ShoppingCartDTO responseCart = shoppingCartService.getShoppingCartByUserEmail(savedUserDTO.getEmail());
         //
         assertEquals(responseCart.getId(), savedCart.getId());
-        assertEquals(responseCart.getCards().size(), savedCart.getCards().size());
+        assertEquals(responseCart.getCartItemsList().size(), savedCart.getCartItemsList().size());
         assertEquals(responseCart.getApplicationUser().getId(), savedCart.getApplicationUser().getId());
         assertEquals(responseCart.getApplicationUser().getEmail(), savedCart.getApplicationUser().getEmail());
     }

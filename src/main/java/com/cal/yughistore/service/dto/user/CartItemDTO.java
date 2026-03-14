@@ -22,4 +22,12 @@ public class CartItemDTO {
                 .quantity(item.getQuantity())
                 .build();
     }
+
+    public CartItem toCartItem(){
+        return CartItem.builder()
+                .id(getId())
+                .card(getCard().toYughioCard())
+                .quantity(getQuantity())
+                .build();
+    }
 }
