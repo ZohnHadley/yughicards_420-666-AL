@@ -63,9 +63,8 @@ public class ShoppingCartService {
         }
 
         ShoppingCart shoppingCart = shoppingCartRepository.findByApplicationUser_Id(userId);
-
         if (shoppingCart == null) {
-            throw new ShoppingCartNotFoundException("Shopping cart not found for userId=" + userId);
+            return new ShoppingCartDTO();
         }
 
         logger.debug("Shopping cart for user {}: {}", userId, shoppingCart);
@@ -79,7 +78,7 @@ public class ShoppingCartService {
         }
         ShoppingCart shoppingCart = shoppingCartRepository.findByApplicationUser_Credentials_Email(userEmail);
         if (shoppingCart == null) {
-            throw new ShoppingCartNotFoundException("Shopping cart not found in db for userEmail=" + userEmail);
+            return new ShoppingCartDTO();
         }
         logger.info("Shopping cart for user {}: {}", userEmail, shoppingCart);
         return ShoppingCartDTO.of(shoppingCart);

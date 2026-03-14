@@ -83,12 +83,12 @@ public class YughistoreApplication {
             storeClientService.addToShoppingCart(applicationUserDTO.getId(), 2L, 1);
             storeClientService.addToShoppingCart(applicationUserDTO.getId(), 3L, 1);
 
-            System.out.println(shoppingCartService.getShoppingCartByUserId(applicationUserDTO.getId()).getCards());
+            System.out.println(shoppingCartService.getShoppingCartByUserId(applicationUserDTO.getId()).getCartItemsList());
 
             /// remove 1 card from cart
             storeClientService.removeFromShoppingCart(applicationUserDTO.getId(), 1L);
 
-            System.out.println(shoppingCartService.getShoppingCartByUserId(applicationUserDTO.getId()).getCards());
+            System.out.println(shoppingCartService.getShoppingCartByUserId(applicationUserDTO.getId()).getCartItemsList());
         };
     }
 }

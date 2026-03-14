@@ -1,5 +1,7 @@
 package com.cal.yughistore.service.dto.user;
 
+
+import com.cal.yughistore.model.user.CartItem;
 import com.cal.yughistore.model.user.ShoppingCart;
 import com.cal.yughistore.model.user.ApplicationUser;
 import com.cal.yughistore.model.yughiocard.YughioCard;
@@ -22,29 +24,29 @@ public class ShoppingCartDTO {
     @NotBlank
     private UserPublicDTO applicationUser;
     @Builder.Default
-    private List<YughioCardDTO> cards = new ArrayList<>();
+    private List<CartItemDTO> cartItemsList = new ArrayList<>();
 
 
     public static ShoppingCartDTO of(ShoppingCart shoppingCart) {
         if (shoppingCart == null) {
             throw new IllegalArgumentException("Shopping cart must not be null");
         }
-        if (shoppingCart.getCardList() == null) {
+        if (shoppingCart.getCartItemList() == null) {
             throw new IllegalArgumentException("Shopping cart list cannot be null");
         }
 
-        List<YughioCardDTO> cardList = new ArrayList<>();
+        List<CartItemDTO> cardList = new ArrayList<>();
 
-        if (shoppingCart.getCardList() != null && !shoppingCart.getCardList().isEmpty()) {
-            for (YughioCard card : shoppingCart.getCardList()) {
-                cardList.add(YughioCardDTO.of(card));
+        if (shoppingCart.getCartItemList() != null && !shoppingCart.getCartItemList().isEmpty()) {
+            for (CartItem cartItem : shoppingCart.getCartItemList()) {
+                cardList.add(CartItemDTO.of(cartItem));
             }
         }
 
         return ShoppingCartDTO.builder()
                 .id(shoppingCart.getId())
                 .applicationUser(UserPublicDTO.of(shoppingCart.getApplicationUser()))
-                .cards(cardList)
+                .cartItemsList(cardList)
                 .build();
     }
 
@@ -56,18 +58,18 @@ public class ShoppingCartDTO {
             userRef.setId(this.applicationUser.getId());
         }
 
-        List<YughioCard> cardList = new ArrayList<>();
+        List<CartItem> itemList = new ArrayList<>();
 
-        if (this.getCards() != null) {
-            for (YughioCardDTO card : this.getCards()) {
-                cardList.add(card.toYughioCard());
+        if (this.getCartItemsList() != null) {
+            for (CartItemDTO cartItem : this.getCartItemsList()) {
+                itemList.add(cartItem.toCartItem());
             }
         }
 
         ShoppingCart cart = ShoppingCart.builder()
                 .id(this.getId())
                 .applicationUser(userRef)
-                .cardList(cardList)
+                .cartItemList(itemList)
                 .build();
 
         if (userRef != null) {
