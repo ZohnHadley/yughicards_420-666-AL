@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class ShoppingCartService {
     private static final Logger logger = LoggerFactory.getLogger(
@@ -37,46 +39,27 @@ public class ShoppingCartService {
 
     @Transactional
     public ShoppingCartDTO save(ShoppingCartDTO shoppingCartDTO) {
-        try {
-            if (shoppingCartDTO == null || shoppingCartDTO.getId() == null) {
-                throw new ShoppingCartNotSavedException("Shopping cart DTO is null or missing ID");
-            }
+        if (shoppingCartDTO == null) {
+            throw new ShoppingCartNotSavedException("Shopping cart DTO is null or missing ID");
+        }
+        if (shoppingCartDTO.getApplicationUser() == null) {
+            throw new ShoppingCartNotSavedException("Shopping cart DTO is null or missing ID");
+        }
 
-            ShoppingCart cart = shoppingCartRepository.findById(shoppingCartDTO.getId())
-                    .orElseThrow(() -> new ShoppingCartNotFoundException("Shopping cart not found: id=" + shoppingCartDTO.getId()));
+        Optional<ShoppingCart> cart = shoppingCartRepository.findById(shoppingCartDTO.getId());
+        if (cart.isEmpty()) {
+            ShoppingCart savedCart = shoppingCartRepository.save(shoppingCartDTO.toShoppingCart());
+            return ShoppingCartDTO.of(savedCart);
 
-            // IMPORTANT: never attach a "new ApplicationUser()" stub.
-            // If DTO provides a user id, attach a managed reference.
-            if (shoppingCartDTO.getApplicationUser() != null && shoppingCartDTO.getApplicationUser().getId() != null) {
-                Long userId = shoppingCartDTO.getApplicationUser().getId();
-                ApplicationUser userRef = applicationUserRepository.getReferenceById(userId);
-                cart.setApplicationUser(userRef);
-            }
-            // else: keep existing cart.applicationUser as-is
-
-            cart.getCardList().clear();
-            if (shoppingCartDTO.getCards() != null) {
-                for (var cardDto : shoppingCartDTO.getCards()) {
-                    if (cardDto != null && cardDto.getId() != null) {
-                        YughioCard cardRef = yughioCardRepository.getReferenceById(cardDto.getId());
-                        cart.getCardList().add(cardRef);
-                    }
-                }
-            }
-
-            ShoppingCart savedShoppingCart = shoppingCartRepository.save(cart);
-            logger.debug("Saved shopping cart id={}", savedShoppingCart.getId());
-            return ShoppingCartDTO.of(savedShoppingCart);
-        } catch (Exception e) {
-            logger.error("Error saving shopping cart: {}", e.getMessage());
-            throw new RuntimeException(e);
+        } else {
+            return ShoppingCartDTO.of(cart.get());
         }
     }
 
     @Transactional(readOnly = true)
     public ShoppingCartDTO getShoppingCartByUserId(Long userId) {
         if (userId == null) {
-            throw new EntityIdentifierNullException(ClientUser.class ,"can't be null");
+            throw new EntityIdentifierNullException(ClientUser.class, "can't be null");
         }
 
         ShoppingCart shoppingCart = shoppingCartRepository.findByApplicationUser_Id(userId);

@@ -20,6 +20,7 @@ public class CardSetDTO {
 
     public static CardSetDTO of(CardSet cardSet) {
         return CardSetDTO.builder()
+                .id(cardSet.getId())
                 .set_name(cardSet.getSet_name())
                 .set_code(cardSet.getSet_code())
                 .set_rarity(cardSet.getSet_rarity())

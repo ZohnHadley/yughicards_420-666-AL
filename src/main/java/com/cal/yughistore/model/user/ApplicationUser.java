@@ -12,11 +12,11 @@ import java.util.Collection;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "shoppingCart")
 public class ApplicationUser {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

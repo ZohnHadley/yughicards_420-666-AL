@@ -17,7 +17,6 @@ import java.util.List;
 public class ShoppingCart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonBackReference
     private Long id;
 
     @OneToOne(optional = false, fetch = FetchType.LAZY)
