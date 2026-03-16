@@ -18,12 +18,24 @@ export const ShoppingCartEn = {
     removeTitle: "Remove",
     cadLabel: "CAD",
 
+    // Shipping
+    shippingTitle: "Delivery",
+    shippingPickup: "In-store pickup",
+    shippingDeliver: "Ship to my address",
+    shippingFree: "Free",
+
     summaryTitle: "⟡ Summary",
     summaryCards: (n) => `Cards (${n})`,
     summaryShipping: "Shipping",
     summaryShippingFree: "—",
     summaryTotal: "Total",
-    checkoutButton: "⚔ Place Order",
+    checkoutButton: "Place Order",
     emptyCheckout: "Cart empty",
     secureCheckout: "Secure payment · Tracked delivery",
+
+    // Order confirmation
+    orderConfirmTitle: "Order received!",
+    orderConfirmShip: "Your order will be shipped within 2-3 business days.",
+    orderConfirmPickup: "Your order is ready. Come pick it up in store!",
+    orderProcessing: "Processing…",
 };

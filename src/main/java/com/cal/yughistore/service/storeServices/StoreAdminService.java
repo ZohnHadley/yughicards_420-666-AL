@@ -1,7 +1,10 @@
 package com.cal.yughistore.service.storeServices;
 
+import com.cal.yughistore.model.user.ApplicationUser;
 import com.cal.yughistore.service.dto.yughiocard.YughioCardDTO;
-import com.cal.yughistore.service.yughiocard.YughioCardService;
+import com.cal.yughistore.service.YughioCardService;
+import com.cal.yughistore.service.exception.EntityDTONullException;
+import com.cal.yughistore.service.exception.EntityIdentifierNullException;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,75 +21,108 @@ public class StoreAdminService {
         this.yughioCardService = yughioCardService;
     }
 
-    @Transactional()
-    public YughioCardDTO setCardStock(YughioCardDTO yughioCardDTO, int quantity) {
-        if (yughioCardDTO == null) {
-            return null;
+    private YughioCardDTO requireCard(Long cardId) {
+        if (cardId == null) {
+            throw new EntityIdentifierNullException(YughioCardDTO.class);
         }
-        if (quantity <= 0) {
-            throw new IllegalArgumentException("quantity must be greater than 0");
+
+        YughioCardDTO card = yughioCardService.getById(cardId);
+        if (card == null) {
+            throw new IllegalArgumentException("Card not found for id: " + cardId);
         }
-        logger.debug("Setting stock for card: {}", yughioCardDTO.getId());
-        return yughioCardService.updateQuantity(yughioCardDTO.getId(), quantity);
+
+        return card;
+    }
+
+    @Transactional
+    protected YughioCardDTO updateQuantity(YughioCardDTO cardDTO, int quantity) {
+        Long cardId = cardDTO != null ? cardDTO.getId() : null;
+
+        try {
+            if (cardDTO == null || cardDTO.getId() == null) {
+                throw new EntityDTONullException(YughioCardDTO.class);
+            }
+            if (quantity < 0) {
+                quantity = 0;
+            }
+
+            cardDTO.setQuantity(quantity);
+            return yughioCardService.save(cardDTO);
+        } catch (Exception e) {
+            logger.error("Error updating quantity for card: {}", cardId, e);
+            throw e;
+        }
     }
 
     @Transactional()
     public YughioCardDTO setCardStock(Long cardId, int quantity) {
-        if (cardId == null) {
-            return null;
+        try {
+            if (quantity < 0) {
+                quantity = 0;
+            }
+
+            logger.debug("Setting stock for card: {}", cardId);
+            YughioCardDTO card = requireCard(cardId);
+            return updateQuantity(card, quantity);
+        } catch (Exception e) {
+            logger.error("Error setting stock for card: {}", cardId, e);
+            throw e;
         }
-        if (quantity <= 0) {
-            throw new IllegalArgumentException("quantity must be greater than 0");
-        }
-        logger.debug("Setting stock for card: {}", cardId);
-        return yughioCardService.updateQuantity(cardId, quantity);
     }
 
     @Transactional()
     public YughioCardDTO incrementCardStock(Long cardId, int quantity) {
-        if (cardId == null) {
-            return null;
-        }
-        if (quantity <= 0) {
-            throw new IllegalArgumentException("quantity must be greater than 0");
-        }
+        try {
+            if (quantity < 0) {
+                quantity = 0;
+            }
 
-        logger.debug("Increasing stock for card: {}", cardId);
-        YughioCardDTO card = yughioCardService.getById(cardId);
-        int newQuantity = card.getQuantity() + quantity;
-        return yughioCardService.updateQuantity(cardId, newQuantity);
+            logger.debug("Increasing stock for card: {}", cardId);
+
+            YughioCardDTO card = requireCard(cardId);
+            int newQuantity = card.getQuantity() + quantity;
+
+            return updateQuantity(card, newQuantity);
+        } catch (Exception e) {
+            logger.error("Error incrementing stock for card: {}", cardId, e);
+            throw e;
+        }
     }
 
     @Transactional()
     public YughioCardDTO decrementCardStock(Long cardId, int quantity) {
-        if (cardId == null) {
-            return null;
+        try {
+            if (quantity < 0) {
+                quantity = 0;
+            }
+            logger.debug("Decreasing stock for card: {}", cardId);
+            YughioCardDTO card = requireCard(cardId);
+            int newQuantity = card.getQuantity() - quantity;
+            return updateQuantity(card, newQuantity);
+        } catch (Exception e) {
+            logger.error("Error decrementing stock for card: {}", cardId, e);
+            throw e;
         }
-        if (quantity <= 0) {
-            throw new IllegalArgumentException("quantity must be greater than 0");
-        }
-        logger.debug("Decreasing stock for card: {}", cardId);
-        YughioCardDTO card = yughioCardService.getById(cardId);
-        int newQuantity = card.getQuantity() - quantity;
-        return yughioCardService.updateQuantity(cardId, newQuantity);
     }
 
     //can change card debugrmation
     @Transactional
     public YughioCardDTO updateCardById(Long cardId) {
-        if (cardId == null) {
-            return null;
+        try {
+            logger.debug("Updating yugio card: {}", cardId);
+            YughioCardDTO yughioCardDTO = requireCard(cardId);
+            return yughioCardService.save(yughioCardDTO);
+        } catch (Exception e) {
+            logger.error("Error updating yugio card: {}", cardId, e);
+            throw e;
         }
-        logger.debug("Updating yugio card: {}", cardId);
-        YughioCardDTO yughioCardDTO = yughioCardService.getById(cardId);
-        return yughioCardService.save(yughioCardDTO);
     }
 
     //deletes card presence from store
     @Transactional
     public Boolean deleteCardById(Long cardId) {
         if (cardId == null) {
-            return null;
+            throw new EntityIdentifierNullException(YughioCardDTO.class);
         }
         logger.debug("Deleting yugio card: {}", cardId);
         return yughioCardService.deleteById(cardId);

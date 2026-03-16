@@ -1,4 +1,3 @@
-// service qui parle au backend
 export const YughioCardService = {
     getAllCards: async (page = 0, size = 10) => {
         const res = await fetch(`http://localhost:8080/api/v1/get-all-cards/page=${page}/num=${size}`);

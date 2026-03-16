@@ -18,12 +18,24 @@ export const ShoppingCartFr = {
     removeTitle: "Retirer",
     cadLabel: "CAD",
 
+    // Livraison
+    shippingTitle: "Livraison",
+    shippingPickup: "Cueillette en magasin",
+    shippingDeliver: "Livraison à domicile",
+    shippingFree: "Gratuit",
+
     summaryTitle: "⟡ Résumé",
     summaryCards: (n) => `Cartes (${n})`,
     summaryShipping: "Livraison",
     summaryShippingFree: "—",
     summaryTotal: "Total",
-    checkoutButton: "⚔ Passer la commande",
+    checkoutButton: "Passer la commande",
     emptyCheckout: "Panier vide",
     secureCheckout: "Paiement sécurisé · Livraison suivie",
+
+    // Confirmation commande
+    orderConfirmTitle: "Commande reçue !",
+    orderConfirmShip: "Ta commande sera expédiée sous 2-3 jours ouvrables.",
+    orderConfirmPickup: "Ta commande est prête. Viens la chercher en magasin !",
+    orderProcessing: "Traitement en cours…",
 };

@@ -31,10 +31,11 @@ public class CardImagesDTO {
 
     public CardImages toCardImages() {
         return CardImages.builder()
-                .image_group_api_id(image_group_api_id)
-                .image_url(image_url)
-                .image_url_small(image_url_small)
-                .image_url_cropped(image_url_cropped)
+                .id(getId())
+                .image_group_api_id(getImage_group_api_id())
+                .image_url(getImage_url())
+                .image_url_small(getImage_url_small())
+                .image_url_cropped(getImage_url_cropped())
                 .build();
     }
 

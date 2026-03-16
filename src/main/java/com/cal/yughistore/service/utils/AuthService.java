@@ -2,16 +2,16 @@ package com.cal.yughistore.service.utils;
 
 
 import com.cal.yughistore.event.PasswordResetRequestEvent;
-import com.cal.yughistore.model.applicaitonuser.ApplicationUser;
-import com.cal.yughistore.model.applicaitonuser.auth.Credentials;
+import com.cal.yughistore.model.user.ApplicationUser;
+import com.cal.yughistore.model.user.auth.Credentials;
 import com.cal.yughistore.repository.user.ApplicationUserRepository;
 import com.cal.yughistore.security.JwtTokenProvider;
 import com.cal.yughistore.security.exceptions.InvalidJwtTokenException;
 import com.cal.yughistore.security.exceptions.UserNotFoundException;
-import com.cal.yughistore.service.applicaitonuser.ApplicationUserService;
-import com.cal.yughistore.service.dto.applicationuser.ApplicationUserDTO;
-import com.cal.yughistore.service.dto.applicationuser.LoginDTO;
-import com.cal.yughistore.service.dto.applicationuser.PasswordRequestDTO;
+import com.cal.yughistore.service.user.ApplicationUserService;
+import com.cal.yughistore.service.dto.user.ApplicationUserDTO;
+import com.cal.yughistore.service.dto.user.LoginDTO;
+import com.cal.yughistore.service.dto.user.PasswordRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

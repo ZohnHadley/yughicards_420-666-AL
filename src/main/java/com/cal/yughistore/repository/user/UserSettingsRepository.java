@@ -1,6 +1,6 @@
 package com.cal.yughistore.repository.user;
 
-import com.cal.yughistore.model.applicaitonuser.UserSettings;
+import com.cal.yughistore.model.user.UserSettings;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

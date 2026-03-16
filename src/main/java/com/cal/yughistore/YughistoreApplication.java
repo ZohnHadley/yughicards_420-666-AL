@@ -1,11 +1,13 @@
 package com.cal.yughistore;
 
-import com.cal.yughistore.service.applicaitonuser.ApplicationUserService;
-import com.cal.yughistore.service.applicaitonuser.AdminUserService;
-import com.cal.yughistore.service.applicaitonuser.ClientUserService;
-import com.cal.yughistore.service.dto.applicationuser.ApplicationUserDTO;
+import com.cal.yughistore.service.YughioCardService;
+import com.cal.yughistore.service.user.ApplicationUserService;
+import com.cal.yughistore.service.user.AdminUserService;
+import com.cal.yughistore.service.user.ClientUserService;
+import com.cal.yughistore.service.dto.user.ApplicationUserDTO;
 import com.cal.yughistore.service.storeServices.StoreAdminService;
 import com.cal.yughistore.service.storeServices.StoreClientService;
+import com.cal.yughistore.service.user.ShoppingCartService;
 import com.cal.yughistore.service.utils.AuthService;
 import com.cal.yughistore.utils.ConsoleLoadingBar;
 import org.springframework.boot.CommandLineRunner;
@@ -44,8 +46,7 @@ public class YughistoreApplication {
     }
 
     @Bean
-    CommandLineRunner commandLineRunner(
-    ) {
+    CommandLineRunner commandLineRunner(ApplicationContext context, ShoppingCartService shoppingCartService, YughioCardService yughioCardService) {
         return args -> {
             ConsoleLoadingBar consoleLoadingBar = new ConsoleLoadingBar();
 
@@ -64,27 +65,30 @@ public class YughistoreApplication {
                             .lastName("User")
                             .build()
             );
-            /// populate cart
 
-            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 1L);
-            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 2L);
-            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 3L);
+            /// stock up cards FIRST
+            List<Long> cardIds = new ArrayList<>();
+            System.out.println("stocking up to 1000 cards");
+            for (int i = 1; i <= 1000; i++) {
+                if (yughioCardService.getById((long) i) != null)
+                    cardIds.add((long) i);
+            }
+            for (Long cardId : cardIds) {
+                storeAdminService.incrementCardStock(cardId, 30);
+            }
+            consoleLoadingBar.finish();
 
-            System.out.println(storeClientService.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
+            /// populate cart AFTER stock is set
+            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 1L, 1);
+            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 2L, 1);
+            storeClientService.addToShoppingCart(applicationUserDTO.getId(), 3L, 1);
 
-            ///  remove 1 card from cart
+            System.out.println(shoppingCartService.getShoppingCartByUserId(applicationUserDTO.getId()).getCards());
+
+            /// remove 1 card from cart
             storeClientService.removeFromShoppingCart(applicationUserDTO.getId(), 1L);
 
-            System.out.println(storeClientService.getShoppingCartByUserID(applicationUserDTO.getId()).getCards());
-
-//            List<Long> cardIds = new ArrayList<>();
-//            System.out.println("stocking up to 1000 cards");
-//            for (int i = 1; i <= 1000; i++) {
-//                cardIds.add((long) i);
-//                storeAdminService.incrementCardStock(((long) i), 30);
-//                consoleLoadingBar.printProgress(i, 1000);
-//            }
-//            consoleLoadingBar.finish();
+            System.out.println(shoppingCartService.getShoppingCartByUserId(applicationUserDTO.getId()).getCards());
         };
     }
 }

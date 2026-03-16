@@ -32,5 +32,13 @@ export function useYughioInventoryStore() {
         }
     };
 
-    return { cards, loading, error, fetchAllCards, searchCards };
+    const updateCardQuantity = (cardId, newQuantity) => {
+        setCards(prev => prev.map(c => c.id === cardId ? { ...c, quantity: newQuantity } : c));
+    };
+
+    const removeCard = (cardId) => {
+        setCards(prev => prev.filter(c => c.id !== cardId));
+    };
+
+    return { cards, loading, error, fetchAllCards, searchCards, updateCardQuantity, removeCard };
 }

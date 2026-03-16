@@ -14,11 +14,10 @@ export const useShoppingCartStore = create((set, get) => ({
     error: null,
 
     // ── Fetch ─────────────────────────────────────────────────────────────────
-    fetchByUserId: async (userId) => {
-        if (!userId) return;
+    fetchByUserId: async () => {
         set({ loading: true, error: null });
         try {
-            const cart = await ShoppingCartService.getByUserId(userId);
+            const cart = await ShoppingCartService.getByUserId();
             set({ cart: normalizeCart(cart), loading: false });
         } catch (e) {
             set({ error: e.message, loading: false });
@@ -39,49 +38,68 @@ export const useShoppingCartStore = create((set, get) => ({
     // ── Add card (optimistic) ─────────────────────────────────────────────────
     addCard: async (cardDTO) => {
         const { cart } = get();
-        if (!cart?.applicationUser?.id) throw new Error("Aucun utilisateur chargé dans le panier.");
         if (!cardDTO?.id) throw new Error("La carte doit avoir un id.");
 
-        const userId = cart.applicationUser.id;
         const cardId = cardDTO.id;
 
-        const alreadyIn = cart.cards.some((c) => c.id === cardId);
-        if (alreadyIn) return;
-
-        // Optimistic update
+        // Optimistic update — ajoute UNE occurrence de plus
         set((state) => ({
-            cart: { ...state.cart, cards: [...state.cart.cards, cardDTO] },
+            cart: { ...state.cart, cards: [...(state.cart?.cards ?? []), cardDTO] },
         }));
 
         try {
-            await ShoppingCartService.addCard(userId, cardId);
+            await ShoppingCartService.addCard(cardId, 1);
         } catch (e) {
-            // Rollback
+            // Rollback — retire la dernière occurrence ajoutée
+            set((state) => {
+                const cards = [...(state.cart?.cards ?? [])];
+                const idx = cards.findLastIndex(c => c.id === cardId);
+                if (idx !== -1) cards.splice(idx, 1);
+                return { cart: { ...state.cart, cards }, error: e.message };
+            });
+            throw e;
+        }
+    },
+    // ── Remove card (optimistic) ──────────────────────────────────────────────
+    removeCard: async (cardId) => {
+        const { cart } = get();
+        const previousCards = [...(cart?.cards ?? [])];
+
+        // Optimistic update — retire UNE occurrence
+        set((state) => {
+            const cards = [...(state.cart?.cards ?? [])];
+            const idx = cards.findIndex(c => c.id === cardId);
+            if (idx !== -1) cards.splice(idx, 1);
+            return { cart: { ...state.cart, cards } };
+        });
+
+        try {
+            await ShoppingCartService.removeCard(cardId);
+        } catch (e) {
             set((state) => ({
-                cart: { ...state.cart, cards: state.cart.cards.filter((c) => c.id !== cardId) },
+                cart: { ...state.cart, cards: previousCards },
                 error: e.message,
             }));
             throw e;
         }
     },
 
-    // ── Remove card (optimistic) ──────────────────────────────────────────────
-    removeCard: async (cardId) => {
+    removeAllOfCard: async (cardId) => {
         const { cart } = get();
-        if (!cart?.applicationUser?.id) throw new Error("Aucun utilisateur chargé dans le panier.");
+        const previousCards = [...(cart?.cards ?? [])];
 
-        const userId = cart.applicationUser.id;
-        const previousCards = [...cart.cards];
-
-        // Optimistic update
+        // Optimistic update — retire TOUTES les occurrences
         set((state) => ({
-            cart: { ...state.cart, cards: state.cart.cards.filter((c) => c.id !== cardId) },
+            cart: { ...state.cart, cards: (state.cart?.cards ?? []).filter(c => c.id !== cardId) },
         }));
 
         try {
-            await ShoppingCartService.removeCard(userId, cardId);
+            // Appelle remove autant de fois qu'il y avait de copies
+            const count = previousCards.filter(c => c.id === cardId).length;
+            for (let i = 0; i < count; i++) {
+                await ShoppingCartService.removeCard(cardId);
+            }
         } catch (e) {
-            // Rollback
             set((state) => ({
                 cart: { ...state.cart, cards: previousCards },
                 error: e.message,
