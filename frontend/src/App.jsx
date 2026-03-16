@@ -9,17 +9,11 @@ import Footer from "./components/Footer.jsx";
 import Contact from "./pages/Contact.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import YughiohCardDetails from "./pages/YughiohCardDetails.jsx";
-<<<<<<< HEAD
-import Login from "./pages/Login.jsx";
-import Register from "./pages/Register.jsx";
-import ShoppingCart from "./pages/ShoppingCart.jsx";
-=======
 import ShoppingCart from "./pages/ShoppingCart.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import {useAuthStore} from "./store/UseAuthStore.js";
 import ThankYou from "./pages/ThankYou.jsx";
->>>>>>> 825522f683b5b66c5a8da95c5b9e3ec326d2e87f
 
 function App() {
     const [language, setLanguage] = useState("fr");
@@ -47,7 +41,6 @@ function App() {
                         <Route path="/contact" element={<Contact language={language}/>}/>
                         <Route path="/login" element={<Login language={language}/>}/>
                         <Route path="/register" element={<Register language={language}/>}/>
-<<<<<<< HEAD
 
                         {/* Page details des cartes */}
 
@@ -56,11 +49,9 @@ function App() {
 
                         {/* Page du shoppingCart*/}
                         <Route path="/shoppingCard" element={<ShoppingCart language={language}/>} />
-=======
                         <Route path="/cardDetails" element={<YughiohCardDetails language={language}/>}/>
                         <Route path="/shoppingCard" element={<ShoppingCart language={language}/>}/>
                         <Route path="/thank-you" element={<ThankYou language={language} />} />
->>>>>>> 825522f683b5b66c5a8da95c5b9e3ec326d2e87f
 
                     </Routes>
                 </main>
