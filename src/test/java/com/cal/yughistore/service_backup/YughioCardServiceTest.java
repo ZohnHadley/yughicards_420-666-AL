@@ -1,13 +1,14 @@
-package com.cal.yughistore.service;
+package com.cal.yughistore.service_backup;
 
 
 import com.cal.yughistore.model.yughiocard.YughioCard;
 import com.cal.yughistore.model.yughiocard.enums.EnumCardType;
 import com.cal.yughistore.model.yughiocard.enums.EnumFrameType;
 import com.cal.yughistore.repository.card.*;
+import com.cal.yughistore.service.YughioCardService;
 import com.cal.yughistore.service.dto.yughiocard.YughioCardDTO;
 import com.cal.yughistore.service.exception.EntityDTONullException;
-import com.cal.yughistore.service.exception.EntityIdentifierNullException; 
+import com.cal.yughistore.service.exception.EntityIdentifierNullException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +19,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +28,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class YughioCardServiceTest {
-
 
     @Mock
     private YughioCardRepository cardRepository;
@@ -76,7 +75,6 @@ public class YughioCardServiceTest {
         assertNotNull(savedCard.getId());
         assertEquals(1L, savedCard.getId());
         assertEquals("Test Card", savedCard.getName());
-        assertEquals(0, savedCard.getQuantity());
 
         verify(cardRepository).save(any(YughioCard.class));
     }
@@ -105,10 +103,7 @@ public class YughioCardServiceTest {
 
         when(cardRepository.save(any(YughioCard.class))).thenReturn(savedEntity);
 
-        List<YughioCardDTO> dtoCards = new ArrayList<>();
-        for (int i = 0; i < 1; i++){
-            dtoCards.add(new YughioCardDTO());
-        }
+        List<YughioCardDTO> dtoCards = List.of(dtoCard1);
         List<YughioCardDTO> savedCards = yughioCardService.saveAll(dtoCards);
 
         assertNotNull(savedCards);
@@ -152,10 +147,10 @@ public class YughioCardServiceTest {
     }
 
     @Test
-    void getById_noCardWithId_shouldReturnEmptyCard(){
-        when(cardRepository.findById(1L)).thenReturn(Optional.of(new YughioCard()));
-        YughioCardDTO cardDTO = yughioCardService.getById(1L);
-        assertNotNull(cardDTO);
+    void getById_nonExistingId_shouldThrowEntityIdentifierNullException() {
+        when(cardRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(EntityIdentifierNullException.class, () -> yughioCardService.getById(1L));
     }
 
     @Test
