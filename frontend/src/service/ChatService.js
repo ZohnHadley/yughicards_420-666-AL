@@ -1,11 +1,15 @@
-const BASE_URL = "http://localhost:8080/api/v1/ai";
-
 export const chatService = {
     ask: async (userName, question) => {
+        console.log("📤 Envoi vers:", `http://localhost:8080/api/v1/ai/${userName}/ask`);
+        console.log("📝 Question:", question);
+
         const res = await fetch(
-            `${BASE_URL}/${userName}/ask?question=${encodeURIComponent(question)}`
+            `http://localhost:8080/api/v1/ai/${userName}/ask?question=${encodeURIComponent(question)}`
         );
-        if (!res.ok) throw new Error("Erreur serveur");
+
+        console.log("📥 Status reçu:", res.status);
+
+        if (!res.ok) throw new Error(`Erreur serveur: ${res.status}`);
         return await res.text();
     },
 };
