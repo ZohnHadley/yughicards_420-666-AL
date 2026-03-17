@@ -170,12 +170,10 @@ export default function AiChatBox({ language }) {
             />
                         <button
                             onClick={sendMessage}
-                            className="w-9 h-9 rounded-xl border-none cursor-pointer flex items-center justify-center shrink-0 hover:scale-105 active:scale-95 transition-transform"
-                            style={{ background: "linear-gradient(135deg, #C9A84C, #8B6914)" }}
+                            className="w-9 h-9 rounded-xl border-none cursor-pointer flex items-center justify-center shrink-0 hover:scale-105 active:scale-95 transition-transform text-[#1A1A2E] font-bold text-lg"
+                            style={{background: "linear-gradient(135deg, #C9A84C, #8B6914)"}}
                         >
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="#1A1A2E">
-                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                            </svg>
+                            ↑
                         </button>
                     </div>
 

@@ -59,7 +59,8 @@ export const useChatStore = create((set, get) => ({
                 time: new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
             };
             set((s) => ({ messages: [...s.messages, botMsg] }));
-        } catch {
+        } catch (e) {
+            console.error("Chat error:", e);
             const errMsg = {
                 id: Date.now() + 1,
                 text: "Service temporairement indisponible. Veuillez réessayer.",
