@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { chatService } from "../services/chatService";
+import {chatService} from "../service/ChatService.js";
 
 const getOrCreateUserName = () => {
     let name = localStorage.getItem("chat_username");

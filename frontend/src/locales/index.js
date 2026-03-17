@@ -22,6 +22,8 @@ import {ShoppingCartFr} from "./francais/ShoppingCartFr.js";
 import {ShoppingCartEn} from "./english/ShoppingCartEn.js";
 import {ThankYouFr} from "./francais/ThankYouFr.js";
 import {ThankYouEn} from "./english/ThankYouEn.js";
+import {AiChatBoxEn} from "./english/components/Ai/AiChatBoxEn.js";
+import {AiChatBoxFr} from "./francais/components/Ai/AiChatBoxFr.js";
 
 export const translations = {
     fr: {
@@ -37,6 +39,7 @@ export const translations = {
         login: LoginFr,
         register: RegisterFr,
         thankYou: ThankYouFr,
+        aiChatBox: AiChatBoxFr
     },
     en: {
         navbar: NavbarEn,
@@ -51,6 +54,7 @@ export const translations = {
         login: LoginEn,
         register: RegisterEn,
         thankYou: ThankYouEn,
+        aiChatBox: AiChatBoxEn
     }
 }
 export const languages = [
