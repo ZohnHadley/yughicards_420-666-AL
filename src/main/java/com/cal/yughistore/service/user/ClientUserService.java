@@ -2,9 +2,11 @@ package com.cal.yughistore.service.user;
 
 import com.cal.yughistore.model.user.ShoppingCart;
 import com.cal.yughistore.model.user.ClientUser;
+import com.cal.yughistore.model.user.auth.Role;
 import com.cal.yughistore.repository.user.ShoppingCartRepository;
 import com.cal.yughistore.repository.user.ClientUserRepository;
 import com.cal.yughistore.service.dto.user.ApplicationUserDTO;
+import com.cal.yughistore.service.dto.user.ClientDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,7 +30,7 @@ public class ClientUserService {
     }
 
     @Transactional
-    public ApplicationUserDTO save(ApplicationUserDTO applicationUserDTO) {
+    public ApplicationUserDTO save(ClientDTO applicationUserDTO) {
         if (applicationUserDTO == null) {
             throw new IllegalArgumentException("applicationUserDTO must not be null");
         }
@@ -51,14 +53,15 @@ public class ClientUserService {
 
         ClientUser savedClientUser = clientUserRepository.save(clientUserToSave);
 
-        ShoppingCart cart = new ShoppingCart();
-        cart.setApplicationUser(savedClientUser);     // must be set (NOT NULL FK)
-        savedClientUser.setShoppingCart(cart);        // keep both sides consistent in memory
+        if(savedClientUser.getId() != null){
+            ShoppingCart cart = new ShoppingCart();
+            cart.setApplicationUser(savedClientUser);     // must be set (NOT NULL FK)
+            savedClientUser.setShoppingCart(cart);        // keep both sides consistent in memory
 
-        shoppingCartRepository.save(cart);
+            shoppingCartRepository.save(cart);
+        }
 
         logger.info("Client created = {}", savedClientUser.getEmail());
-
         ApplicationUserDTO result = ApplicationUserDTO.of(savedClientUser);
         result.setPassword(null);
         return result;

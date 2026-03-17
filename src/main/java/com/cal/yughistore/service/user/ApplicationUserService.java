@@ -1,13 +1,7 @@
 package com.cal.yughistore.service.user;
 
-import com.cal.yughistore.model.user.AdminUser;
-import com.cal.yughistore.model.user.ApplicationUser;
-import com.cal.yughistore.model.user.ClientUser;
-import com.cal.yughistore.model.user.UserSettings;
-import com.cal.yughistore.repository.user.AdminUserRepository;
-import com.cal.yughistore.repository.user.ApplicationUserRepository;
-import com.cal.yughistore.repository.user.ClientUserRepository;
-import com.cal.yughistore.repository.user.UserSettingsRepository;
+import com.cal.yughistore.model.user.*;
+import com.cal.yughistore.repository.user.*;
 import com.cal.yughistore.security.JwtTokenProvider;
 import com.cal.yughistore.security.exceptions.UserNotFoundException;
 import com.cal.yughistore.service.dto.user.*;
@@ -27,6 +21,8 @@ public class ApplicationUserService {
     private final ApplicationUserRepository applicationUserRepository;
     private final AdminUserRepository adminUserRepository;
     private final ClientUserRepository clientUserRepository;
+    private final GuestUserRepository guestUserRepository;
+
     private final UserSettingsRepository userSettingsRepository;
 
     public ApplicationUserService(
@@ -34,7 +30,7 @@ public class ApplicationUserService {
             JwtTokenProvider jwtTokenProvider,
             ApplicationUserRepository applicationUserRepository,
             AdminUserRepository adminUserRepository,
-            ClientUserRepository clientUserRepository,
+            ClientUserRepository clientUserRepository, GuestUserRepository guestUserRepository,
             UserSettingsRepository userSettingsRepository)
     {
         this.authenticationManager = authenticationManager;
@@ -43,6 +39,7 @@ public class ApplicationUserService {
 
         this.adminUserRepository = adminUserRepository;
         this.clientUserRepository = clientUserRepository;
+        this.guestUserRepository = guestUserRepository;
 
         this.userSettingsRepository = userSettingsRepository;
     }
@@ -78,13 +75,12 @@ public class ApplicationUserService {
     }
 
     private ApplicationUserDTO getGuestDTO(Long id) {
-        return ApplicationUserDTO.builder().build();
-//        final Optional<GuestUser> adminUserOptional = adminUserRepository.findById(
-//                id
-//        );
-//        return adminUserOptional.isPresent()
-//                ? ApplicationUserDTO.of(adminUserOptional.get())
-//                : new ApplicationUserDTO();
+        final Optional<GuestUser> guestOptional = guestUserRepository.findById(
+                id
+        );
+        return guestOptional.isPresent()
+                ? ApplicationUserDTO.of(guestOptional.get())
+                : new ApplicationUserDTO();
     }
 
     private ApplicationUserDTO getAdminDTO(Long id) {

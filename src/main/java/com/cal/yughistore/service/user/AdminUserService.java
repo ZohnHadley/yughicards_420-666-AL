@@ -1,9 +1,12 @@
 package com.cal.yughistore.service.user;
 
+import com.cal.yughistore.model.user.ApplicationUser;
 import com.cal.yughistore.model.user.ShoppingCart;
 import com.cal.yughistore.model.user.AdminUser;
+import com.cal.yughistore.model.user.auth.Role;
 import com.cal.yughistore.repository.user.ShoppingCartRepository;
 import com.cal.yughistore.repository.user.AdminUserRepository;
+import com.cal.yughistore.service.dto.user.AdminDTO;
 import com.cal.yughistore.service.dto.user.ApplicationUserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +31,7 @@ public class AdminUserService {
     }
 
     @Transactional
-    public ApplicationUserDTO save(ApplicationUserDTO applicationUserDTO) {
+    public ApplicationUserDTO save(AdminDTO applicationUserDTO) {
         if (applicationUserDTO == null) {
             throw new IllegalArgumentException("applicationUserDTO must not be null");
         }

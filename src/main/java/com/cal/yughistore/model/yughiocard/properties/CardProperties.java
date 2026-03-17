@@ -17,11 +17,10 @@ public class CardProperties implements TextImbbededObject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonBackReference
     private Long id;
 
     @OneToOne
-    @JsonBackReference
+    @JsonBackReference("card-properties")
     private YughioCard yughioCard;
 
     @Override

@@ -16,13 +16,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AdminUser extends ApplicationUser  {
+public class AdminUser extends ApplicationUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
 
-    @Builder
     public AdminUser(
             Long id,
             String profilePictureUrl,

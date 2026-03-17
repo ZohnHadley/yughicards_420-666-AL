@@ -30,8 +30,8 @@ public class ApplicationUser {
     @Embedded
     private Credentials credentials;
 
-    @OneToOne(mappedBy = "applicationUser", fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @OneToOne(mappedBy = "applicationUser")
+    @JsonManagedReference("user-shopping-cart")
     private ShoppingCart shoppingCart;
 
     private boolean active = true;

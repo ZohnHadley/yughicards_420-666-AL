@@ -23,7 +23,7 @@ public class CardSet{
 
     @ManyToOne
     @JoinColumn(name = "yughio_card_id")
-    @JsonBackReference
+    @JsonBackReference("card-sets")
     private YughioCard yughioCard;
 
     public String toEmbeddingText() {

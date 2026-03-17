@@ -1,6 +1,6 @@
-package com.cal.yughistore.presentation;
+package com.cal.yughistore.AI.presentation;
 
-import com.cal.yughistore.service.AiChatBotService;
+import com.cal.yughistore.AI.service.AiChatBotService;
 import com.cal.yughistore.service.utils.YughioCardVectorStoreUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

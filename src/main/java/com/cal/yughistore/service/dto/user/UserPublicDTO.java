@@ -23,11 +23,9 @@ public class UserPublicDTO {
     @Size(min = 4)
     private String userName;
 
-    @NotBlank(message = "First name is mandatory")
     @Size(min = 4)
     private String firstName;
 
-    @NotBlank(message = "Last name is mandatory")
     @Size(min = 2)
     private String lastName;
 
@@ -40,21 +38,9 @@ public class UserPublicDTO {
 
     private Role role;
 
-    @Builder
-    public UserPublicDTO(Long id, String profilePictureUrl, String userName, String firstName, String lastName, ShoppingCart shoppingCart, String email, Role role) {
-        this.id = id;
-        this.profilePictureUrl = profilePictureUrl;
-        this.userName = userName;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.shoppingCart = shoppingCart;
-        this.email = email;
-        this.role = role;
-    }
-
     public static UserPublicDTO of(ApplicationUser user) {
         if(user == null){
-            return new UserPublicDTO();
+           throw new IllegalArgumentException("User must not be null");
         }
         return UserPublicDTO.builder()
                 .id(user.getId())
@@ -68,16 +54,27 @@ public class UserPublicDTO {
                 .build();
     }
 
-    public ApplicationUserDTO toApplicationUserDTO(){
-        return ApplicationUserDTO.builder()
-                .id(this.getId())
-                .profilePictureUrl(this.getProfilePictureUrl())
-                .userName(this.getUserName())
-                .firstName(this.getFirstName())
-                .lastName(this.getLastName())
-                .email(this.getEmail())
-                .shoppingCart(this.getShoppingCart())
-                .role(this.getRole())
+    public static ApplicationUserDTO toApplicationUserDTO(ApplicationUser user) {
+        if(user == null){
+            throw new IllegalArgumentException("User must not be null");
+        }
+        return ApplicationUserDTO.of(user);
+    }
+
+    public static UserPublicDTO toUserPublicDTO(ApplicationUserDTO user) {
+        if(user == null){
+            throw new IllegalArgumentException("User must not be null");
+        }
+        return UserPublicDTO.builder()
+                .id(user.getId())
+                .profilePictureUrl(user.getProfilePictureUrl())
+                .userName(user.getUserName())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+//                .shoppingCart(user.getShoppingCartId())
+                .role(user.getRole())
                 .build();
     }
+
 }

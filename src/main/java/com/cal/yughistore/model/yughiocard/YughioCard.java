@@ -51,12 +51,11 @@ public class YughioCard {
 
     @OneToOne(mappedBy = "yughioCard", cascade = CascadeType.ALL)
     @JoinColumn(insertable = false, updatable = false)
-    @JsonManagedReference
+    @JsonManagedReference("card-properties")
     private CardProperties cardProperties;
 
-
     @OneToMany(mappedBy = "yughioCard", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonManagedReference("card-sets")
     private List<CardSet> card_sets = new ArrayList<>();
 
 

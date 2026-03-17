@@ -125,7 +125,7 @@ public class AuthService {
         ApplicationUser user = applicationUserRepository.findApplicationUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("Étudiant introuvable avec email " + email));
 
-        ApplicationUserDTO userDTO = new ApplicationUserDTO(user);
+        ApplicationUserDTO userDTO = ApplicationUserDTO.of(user);
 
         String resetToken = jwtTokenProvider.generatePasswordResetToken(user.getEmail());
 

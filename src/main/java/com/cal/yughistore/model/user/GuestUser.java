@@ -2,7 +2,10 @@ package com.cal.yughistore.model.user;
 
 import com.cal.yughistore.model.user.auth.Credentials;
 import com.cal.yughistore.model.user.auth.Role;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,20 +17,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ClientUser extends ApplicationUser {
+public class GuestUser extends ApplicationUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
 
-    public ClientUser(
+    public GuestUser(
             Long id,
             String profilePictureUrl,
             String username,
             String firstName,
             String lastName,
-            String email,
-            String password,
             ShoppingCart shoppingCart,
             boolean active,
             LocalDateTime createdAt,
@@ -41,9 +42,9 @@ public class ClientUser extends ApplicationUser {
                 firstName,
                 lastName,
                 Credentials.builder()
-                        .email(email)
-                        .password(password)
-                        .role(Role.CLIENT)
+                        .email("")
+                        .password("")
+                        .role(Role.GUEST)
                         .build(),
                 shoppingCart,
                 active,

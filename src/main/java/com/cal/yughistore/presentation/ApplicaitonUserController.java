@@ -35,12 +35,12 @@ public class ApplicaitonUserController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<ApplicationUserDTO> inscription(
-			@Valid @RequestBody ApplicationUserDTO ApplicationUserDTO
+			@Valid @RequestBody ClientDTO clientDTO
 	) {
 		System.out.println("=== Requête reçue dans le controller ===");
-		System.out.println("Données reçues : " + ApplicationUserDTO);
+		System.out.println("Données reçues : " + clientDTO);
 
-		ApplicationUserDTO savedClientUser = clientUserService.save(ApplicationUserDTO);
+		ApplicationUserDTO savedClientUser = clientUserService.save(clientDTO);
 
 		System.out.println("=== Après sauvegarde ===");
 		System.out.println("Etudiant sauvegardé : " + savedClientUser);

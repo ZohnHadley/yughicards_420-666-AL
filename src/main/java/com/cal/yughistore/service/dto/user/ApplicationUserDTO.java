@@ -1,9 +1,7 @@
 package com.cal.yughistore.service.dto.user;
 
-import com.cal.yughistore.model.user.ShoppingCart;
-import com.cal.yughistore.model.user.AdminUser;
-import com.cal.yughistore.model.user.ApplicationUser;
-import com.cal.yughistore.model.user.ClientUser;
+import com.cal.yughistore.model.user.*;
+import com.cal.yughistore.model.user.auth.Credentials;
 import com.cal.yughistore.model.user.auth.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
@@ -20,7 +18,7 @@ import lombok.*;
 public class ApplicationUserDTO {
     private Long id;
 
-    private String profilePictureUrl="";
+    private String profilePictureUrl = "";
 
     @NotBlank(message = "Username is mandatory")
     @Size(min = 4)
@@ -34,10 +32,9 @@ public class ApplicationUserDTO {
 
 
     @NotBlank(message = "Email is mandatory")
-    @Email private String email;
+    @Email
+    private String email;
 
-    @JsonIgnore
-    private ShoppingCart shoppingCart = new ShoppingCart();
 
     @NotBlank(message = "Password is mandatory")
     @Pattern(
@@ -46,57 +43,54 @@ public class ApplicationUserDTO {
                     "one lowercase, one number, and one special character"
     )
     private String password;
-    private Role role;
 
-    @Builder
-    public ApplicationUserDTO(Long id, String profilePictureUrl, String userName, String firstName, String lastName, ShoppingCart shoppingCart, String email, String password, Role role) {
-        this.id = id;
-        this.profilePictureUrl = profilePictureUrl;
-        this.userName = userName;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.shoppingCart = shoppingCart;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
+    @JsonIgnore
+    private ShoppingCartDTO shoppingCart;
 
-    public ApplicationUserDTO(ApplicationUser user) {
-        this.id = user.getId();
-        this.profilePictureUrl = user.getProfilePictureUrl();
-        this.userName = user.getUserName();
-        this.firstName = user.getFirstName();
-        this.lastName = user.getLastName();
-        this.email = user.getEmail();
-        this.password = user.getPassword();
-        this.role = user.getRole();
-    }
+    private Role role = Role.CLIENT;
 
     public static ApplicationUserDTO of(ApplicationUser user) {
-        return new ApplicationUserDTO(user);
+        ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO();
+        applicationUserDTO.setId(user.getId());
+        applicationUserDTO.setProfilePictureUrl(user.getProfilePictureUrl());
+        applicationUserDTO.setUserName(user.getUserName());
+        applicationUserDTO.setFirstName(user.getFirstName());
+        applicationUserDTO.setLastName(user.getLastName());
+        applicationUserDTO.setEmail(user.getEmail());
+        applicationUserDTO.setPassword(null);
+        applicationUserDTO.setRole(user.getRole());
+
+        if (user.getShoppingCart() != null) {
+            applicationUserDTO.setShoppingCart(ShoppingCartDTO.of(user.getShoppingCart()));
+        }
+
+        return applicationUserDTO;
     }
 
-    public AdminUser toAdminUser(){
-        return AdminUser.builder()
-                .id(this.getId())
-                .profilePictureUrl(this.getProfilePictureUrl())
-                .email(this.getEmail())
-                .password(this.getPassword())
+    public ApplicationUser toApplicationUser() {
+        return switch (this.role) {
+            case ADMIN -> populateCommonFields(new AdminUser());
+            case CLIENT -> populateCommonFields(new ClientUser());
+            default -> populateCommonFields(new GuestUser());
+        };
+    }
+
+    private <T extends ApplicationUser> T populateCommonFields(T user) {
+        user.setId(this.id);
+        user.setProfilePictureUrl(this.profilePictureUrl);
+        user.setUserName(this.userName);
+        user.setFirstName(this.firstName);
+        user.setLastName(this.lastName);
+        user.setCredentials(buildCredentials());
+        user.setShoppingCart(this.shoppingCart != null ? this.shoppingCart.toShoppingCart() : null);
+        return user;
+    }
+
+    private Credentials buildCredentials() {
+        return Credentials.builder()
+                .email(this.email)
+                .password(this.password)
+                .role(this.role)
                 .build();
     }
-
-    public ClientUser toClientUser(){
-        return ClientUser.builder()
-                .id(this.getId())
-                .profilePictureUrl(this.getProfilePictureUrl())
-                .firstName(this.getFirstName())
-                .lastName(this.getLastName())
-                .username(this.getUserName())
-                .email(this.getEmail())
-                .password(this.getPassword())
-                .shoppingCart(this.getShoppingCart())
-                .build();
-    }
-
-
 }

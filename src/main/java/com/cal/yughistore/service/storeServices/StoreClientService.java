@@ -57,8 +57,10 @@ public class StoreClientService {
             );
         }
 
-        cart.toShoppingCart().addCard(cardDTO.toYughioCard(), quantity);
-        shoppingCartService.save(cart);
+        ShoppingCart shoppingCart = cart.toShoppingCart();
+        shoppingCart.addCard(cardDTO.toYughioCard(), quantity);
+        shoppingCartService.save(ShoppingCartDTO.of(shoppingCart));
+
         logger.info("Ajouté {}x '{}' au panier userId={}", quantity, cardDTO.getName(), userId);
     }
 
@@ -70,13 +72,17 @@ public class StoreClientService {
 
         ShoppingCartDTO cartDTO = shoppingCartService.getShoppingCartByUserId(userId);
 
+        if (cartDTO == null) {
+            throw new ShoppingCartNotFoundException("Cart not found for userId=" + userId);
+        }
+
         if(cartDTO.getCartItemsList().isEmpty()){
             return;
         }
 
-        cartDTO.toShoppingCart().removeOneCard(cardId);
-
-        shoppingCartService.save(cartDTO);
+        ShoppingCart shoppingCart = cartDTO.toShoppingCart();
+        shoppingCart.removeOneCard(cardId);
+        shoppingCartService.save(ShoppingCartDTO.of(shoppingCart));
     }
 
     // ── Checkout : décrémente le stock et vide le panier ──────────────────
@@ -104,9 +110,13 @@ public class StoreClientService {
     }
 
 
-    public void clearShoppingCart(Long id) {
-        ShoppingCartDTO cart = shoppingCartService.getShoppingCartByUserId(id);
-        cart.setCartItemsList(new java.util.ArrayList<>());
-        shoppingCartService.save(cart);
+    public void clearShoppingCart(Long userId) {
+        ShoppingCartDTO cartDTO = shoppingCartService.getShoppingCartByUserId(userId);
+        if (cartDTO == null) {
+            throw new ShoppingCartNotFoundException("Cart not found for userId=" + userId);
+        }
+
+        cartDTO.setCartItemsList(new java.util.ArrayList<>());
+        shoppingCartService.save(cartDTO);
     }
 }

@@ -1,6 +1,8 @@
 package com.cal.yughistore;
 
 import com.cal.yughistore.service.YughioCardService;
+import com.cal.yughistore.service.dto.user.AdminDTO;
+import com.cal.yughistore.service.dto.user.ClientDTO;
 import com.cal.yughistore.service.user.ApplicationUserService;
 import com.cal.yughistore.service.user.AdminUserService;
 import com.cal.yughistore.service.user.ClientUserService;
@@ -51,13 +53,13 @@ public class YughistoreApplication {
             ConsoleLoadingBar consoleLoadingBar = new ConsoleLoadingBar();
 
             adminUserService.save(
-                    ApplicationUserDTO.builder()
+                    AdminDTO.builder()
                             .email("admin@gmail.com")
                             .password("!Password123")
                             .build()
             );
             ApplicationUserDTO applicationUserDTO = clientUserService.save(
-                    ApplicationUserDTO.builder()
+                    ClientDTO.builder()
                             .email("zink@gmail.com")
                             .password("!Password123")
                             .userName("Zink")
