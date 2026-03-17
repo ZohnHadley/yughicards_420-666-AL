@@ -36,6 +36,7 @@ public class SecurityConfiguration {
     private final JwtAuthenticationEntryPoint authenticationEntryPoint;
 
     // ── Path constants ────────────────────────────────────────────────────────
+    private static final String AI_ASSISTANT_PATH        = "/api/v1/ai-assistant/**";
     private static final String YUGHIO_CARD_DATA_PATH    = "/api/v1/**";
     private static final String YUGHIO_CARD_SINGLE_PATH  = "/api/v1/get-card/**";
     private static final String USER_PATH                = "/api/v1/user/**";
