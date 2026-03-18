@@ -550,7 +550,39 @@ Fonctionnalité qui sert à mettre à jour les stocks du magasin.
 **Page catalogue des cartes**: Page qui montre l'inventaire des cartes du boutique. L'admin peut ajouter ou retirer
 **Page détails des cartes**: Une fois qu'on clique sur une carte, une page des détails s'ouvre. L'admin peut voir les détails des cartes et soit décidé d'ajouter ou retirer des cartes de l'inventaire.
 
+--
+### 17 Mars (3pm - 5:30pm): FE - Implémentation de l'interface du chatbox AI:
+Fonctionnalité qui sert à permettre aux clients de discuter avec un assistant AI directement depuis le site.
+
+**Composant AiChatbox**: Composant React fixe en bas à droite de l'écran qui suit l'utilisateur lors du scroll. Le chatbox possède 3 états : une bulle minimisée, une taille normale (340x480px) et une taille agrandie (500x660px). L'utilisateur peut basculer entre les tailles avec un bouton d'expansion et minimiser le chat en cliquant sur le bouton de réduction.
+
+**Internationalisation (i18n)**: Ajout des fichiers de traduction `AiChatBoxFr.js` et `AiChatBoxEn.js` intégrés dans le fichier global `translations` existant. Le composant reçoit `language` en prop comme les autres composants du projet.
+
+**ChatStore (Zustand)**: Store Zustand qui gère l'état global du chatbox : ouverture/fermeture, taille, historique des messages, input utilisateur et état de chargement (isTyping).
+
+**ChatService**: Service responsable des appels HTTP vers le backend Spring Boot (`GET /api/v1/ai/{userName}/ask?question=...`).
+
 ---
+### Étapes pour démarrer le projet (Backend + AI):
+
+**1. Démarrer Ollama et le modèle LLaMA:**
+- Ouvrir un CMD
+- Taper `ollama` pour vérifier qu'Ollama est installé
+- Lancer le modèle avec la commande :
+```bash
+ollama run llama3.1:8b
+```
+- Attendre que le prompt `>>>` apparaisse (le modèle est prêt)
+
+**2. Démarrer le backend Spring Boot:**
+- Ouvrir le projet backend dans IntelliJ
+- Lancer l'application Spring Boot
+- Attendre le message `Started YughiStoreApplication` dans les logs
+
+**3. Démarrer le frontend:**
+```bash
+npm run dev
+```
 
  
  
