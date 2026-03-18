@@ -36,6 +36,7 @@ public class SecurityConfiguration {
     private final JwtAuthenticationEntryPoint authenticationEntryPoint;
 
     // ── Path constants ────────────────────────────────────────────────────────
+    private static final String AI_ASSISTANT_PATH        = "/api/v1/ai/**";
     private static final String YUGHIO_CARD_DATA_PATH    = "/api/v1/**";
     private static final String YUGHIO_CARD_SINGLE_PATH  = "/api/v1/get-card/**";
     private static final String USER_PATH                = "/api/v1/user/**";
@@ -71,6 +72,7 @@ public class SecurityConfiguration {
                                 SWAGGER_CONFIG_PATH, WEBJARS_PATH).permitAll()
 
                         // ── Routes publiques USER (spécifiques d'abord) ───────────
+                        .requestMatchers(AI_ASSISTANT_PATH).permitAll()
                         .requestMatchers(HttpMethod.POST, USER_SIGNUP_PATH).permitAll()
                         .requestMatchers(HttpMethod.POST, USER_SIGNIN_PATH).permitAll()
                         .requestMatchers(HttpMethod.POST, USER_PASSWORD_RESET_PATH).permitAll()

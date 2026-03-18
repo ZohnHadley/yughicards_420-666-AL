@@ -14,6 +14,7 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import {useAuthStore} from "./store/UseAuthStore.js";
 import ThankYou from "./pages/ThankYou.jsx";
+import AiChatbox from "./components/Ai/AiChatbox.jsx";
 
 function App() {
     const [language, setLanguage] = useState("fr");
@@ -41,13 +42,24 @@ function App() {
                         <Route path="/contact" element={<Contact language={language}/>}/>
                         <Route path="/login" element={<Login language={language}/>}/>
                         <Route path="/register" element={<Register language={language}/>}/>
+
+                        {/* Page details des cartes */}
+
+                        <Route path="/cardDetails" element={<YughiohCardDetails language={language}/>}/>
+                        <Route path="/cardDetails" element={<YughiohCardDetails language={language}/>}/>
+
+                        {/* Page du shoppingCart*/}
+                        <Route path="/shoppingCard" element={<ShoppingCart language={language}/>}/>
                         <Route path="/cardDetails" element={<YughiohCardDetails language={language}/>}/>
                         <Route path="/shoppingCard" element={<ShoppingCart language={language}/>}/>
-                        <Route path="/thank-you" element={<ThankYou language={language} />} />
+                        <Route path="/thank-you" element={<ThankYou language={language}/>}/>
 
                     </Routes>
                 </main>
                 <Footer language={language}/>
+
+                {/* Chatbot AI */}
+                <AiChatbox language={language}/>
             </div>
         </Router>
     );

@@ -14,14 +14,17 @@ import {YughiohInventoryFr} from "./francais/YughioInventoryFr.js";
 import {YughiohInventoryEn} from "./english/YughiohInventoryEn.js";
 import {YughiohCardDetailsFr} from "./francais/YughiohCardDetailsFr.js";
 import {YughiohCardDetailsEn} from "./english/YughiohCardDetailsEn.js";
-import {ShoppingCartFr} from "./francais/ShoppingCartFr.js";
-import {ShoppingCartEn} from "./english/ShoppingCartEn.js";
 import {LoginFr} from "./francais/LoginFr.js";
 import {RegisterFr} from "./francais/RegistrerFr.js";
 import {LoginEn} from "./english/LoginEn.js";
 import {RegisterEn} from "./english/RegisterEn.js";
+import {ShoppingCartFr} from "./francais/ShoppingCartFr.js";
+import {ShoppingCartEn} from "./english/ShoppingCartEn.js";
 import {ThankYouFr} from "./francais/ThankYouFr.js";
 import {ThankYouEn} from "./english/ThankYouEn.js";
+import {AiChatBoxEn} from "./english/components/Ai/AiChatBoxEn.js";
+import {AiChatBoxFr} from "./francais/components/Ai/AiChatBoxFr.js";
+
 export const translations = {
     fr: {
         navbar: NavbarFr,
@@ -36,6 +39,7 @@ export const translations = {
         login: LoginFr,
         register: RegisterFr,
         thankYou: ThankYouFr,
+        aiChatBox: AiChatBoxFr
     },
     en: {
         navbar: NavbarEn,
@@ -50,6 +54,7 @@ export const translations = {
         login: LoginEn,
         register: RegisterEn,
         thankYou: ThankYouEn,
+        aiChatBox: AiChatBoxEn
     }
 }
 export const languages = [
