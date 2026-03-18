@@ -539,8 +539,6 @@ UPDATE - ### 11 et 12 Mars: FE - Implémentation de la page remerciement pour le
 
 **Regarder** le vidéo **"[Modular RAG Architectures with Java and Spring AI](https://www.youtube.com/watch?v=ZcB4pNwPklI)"** pour mieux  m'informer sur les vector store, comment structuré notre projet et m'informer plus sur RAG
 
-
-
 ---
 
 ### 12 Mars (3pm - 5:30pm): FE - Implémentation de la fonctionnalité pour ajouter ou retirer des cartes de l'inventaire pour l'admin:
@@ -583,6 +581,20 @@ ollama run llama3.1:8b
 ```bash
 npm run dev
 ```
+
+###18 Mars (4pm - 7:30pm): Implémentation de l'historique des commandes du client
+
+Fonctionnalité qui permet au client de consulter ses commandes passées.
+
+**Modèle de données (BE)**: Création des entités pour persister les commandes et leurs articles au moment de l'achat, incluant un snapshot du prix en CAD au moment de la transaction.
+
+**Endpoint de commande (BE)**: Modification du processus de paiement pour enregistrer la commande en base de données avant de vider le panier et de décrémenter les stocks.
+
+**Historique des commandes (BE/FE)**: Nouveaux endpoints et nouvelle page qui liste toutes les commandes passées du client connecté, avec le total, la méthode de livraison et la date.
+
+**Détail d'une commande (BE/FE)**: Page de détail accessible depuis la liste, qui affiche toutes les cartes achetées lors d'une commande spécifique avec les prix unitaires et le total.
+
+**Internationalisation**: Ajout des traductions FR/EN pour les deux nouvelles pages.
 
  
  
