@@ -11,6 +11,7 @@ import com.cal.yughistore.service.user.Order.OrderService;
 import com.cal.yughistore.service.user.ShoppingCartService;
 import com.cal.yughistore.utils.JwtTokenUtils;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -79,13 +80,13 @@ public class StoreClientShoppingCartController {
     }
 
     @PostMapping("/checkout")
+    @Transactional
     public ResponseEntity<OrderDTO> checkout(
             HttpServletRequest request,
             @RequestParam String shippingMethod
     ) {
         Long userId = getCurrentUserId(request);
 
-        // 1. Charge le user et le panier
         ApplicationUser user = applicationUserService.findById(userId);
         ShoppingCart cart = shoppingCartService.getCartEntityByUserId(userId);
 
@@ -93,13 +94,12 @@ public class StoreClientShoppingCartController {
             return ResponseEntity.badRequest().build();
         }
 
-        // 2. Crée et persiste la commande AVANT de vider le panier
+        // 1. Snapshot des items DANS la même session
         Order order = orderService.createFromCart(user, cart, shippingMethod);
 
-        // 3. Décrémente le stock et vide le panier
+        // 2. Décrémente stock + vide panier
         storeClientService.buyAllFromShoppingCart(userId);
 
-        // 4. Retourne le DTO de la commande créée
         return ResponseEntity.ok()
                 .header("X-Shipping-Method", shippingMethod)
                 .body(OrderDTO.from(order));

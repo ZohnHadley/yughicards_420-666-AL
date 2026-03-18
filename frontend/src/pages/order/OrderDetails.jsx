@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useOrderStore } from "../store/OrderStore.js";
-import { useAuthStore } from "../store/UseAuthStore.js";
-import { translations } from "../locales/index.js";
+import {useOrderStore} from "../../store/useOrderStore.js";
+import {useAuthStore} from "../../store/UseAuthStore.js";
+import {translations} from "../../locales/index.js";
+
 
 function frameColor(cardType) {
     const ft = (cardType ?? "").toUpperCase();

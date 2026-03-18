@@ -57,7 +57,7 @@ public class ShoppingCartService {
     @Transactional(readOnly = true)
     public ShoppingCart getCartEntityByUserId(Long userId) {
         if (userId == null) throw new EntityIdentifierNullException(ClientUser.class, "can't be null");
-        ShoppingCart cart = shoppingCartRepository.findByApplicationUser_Id(userId);
+        ShoppingCart cart = shoppingCartRepository.findByUserIdWithItems(userId);
         if (cart == null) throw new ShoppingCartNotFoundException("Shopping cart not found for userId=" + userId);
         return cart;
     }

@@ -4,4 +4,5 @@ export const NavbarEn = {
     about: "About",
     contact: "Contact",
     logout: "Logout",
+    orderHistory: "My orders",
 }

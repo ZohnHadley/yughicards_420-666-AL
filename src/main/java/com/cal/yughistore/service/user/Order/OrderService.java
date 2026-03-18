@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,22 +32,28 @@ public class OrderService {
                                 ShoppingCart cart,
                                 String shippingMethod) {
 
+        // Force le chargement des items AVANT toute autre opération
+        List<CartItem> cartItems = new ArrayList<>(cart.getItems());
+
+        if (cartItems.isEmpty()) {
+            throw new RuntimeException("Le panier est vide.");
+        }
+
         BigDecimal shippingCost = "ship".equals(shippingMethod)
                 ? new BigDecimal("3.99")
                 : BigDecimal.ZERO;
 
-        // Construit les OrderItems depuis les CartItems
-        List<OrderItem> orderItems = cart.getItems().stream()
-                .map(cartItem -> buildOrderItem(cartItem))
+        List<OrderItem> orderItems = cartItems.stream()
+                .map(this::buildOrderItem)
                 .collect(Collectors.toList());
 
-        // Calcule le total (prix cartes + livraison)
         BigDecimal subtotal = orderItems.stream()
                 .map(oi -> oi.getPriceAtPurchase()
                         .multiply(BigDecimal.valueOf(oi.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal total = subtotal.add(shippingCost).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal total = subtotal.add(shippingCost)
+                .setScale(2, RoundingMode.HALF_UP);
 
         Order order = Order.builder()
                 .applicationUser(user)
@@ -54,7 +61,6 @@ public class OrderService {
                 .totalPrice(total)
                 .build();
 
-        // Lie chaque item à la commande
         for (OrderItem item : orderItems) {
             item.setOrder(order);
             order.getItems().add(item);

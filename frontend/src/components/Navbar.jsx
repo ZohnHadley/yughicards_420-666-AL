@@ -121,6 +121,20 @@ export default function Navbar({ language, setLanguage }) {
 
                                     {userDropdownOpen && (
                                         <div className="absolute top-full right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden min-w-[140px]">
+
+                                            {/* ← NOUVEAU */}
+                                            <button
+                                                onClick={() => {
+                                                    setUserDropdownOpen(false);
+                                                    navigate("/orders");
+                                                }}
+                                                className="w-full px-4 py-3 hover:bg-red-50 flex items-center gap-2
+                       text-gray-800 font-medium transition-colors duration-150"
+                                            >
+                                                <span className="text-red-600 text-sm">📋</span>
+                                                {t.orderHistory}
+                                            </button>
+
                                             <button
                                                 onClick={() => {
                                                     logout();
@@ -128,7 +142,7 @@ export default function Navbar({ language, setLanguage }) {
                                                     navigate("/");
                                                 }}
                                                 className="w-full px-4 py-3 hover:bg-red-50 flex items-center gap-2
-                                   text-gray-800 font-medium transition-colors duration-150"
+                       text-gray-800 font-medium transition-colors duration-150"
                                             >
                                                 <span className="text-red-600 text-sm">✦</span>
                                                 {t.logout}

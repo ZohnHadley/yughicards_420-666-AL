@@ -132,16 +132,17 @@ export default function OrderHistory({ language = "fr" }) {
     return (
         <div className="min-h-screen bg-[#080a0f] text-[#e8dcc8] font-serif">
 
-            <div style={{ height: 2, background: "linear-gradient(90deg, transparent, #c9973a, transparent)" }} />
+            <div style={{height: 2, background: "linear-gradient(90deg, transparent, #c9973a, transparent)"}}/>
 
             {/* Header */}
-            <header className="px-8 pt-10 pb-6 border-b border-[#c9973a]/20 flex flex-wrap items-end justify-between gap-4">
+            <header
+                className="px-8 pt-10 pb-6 border-b border-[#c9973a]/20 flex flex-wrap items-end justify-between gap-4">
                 <div>
                     <p className="text-[10px] tracking-[0.4em] text-[#c9973a] uppercase mb-2 font-sans">
                         ⟡ {t.eyebrow}
                     </p>
                     <h1 className="text-4xl font-black tracking-tight bg-gradient-to-br from-[#e8c06a] via-[#c9973a] to-[#a07828] bg-clip-text text-transparent"
-                        style={{ fontFamily: "Georgia,serif" }}>
+                        style={{fontFamily: "Georgia,serif"}}>
                         {t.title}
                     </h1>
                     <p className="text-[#7a6f5e] italic mt-1 text-sm">{t.subtitle}</p>
@@ -149,14 +150,15 @@ export default function OrderHistory({ language = "fr" }) {
 
                 <div className="flex items-center gap-3">
                     {orders.length > 0 && (
-                        <span className="text-xs tracking-widest text-[#c9973a] border border-[#c9973a]/20 bg-[#131920] rounded-full px-4 py-1.5">
+                        <span
+                            className="text-xs tracking-widest text-[#c9973a] border border-[#c9973a]/20 bg-[#131920] rounded-full px-4 py-1.5">
                             {t.orderCount(orders.length)}
                         </span>
                     )}
                     <button
                         onClick={() => navigate("/inventaire")}
                         className="text-xs tracking-widest px-4 py-1.5 rounded-full border transition-all duration-200 hover:bg-[#c9973a]/10"
-                        style={{ color: "#9a8e7a", borderColor: "rgba(201,151,58,0.2)" }}
+                        style={{color: "#9a8e7a", borderColor: "rgba(201,151,58,0.2)"}}
                     >
                         {t.emptyAction}
                     </button>
@@ -164,21 +166,22 @@ export default function OrderHistory({ language = "fr" }) {
             </header>
 
             {/* Body */}
-            <main className="px-8 py-8 max-w-3xl">
+            <main className="px-8 py-8 max-w-3xl mx-auto">
                 {loading && (
                     <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
-                        <div className="w-10 h-10 border-2 border-[#c9973a]/20 border-t-[#c9973a] rounded-full animate-spin" />
+                        <div
+                            className="w-10 h-10 border-2 border-[#c9973a]/20 border-t-[#c9973a] rounded-full animate-spin"/>
                         <p className="text-xs tracking-[0.3em] text-[#7a6f5e] uppercase">{t.loading}</p>
                     </div>
                 )}
 
                 {error && !loading && (
-                    <OrderError error={error} onRetry={fetchMyOrders} t={t} />
+                    <OrderError error={error} onRetry={fetchMyOrders} t={t}/>
                 )}
 
                 {!loading && !error && (
                     orders.length === 0
-                        ? <EmptyOrders onBack={() => navigate("/inventaire")} t={t} />
+                        ? <EmptyOrders onBack={() => navigate("/inventaire")} t={t}/>
                         : (
                             <div className="flex flex-col gap-3">
                                 {orders.map((order, i) => (
@@ -196,7 +199,10 @@ export default function OrderHistory({ language = "fr" }) {
             </main>
 
             <div className="mx-8 mt-4 mb-8"
-                 style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(201,151,58,0.3), transparent)" }} />
+                 style={{
+                     height: 1,
+                     background: "linear-gradient(90deg, transparent, rgba(201,151,58,0.3), transparent)"
+                 }}/>
 
             <style>{`
                 @keyframes fadeUp {
