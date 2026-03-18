@@ -1,8 +1,13 @@
 package com.cal.yughistore.presentation.client;
 
+import com.cal.yughistore.model.user.ApplicationUser;
+import com.cal.yughistore.model.user.ShoppingCart;
+import com.cal.yughistore.model.user.order.Order;
+import com.cal.yughistore.service.dto.user.order.OrderDTO;
 import com.cal.yughistore.service.user.ApplicationUserService;
 import com.cal.yughistore.service.dto.yughiocard.YughioCardDTO;
 import com.cal.yughistore.service.storeServices.StoreClientService;
+import com.cal.yughistore.service.user.Order.OrderService;
 import com.cal.yughistore.service.user.ShoppingCartService;
 import com.cal.yughistore.utils.JwtTokenUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +26,7 @@ public class StoreClientShoppingCartController {
     private final ShoppingCartService shoppingCartService;
     private final StoreClientService storeClientService;
     private final ApplicationUserService applicationUserService;
+    private final OrderService orderService;
 
     @GetMapping("/get")
     public ResponseEntity<List<YughioCardDTO>> getShoppingCart(HttpServletRequest request) {
@@ -73,23 +79,29 @@ public class StoreClientShoppingCartController {
     }
 
     @PostMapping("/checkout")
-    public ResponseEntity<List<YughioCardDTO>> checkout(
+    public ResponseEntity<OrderDTO> checkout(
             HttpServletRequest request,
-            @RequestParam String shippingMethod   // "pickup" ou "ship"
+            @RequestParam String shippingMethod
     ) {
         Long userId = getCurrentUserId(request);
 
-        // 1. Récupère les cartes avant de vider
-        List<YughioCardDTO> purchasedCards = shoppingCartService
-                .getShoppingCartByUserId(userId)
-                .getCards();
+        // 1. Charge le user et le panier
+        ApplicationUser user = applicationUserService.findById(userId);
+        ShoppingCart cart = shoppingCartService.getCartEntityByUserId(userId);
 
-        // 2. Décrémente le stock ET vide le panier
+        if (cart.getItems().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        // 2. Crée et persiste la commande AVANT de vider le panier
+        Order order = orderService.createFromCart(user, cart, shippingMethod);
+
+        // 3. Décrémente le stock et vide le panier
         storeClientService.buyAllFromShoppingCart(userId);
 
-        // 3. Retourne les cartes achetées + méthode de livraison dans le header
+        // 4. Retourne le DTO de la commande créée
         return ResponseEntity.ok()
                 .header("X-Shipping-Method", shippingMethod)
-                .body(purchasedCards);
+                .body(OrderDTO.from(order));
     }
 }

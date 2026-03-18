@@ -127,4 +127,9 @@ public class ApplicationUserService {
         userSettingsRepository.save(settings);
         return UserSettingsDTO.fromEntity(settings);
     }
+
+    public ApplicationUser findById(Long id) {
+        return applicationUserRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("Utilisateur introuvable avec id " + id));
+    }
 }
