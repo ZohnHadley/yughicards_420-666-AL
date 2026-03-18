@@ -24,6 +24,8 @@ import {ThankYouFr} from "./francais/ThankYouFr.js";
 import {ThankYouEn} from "./english/ThankYouEn.js";
 import {AiChatBoxEn} from "./english/components/Ai/AiChatBoxEn.js";
 import {AiChatBoxFr} from "./francais/components/Ai/AiChatBoxFr.js";
+import {OrderHistoryEn} from "./english/OrderHistoryEn.js";
+import {OrderHistoryFr} from "./francais/OrderHistoryFr.js";
 
 export const translations = {
     fr: {
@@ -39,7 +41,8 @@ export const translations = {
         login: LoginFr,
         register: RegisterFr,
         thankYou: ThankYouFr,
-        aiChatBox: AiChatBoxFr
+        aiChatBox: AiChatBoxFr,
+        orderHistory: OrderHistoryFr,
     },
     en: {
         navbar: NavbarEn,
@@ -54,7 +57,8 @@ export const translations = {
         login: LoginEn,
         register: RegisterEn,
         thankYou: ThankYouEn,
-        aiChatBox: AiChatBoxEn
+        aiChatBox: AiChatBoxEn,
+        orderHistory: OrderHistoryEn,
     }
 }
 export const languages = [

@@ -15,6 +15,8 @@ import Register from "./pages/Register.jsx";
 import {useAuthStore} from "./store/UseAuthStore.js";
 import ThankYou from "./pages/ThankYou.jsx";
 import AiChatbox from "./components/Ai/AiChatbox.jsx";
+import OrderHistory from "./pages/order/OrderHistory.jsx";
+import OrderDetail from "./pages/order/OrderDetails.jsx";
 
 function App() {
     const [language, setLanguage] = useState("fr");
@@ -53,6 +55,10 @@ function App() {
                         <Route path="/cardDetails" element={<YughiohCardDetails language={language}/>}/>
                         <Route path="/shoppingCard" element={<ShoppingCart language={language}/>}/>
                         <Route path="/thank-you" element={<ThankYou language={language}/>}/>
+
+
+                        <Route path="/orders"     element={<OrderHistory language={language} />} />
+                        <Route path="/orders/:id" element={<OrderDetail  language={language} />} />
 
                     </Routes>
                 </main>
