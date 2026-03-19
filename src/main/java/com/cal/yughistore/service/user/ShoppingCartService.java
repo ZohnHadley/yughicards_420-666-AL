@@ -53,4 +53,12 @@ public class ShoppingCartService {
         logger.info("Shopping cart for user {}: {} items", userEmail, cart.getItems().size());
         return ShoppingCartDTO.of(cart);
     }
+
+    @Transactional(readOnly = true)
+    public ShoppingCart getCartEntityByUserId(Long userId) {
+        if (userId == null) throw new EntityIdentifierNullException(ClientUser.class, "can't be null");
+        ShoppingCart cart = shoppingCartRepository.findByUserIdWithItems(userId);
+        if (cart == null) throw new ShoppingCartNotFoundException("Shopping cart not found for userId=" + userId);
+        return cart;
+    }
 }

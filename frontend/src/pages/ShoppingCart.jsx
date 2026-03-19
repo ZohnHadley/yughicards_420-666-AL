@@ -416,11 +416,30 @@ export default function ShoppingCart({ language = "fr" }) {
                 }
             );
             if (!res.ok) throw new Error(`Erreur ${res.status}`);
-            const purchasedCards = await res.json();
+
+            // Le backend retourne maintenant un OrderDTO
+            const order = await res.json();
+
             clearCart();
-            navigate("/thank-you", { state: { cards: purchasedCards, shipping: shippingChoice } });
+            navigate("/thank-you", {
+                state: {
+                    // Reconstruit la liste de cartes depuis les OrderItems pour ThankYou
+                    cards: order.items.flatMap(item =>
+                        Array.from({ length: item.quantity }, () => ({
+                            id: item.cardId,
+                            name: item.cardName,
+                            type: item.cardType,
+                            frameType: item.frameType,
+                            card_images: item.imageUrl
+                                ? [{ image_url_small: item.imageUrl }]
+                                : [],
+                            card_prices: [{ cardmarket_price: (item.priceAtPurchase / 1.36).toFixed(2) }],
+                        }))
+                    ),
+                    shipping: shippingChoice,
+                }
+            });
         } catch (e) {
-            // En cas d'erreur réseau, on navigue quand même avec les cartes locales
             clearCart();
             navigate("/thank-you", { state: { cards, shipping: shippingChoice } });
         }
