@@ -550,7 +550,7 @@ Fonctionnalité qui sert à mettre à jour les stocks du magasin.
 
 --
 ### 17 Mars (3pm - 5:30pm): FE - Implémentation de l'interface du chatbox AI:
-Fonctionnalité qui sert à permettre aux clients de discuter avec un assistant AI directement depuis le site.
+Fonctionnalité qui sert à permettre aux clients de discuter avec un assistant AI directement depuis le site. Le AI peut répondre à des questions sur le jeu de cartes yugioh.
 
 **Composant AiChatbox**: Composant React fixe en bas à droite de l'écran qui suit l'utilisateur lors du scroll. Le chatbox possède 3 états : une bulle minimisée, une taille normale (340x480px) et une taille agrandie (500x660px). L'utilisateur peut basculer entre les tailles avec un bouton d'expansion et minimiser le chat en cliquant sur le bouton de réduction.
 
