@@ -72,7 +72,9 @@ public class YughistoreApplication {
             for (int i = 1; i <= 1000; i++) {
                 if (yughioCardService.getById((long) i) != null)
                     cardIds.add((long) i);
+                consoleLoadingBar.printProgress(i + 1, 1000);
             }
+            consoleLoadingBar.finish();
             for (Long cardId : cardIds) {
                 storeAdminService.incrementCardStock(cardId, 30);
             }

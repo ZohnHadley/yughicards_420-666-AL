@@ -582,7 +582,7 @@ ollama run llama3.2:1b
 npm run dev
 ```
 
-###18 Mars (4pm - 7:30pm): Implémentation de l'historique des commandes du client
+### 18 Mars (4pm - 7:30pm): Implémentation de l'historique des commandes du client
 
 Fonctionnalité qui permet au client de consulter ses commandes passées.
 
@@ -595,6 +595,12 @@ Fonctionnalité qui permet au client de consulter ses commandes passées.
 **Détail d'une commande (BE/FE)**: Page de détail accessible depuis la liste, qui affiche toutes les cartes achetées lors d'une commande spécifique avec les prix unitaires et le total.
 
 **Internationalisation**: Ajout des traductions FR/EN pour les deux nouvelles pages.
+
+
+### 18 Mars (4pm - 7:30pm): Changement de la model du llm pour le chatbox:
+- **(pour le moment) Décider de changer le mode parce que le modèle actuel (llama3.1:8b) est trop lent et consomme trop de ressources (ram)**
+
+- **(pour le moment) On a choisi le model** (llama3.2:1b) qui est plus légère et rapide.
 
  
  

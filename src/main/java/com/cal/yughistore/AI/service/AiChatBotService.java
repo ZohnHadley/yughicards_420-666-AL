@@ -1,27 +1,18 @@
 package com.cal.yughistore.AI.service;
 
-import com.cal.yughistore.repository.card.YughioCardRepository;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.PromptChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.document.Document;
-import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
-import org.springframework.ai.vectorstore.filter.Filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AiChatBotService {
 
     private static final Logger logger = LoggerFactory.getLogger(AiChatBotService.class);
-    private static final String CARD_DOCUMENT_SOURCE = "yughio-card";
 
     private final QuestionAnswerAdvisor questionAnswerAdvisor;
     private final PromptChatMemoryAdvisor promptChatMemoryAdvisor;
@@ -186,7 +177,7 @@ public class AiChatBotService {
             """;
 
     public AiChatBotService(
-            VectorStore vectorStore, YughioCardRepository cardRepository, QuestionAnswerAdvisor questionAnswerAdvisor,
+            VectorStore vectorStore, QuestionAnswerAdvisor questionAnswerAdvisor,
             PromptChatMemoryAdvisor promptChatMemoryAdvisor,
             ChatClient.Builder chatClient
     ) {
@@ -194,32 +185,43 @@ public class AiChatBotService {
         this.questionAnswerAdvisor = questionAnswerAdvisor;
         this.promptChatMemoryAdvisor = promptChatMemoryAdvisor;
         this.chatClient = chatClient
-                .defaultAdvisors(questionAnswerAdvisor, promptChatMemoryAdvisor)
+                .defaultAdvisors(questionAnswerAdvisor)
                 .defaultSystem(system)
                 .build();
     }
 
     public String generateResponse(String userName, String userMessage) {
         try {
-            return chatClient.prompt()
+            String response = chatClient.prompt()
                     .user(userMessage)
                     .advisors(p -> p.param(ChatMemory.CONVERSATION_ID, userName))
                     .call()
                     .content();
+
+            return sanitizeAssistantResponse(response);
         } catch (Exception e) {
+            logger.error("AI chat response failed", e);
             return "Le service d'assistant IA est actuellement indisponible à cause d'une configuration de modèle invalide ou inaccessible.";
         }
     }
 
-    public Flux<String> generateStreamResponse(String userName, String userMessage) {
-        try {
-            return chatClient.prompt()
-                    .user(userMessage)
-                    .advisors(p -> p.param(ChatMemory.CONVERSATION_ID, userName))
-                    .stream()
-                    .content();
-        } catch (Exception e) {
-            return Flux.just("Service temporairement indisponible.");
+    private String sanitizeAssistantResponse(String response) {
+        if (response == null) {
+            return "Le service d'assistant IA a renvoyé une réponse vide. Veuillez réessayer.";
         }
+
+        String cleaned = response
+                .replace("\u0000", "")
+                .replace("\r", " ")
+                .replaceAll("(?i)\\bdata:\\s*", "")
+                .replace("[DONE]", "")
+                .replaceAll("\\s+", " ")
+                .trim();
+
+        if (cleaned.isBlank()) {
+            return "Le service d'assistant IA a renvoyé une réponse vide. Veuillez réessayer.";
+        }
+
+        return cleaned;
     }
 }
