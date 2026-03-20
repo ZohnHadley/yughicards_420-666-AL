@@ -1,8 +1,10 @@
 package com.cal.yughistore.AI.presentation;
 
 import com.cal.yughistore.AI.service.AiChatBotService;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
 @Controller
 @ResponseBody
@@ -20,12 +22,12 @@ public class AssistantController {
 
     /// description : ask the chatbot a question using a cleaner REST-style query parameter
     /// example of use : /{userName}/ask?question=what card do you recommend
-    @GetMapping("/{userName}/ask")
-    public String askQuestion(
+    @GetMapping(value = "/{userName}/ask", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> askQuestion(
             @PathVariable String userName,
             @RequestParam("question") String question
     ) {
-        return chatBotService.generateResponse(userName, question);
+        return chatBotService.generateStreamResponse(userName, question);
     }
 
     /// description : legacy endpoint kept for backward compatibility

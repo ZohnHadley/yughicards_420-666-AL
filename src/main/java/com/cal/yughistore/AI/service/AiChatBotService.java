@@ -12,6 +12,7 @@ import org.springframework.ai.vectorstore.filter.Filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -207,6 +208,18 @@ public class AiChatBotService {
                     .content();
         } catch (Exception e) {
             return "Le service d'assistant IA est actuellement indisponible à cause d'une configuration de modèle invalide ou inaccessible.";
+        }
+    }
+
+    public Flux<String> generateStreamResponse(String userName, String userMessage) {
+        try {
+            return chatClient.prompt()
+                    .user(userMessage)
+                    .advisors(p -> p.param(ChatMemory.CONVERSATION_ID, userName))
+                    .stream()
+                    .content();
+        } catch (Exception e) {
+            return Flux.just("Service temporairement indisponible.");
         }
     }
 }
