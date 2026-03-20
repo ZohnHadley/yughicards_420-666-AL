@@ -568,7 +568,7 @@ Fonctionnalité qui sert à permettre aux clients de discuter avec un assistant 
 - Taper `ollama` pour vérifier qu'Ollama est installé
 - Lancer le modèle avec la commande :
 ```bash
-ollama run llama3.1:8b
+ollama run llama3.2:1b
 ```
 - Attendre que le prompt `>>>` apparaisse (le modèle est prêt)
 
